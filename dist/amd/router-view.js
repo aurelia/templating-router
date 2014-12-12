@@ -10,22 +10,22 @@ define(["exports", "aurelia-dependency-injection", "aurelia-templating", "aureli
 
   var defaultInstruction = { suppressBind: true };
 
-  var RouterViewPort = (function () {
-    var RouterViewPort = function RouterViewPort(element, container, viewSlot) {
+  var RouterView = (function () {
+    var RouterView = function RouterView(element, container, viewSlot) {
       this.element = element;
       this.container = container;
       this.viewSlot = viewSlot;
     };
 
-    RouterViewPort.annotations = function () {
-      return [new CustomElement("router-view-port"), new NoView()];
+    RouterView.annotations = function () {
+      return [new CustomElement("router-view"), new NoView()];
     };
 
-    RouterViewPort.inject = function () {
+    RouterView.inject = function () {
       return [Element, Container, ViewSlot];
     };
 
-    RouterViewPort.prototype.created = function (executionContext) {
+    RouterView.prototype.created = function (executionContext) {
       this.executionContext = executionContext;
 
       if ("router" in executionContext) {
@@ -33,7 +33,7 @@ define(["exports", "aurelia-dependency-injection", "aurelia-templating", "aureli
       }
     };
 
-    RouterViewPort.prototype.bind = function (executionContext) {
+    RouterView.prototype.bind = function (executionContext) {
       if (this.executionContext == executionContext) {
         return;
       }
@@ -43,7 +43,7 @@ define(["exports", "aurelia-dependency-injection", "aurelia-templating", "aureli
       }
     };
 
-    RouterViewPort.prototype.getComponent = function (type, createChildRouter) {
+    RouterView.prototype.getComponent = function (type, createChildRouter) {
       var childContainer = this.container.createChild();
 
       childContainer.registerHandler(Router, createChildRouter);
@@ -52,7 +52,7 @@ define(["exports", "aurelia-dependency-injection", "aurelia-templating", "aureli
       return type.create(childContainer, defaultInstruction);
     };
 
-    RouterViewPort.prototype.process = function (viewPortInstruction) {
+    RouterView.prototype.process = function (viewPortInstruction) {
       viewPortInstruction.component.bind(viewPortInstruction.component.executionContext);
       this.viewSlot.swap(viewPortInstruction.component.view);
 
@@ -63,8 +63,8 @@ define(["exports", "aurelia-dependency-injection", "aurelia-templating", "aureli
       this.view = viewPortInstruction.component.view;
     };
 
-    return RouterViewPort;
+    return RouterView;
   })();
 
-  exports.RouterViewPort = RouterViewPort;
+  exports.RouterView = RouterView;
 });

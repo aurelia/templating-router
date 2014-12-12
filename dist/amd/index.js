@@ -1,6 +1,6 @@
-define(["exports", "./route-loader", "./router-view-port"], function (exports, _routeLoader, _routerViewPort) {
+define(["exports", "./route-loader", "./router-view"], function (exports, _routeLoader, _routerView) {
   "use strict";
 
   exports.TemplatingRouteLoader = _routeLoader.TemplatingRouteLoader;
-  exports.RouterViewPort = _routerViewPort.RouterViewPort;
+  exports.RouterView = _routerView.RouterView;
 });

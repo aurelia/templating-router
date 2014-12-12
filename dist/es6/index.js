@@ -1,2 +1,2 @@
 export {TemplatingRouteLoader} from './route-loader';
-export {RouterViewPort} from './router-view-port';
+export {RouterView} from './router-view';

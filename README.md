@@ -10,6 +10,10 @@ This library is part of the [Aurelia](http://www.aurelia.io/) platform and conta
 * [aurelia-router](https://github.com/aurelia/router)
 * [aurelia-dependency-injection](https://github.com/aurelia/dependency-injection)
 
+## Used By
+
+* [aurelia-bootstrapper](https://github.com/aurelia/bootstrapper)
+
 ## Platform Support
 
 This library can be used in the **browser** only.

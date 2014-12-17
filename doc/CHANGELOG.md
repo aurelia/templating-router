@@ -1,3 +1,11 @@
+## 0.4.0 (2014-12-17)
+
+
+#### Bug Fixes
+
+* **package:** update dependencies to latest versions ([4c17dbad](http://github.com/aurelia/templating-router/commit/4c17dbada6fae62ada689b2332801d1ae01d1391))
+
+
 ## 0.3.0 (2014-12-12)
 
 

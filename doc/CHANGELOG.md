@@ -1,3 +1,11 @@
+### 0.4.1 (2014-12-18)
+
+
+#### Bug Fixes
+
+* **package:** update templating to latest version ([c8ab2558](http://github.com/aurelia/templating-router/commit/c8ab25581f1f0e82e85083ad313efe8322f15fdf))
+
+
 ## 0.4.0 (2014-12-17)
 
 

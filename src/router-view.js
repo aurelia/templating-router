@@ -23,6 +23,8 @@ export class RouterView {
     this.executionContext = executionContext;
 
     if ('router' in executionContext) {
+      //TODO: tell router about the module id of it's execution context
+      //This should be used to make moduleIds relative in the route config.
       executionContext.router.registerViewPort(this, this.element.getAttribute('name'));
     }
   }

@@ -1,3 +1,11 @@
+### 0.5.1 (2014-12-22)
+
+
+#### Bug Fixes
+
+* **router-view:** ensure getComponent returns promise ([8cec29a1](http://github.com/aurelia/templating-router/commit/8cec29a17b5b896cae8aa93842216437ff88f6b0))
+
+
 ## 0.5.0 (2014-12-22)
 
 

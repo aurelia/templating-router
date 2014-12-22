@@ -70,7 +70,7 @@ var RouterView = (function () {
       throw new Error("The view must be a string or an instance of ViewStrategy.");
     }
 
-    CustomElement.anonymous(this.container, viewModel, viewStrategy).then(function (behaviorType) {
+    return CustomElement.anonymous(this.container, viewModel, viewStrategy).then(function (behaviorType) {
       return behaviorType.create(childContainer, { executionContext: viewModel, suppressBind: true });
     });
   };

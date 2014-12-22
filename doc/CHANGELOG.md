@@ -1,3 +1,11 @@
+### 0.5.2 (2014-12-22)
+
+
+#### Bug Fixes
+
+* **package:** update router to latest version ([24ae8680](http://github.com/aurelia/templating-router/commit/24ae86806cc042d3f73082d6c425fd4e1b82283e))
+
+
 ### 0.5.1 (2014-12-22)
 
 

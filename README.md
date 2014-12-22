@@ -9,6 +9,8 @@ This library is part of the [Aurelia](http://www.aurelia.io/) platform and conta
 * [aurelia-templating](https://github.com/aurelia/templating)
 * [aurelia-router](https://github.com/aurelia/router)
 * [aurelia-dependency-injection](https://github.com/aurelia/dependency-injection)
+* [aurelia-path](https://github.com/aurelia/path)
+* [aurelia-metadata](https://github.com/aurelia/metadata)
 
 ## Used By
 

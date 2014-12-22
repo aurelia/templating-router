@@ -8,6 +8,6 @@ export class TemplatingRouteLoader extends RouteLoader {
   }
 
   loadRoute(config){
-    return this.resourceCoordinator.loadAnonymousElement(config.moduleId, null, config.view);
+    return this.resourceCoordinator.loadViewModelType(config.moduleId);
   }
 }

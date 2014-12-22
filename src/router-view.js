@@ -1,8 +1,13 @@
 import {Container} from 'aurelia-dependency-injection';
-import {CustomElement, ViewSlot, NoView} from 'aurelia-templating';
+import {CustomElement, ViewSlot, ViewStrategy, UseView, NoView} from 'aurelia-templating';
 import {Router} from 'aurelia-router';
+import {Origin} from 'aurelia-metadata';
+import {relativeToFile} from 'aurelia-path';
 
-var defaultInstruction = {suppressBind:true};
+function makeViewRelative(executionContext, viewPath){
+  var origin = Origin.get(executionContext.constructor);
+  return relativeToFile(viewPath, origin.moduleId);
+}
 
 export class RouterView {
   static annotations(){
@@ -38,13 +43,31 @@ export class RouterView {
     }
   }
 
-  getComponent(type, createChildRouter){
-    var childContainer = this.container.createChild();
-
+  getComponent(viewModelType, createChildRouter, config){
+    var childContainer = this.container.createChild(),
+        viewStrategy = config.view || config.viewStrategy,
+        viewModel;
+    
     childContainer.registerHandler(Router, createChildRouter);
-    childContainer.autoRegister(type.target);
+    childContainer.autoRegister(viewModelType);
 
-    return type.create(childContainer, defaultInstruction);
+    viewModel = childContainer.get(viewModelType);
+
+    if('getViewStrategy' in viewModel && !viewStrategy){
+      viewStrategy = viewModel.getViewStrategy();
+    }
+
+    if(typeof viewStrategy === 'string'){
+      viewStrategy = new UseView(makeViewRelative(this.executionContext, viewStrategy));
+    }
+
+    if(viewStrategy && !(viewStrategy instanceof ViewStrategy)){
+      throw new Error('The view must be a string or an instance of ViewStrategy.');
+    }
+
+    CustomElement.anonymous(this.container, viewModel, viewStrategy).then(behaviorType => {
+      return behaviorType.create(childContainer, {executionContext:viewModel, suppressBind:true});
+    });
   }
 
   process(viewPortInstruction) {

@@ -8,6 +8,8 @@ System.config({
 System.config({
   "map": {
     "aurelia-dependency-injection": "github:aurelia/dependency-injection@0.1.1",
+    "aurelia-metadata": "github:aurelia/metadata@0.1.1",
+    "aurelia-path": "github:aurelia/path@0.3.0",
     "aurelia-router": "github:aurelia/router@0.1.1",
     "aurelia-templating": "github:aurelia/templating@0.3.1",
     "github:aurelia/binding@0.1.2": {

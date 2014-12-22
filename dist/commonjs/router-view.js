@@ -3,11 +3,18 @@
 var Container = require('aurelia-dependency-injection').Container;
 var CustomElement = require('aurelia-templating').CustomElement;
 var ViewSlot = require('aurelia-templating').ViewSlot;
+var ViewStrategy = require('aurelia-templating').ViewStrategy;
+var UseView = require('aurelia-templating').UseView;
 var NoView = require('aurelia-templating').NoView;
 var Router = require('aurelia-router').Router;
+var Origin = require('aurelia-metadata').Origin;
+var relativeToFile = require('aurelia-path').relativeToFile;
 
 
-var defaultInstruction = { suppressBind: true };
+function makeViewRelative(executionContext, viewPath) {
+  var origin = Origin.get(executionContext.constructor);
+  return relativeToFile(viewPath, origin.moduleId);
+}
 
 var RouterView = (function () {
   var RouterView = function RouterView(element, container, viewSlot) {
@@ -38,17 +45,34 @@ var RouterView = (function () {
     }
 
     if ("router" in executionContext) {
+      this.executionContext = executionContext;
       executionContext.router.registerViewPort(this, this.element.getAttribute("name"));
     }
   };
 
-  RouterView.prototype.getComponent = function (type, createChildRouter) {
-    var childContainer = this.container.createChild();
+  RouterView.prototype.getComponent = function (viewModelType, createChildRouter, config) {
+    var childContainer = this.container.createChild(), viewStrategy = config.view || config.viewStrategy, viewModel;
 
     childContainer.registerHandler(Router, createChildRouter);
-    childContainer.autoRegister(type.target);
+    childContainer.autoRegister(viewModelType);
 
-    return type.create(childContainer, defaultInstruction);
+    viewModel = childContainer.get(viewModelType);
+
+    if ("getViewStrategy" in viewModel && !viewStrategy) {
+      viewStrategy = viewModel.getViewStrategy();
+    }
+
+    if (typeof viewStrategy === "string") {
+      viewStrategy = new UseView(makeViewRelative(this.executionContext, viewStrategy));
+    }
+
+    if (viewStrategy && !(viewStrategy instanceof ViewStrategy)) {
+      throw new Error("The view must be a string or an instance of ViewStrategy.");
+    }
+
+    CustomElement.anonymous(this.container, viewModel, viewStrategy).then(function (behaviorType) {
+      return behaviorType.create(childContainer, { executionContext: viewModel, suppressBind: true });
+    });
   };
 
   RouterView.prototype.process = function (viewPortInstruction) {

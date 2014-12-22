@@ -1,3 +1,17 @@
+## 0.5.0 (2014-12-22)
+
+
+#### Bug Fixes
+
+* **package:** update dependencies to latest versions ([9102ed05](http://github.com/aurelia/templating-router/commit/9102ed05892dc23859bc8f6129b27e87d8c30d39))
+* **router-view:** ensure that execution context is always set ([609b8ec1](http://github.com/aurelia/templating-router/commit/609b8ec170054417e58944a6dd3341c38e9fb947))
+
+
+#### Features
+
+* **router-view:** enable getViewStrategy on view models ([5aea8b3e](http://github.com/aurelia/templating-router/commit/5aea8b3eb0ede9c08fe728299a95689c503b32e3))
+
+
 ### 0.4.1 (2014-12-18)
 
 

@@ -27,7 +27,7 @@ define(["exports", "aurelia-templating", "aurelia-router"], function (exports, _
     };
 
     TemplatingRouteLoader.prototype.loadRoute = function (config) {
-      return this.resourceCoordinator.loadAnonymousElement(config.moduleId, null, config.view);
+      return this.resourceCoordinator.loadViewModelType(config.moduleId);
     };
 
     return TemplatingRouteLoader;

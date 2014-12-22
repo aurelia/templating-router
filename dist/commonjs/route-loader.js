@@ -26,7 +26,7 @@ var TemplatingRouteLoader = (function (RouteLoader) {
   };
 
   TemplatingRouteLoader.prototype.loadRoute = function (config) {
-    return this.resourceCoordinator.loadAnonymousElement(config.moduleId, null, config.view);
+    return this.resourceCoordinator.loadViewModelType(config.moduleId);
   };
 
   return TemplatingRouteLoader;

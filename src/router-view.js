@@ -65,7 +65,7 @@ export class RouterView {
       throw new Error('The view must be a string or an instance of ViewStrategy.');
     }
 
-    CustomElement.anonymous(this.container, viewModel, viewStrategy).then(behaviorType => {
+    return CustomElement.anonymous(this.container, viewModel, viewStrategy).then(behaviorType => {
       return behaviorType.create(childContainer, {executionContext:viewModel, suppressBind:true});
     });
   }

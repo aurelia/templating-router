@@ -26,10 +26,7 @@ export class RouterView {
 
   created(executionContext){
     this.executionContext = executionContext;
-
-    if ('router' in executionContext) {
-      executionContext.router.registerViewPort(this, this.element.getAttribute('name'));
-    }
+    this.connectToRouterOnExecutionContext();
   }
 
   bind(executionContext){
@@ -37,10 +34,8 @@ export class RouterView {
       return;
     }
 
-    if ('router' in executionContext) {
-      this.executionContext = executionContext;
-      executionContext.router.registerViewPort(this, this.element.getAttribute('name'));
-    }
+    this.executionContext = executionContext;
+    this.connectToRouterOnExecutionContext();
   }
 
   getComponent(viewModelType, createChildRouter, config){
@@ -79,5 +74,27 @@ export class RouterView {
     }
 
     this.view = viewPortInstruction.component.view;
+  }
+
+  connectToRouterOnExecutionContext(){
+    var executionContext = this.executionContext,
+        key, router;
+
+    if ('router' in executionContext && executionContext.router instanceof Router) {
+      router = executionContext.router;
+    }else{
+      for(key in executionContext){
+        if(executionContext[key] instanceof Router){
+          router = executionContext[key];
+          break;
+        }
+      }
+    }
+
+    if(!router){
+      throw new Error('In order to use a "router-view" the view\'s executionContext (view model) must have a router property.');
+    }
+
+    router.registerViewPort(this, this.element.getAttribute('name'));
   }
 }

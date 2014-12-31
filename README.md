@@ -2,7 +2,7 @@
 
 This library is part of the [Aurelia](http://www.aurelia.io/) platform and contains an implementation of the RouteLoader interface for use with the router module. It also contains a custom element that allows the templating engine to display the current route.
 
-> To keep up to date on [Aurelia](http://www.aurelia.io/), please visit and subscribe to [the official blog](http://blog.durandal.io/). If you have questions, we invite you to join us on [our Gitter Channel](https://gitter.im/Aurelia/Discuss).
+> To keep up to date on [Aurelia](http://www.aurelia.io/), please visit and subscribe to [the official blog](http://blog.durandal.io/). If you have questions, we invite you to join us on [our Gitter Channel](https://gitter.im/aurelia/discuss).
 
 ## Dependencies
 

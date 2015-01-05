@@ -38,15 +38,15 @@ export class RouterView {
     this.connectToRouterOnExecutionContext();
   }
 
-  getComponent(viewModelType, createChildRouter, config){
+  getComponent(viewModelInfo, createChildRouter, config){
     var childContainer = this.container.createChild(),
         viewStrategy = config.view || config.viewStrategy,
         viewModel;
     
     childContainer.registerHandler(Router, createChildRouter);
-    childContainer.autoRegister(viewModelType);
+    childContainer.autoRegister(viewModelInfo.value);
 
-    viewModel = childContainer.get(viewModelType);
+    viewModel = childContainer.get(viewModelInfo.value);
 
     if('getViewStrategy' in viewModel && !viewStrategy){
       viewStrategy = viewModel.getViewStrategy();
@@ -60,7 +60,7 @@ export class RouterView {
       throw new Error('The view must be a string or an instance of ViewStrategy.');
     }
 
-    return CustomElement.anonymous(this.container, viewModel, viewStrategy).then(behaviorType => {
+    return viewModelInfo.type.load(this.container, viewModelInfo.value, viewStrategy).then(behaviorType => {
       return behaviorType.create(childContainer, {executionContext:viewModel, suppressBind:true});
     });
   }

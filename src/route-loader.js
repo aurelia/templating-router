@@ -8,6 +8,6 @@ export class TemplatingRouteLoader extends RouteLoader {
   }
 
   loadRoute(config){
-    return this.resourceCoordinator.loadViewModelType(config.moduleId);
+    return this.resourceCoordinator.loadViewModelInfo(config.moduleId);
   }
 }

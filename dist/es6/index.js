@@ -1,2 +1,15 @@
-export {TemplatingRouteLoader} from './route-loader';
-export {RouterView} from './router-view';
+import {Router, AppRouter, RouteLoader} from 'aurelia-router';
+import {TemplatingRouteLoader} from './route-loader';
+import {RouterView} from './router-view';
+
+function install(aurelia){
+  aurelia.withSingleton(RouteLoader, TemplatingRouteLoader)
+         .withSingleton(Router, AppRouter)
+         .withResources(RouterView);
+}
+
+export {
+  TemplatingRouteLoader,
+  RouterView,
+  install
+};

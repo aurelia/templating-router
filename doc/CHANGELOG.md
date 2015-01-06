@@ -1,3 +1,18 @@
+## 0.6.0 (2015-01-06)
+
+
+#### Bug Fixes
+
+* **router-view:** align with view model load api ([d3881eaf](http://github.com/aurelia/templating-router/commit/d3881eaf5411c1f7e1f209a13911913d2d47ac75))
+
+
+#### Features
+
+* **build:** update compiler and switch to register module format ([1a0f2d6b](http://github.com/aurelia/templating-router/commit/1a0f2d6b5fe867dfecbdce4f67fa342450020e04))
+* **router:** enable plugin model ([a570e911](http://github.com/aurelia/templating-router/commit/a570e911d43b4fb92138b06b9b346ca66e13c03c))
+* **router-view:** make router location more robust ([f38a2cb4](http://github.com/aurelia/templating-router/commit/f38a2cb40ab40679f3a25172d41db79df9988d2d))
+
+
 ### 0.5.2 (2014-12-22)
 
 

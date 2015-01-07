@@ -1,6 +1,7 @@
 import {Container} from 'aurelia-dependency-injection';
 import {CustomElement, ViewSlot, ViewStrategy, UseView, NoView} from 'aurelia-templating';
 import {Router} from 'aurelia-router';
+import {Origin} from 'aurelia-metadata';
 
 export class RouterView {
   static annotations(){
@@ -21,8 +22,7 @@ export class RouterView {
 
   process(viewPortInstruction, waitToSwap) {
     var component = viewPortInstruction.component,
-        config = component.config,
-        viewStrategy = config.view || config.viewStrategy,
+        viewStrategy = component.view,
         viewModelInfo = component.viewModelInfo,
         childContainer = component.childContainer,
         viewModel = component.executionContext;
@@ -33,6 +33,7 @@ export class RouterView {
 
     if(viewStrategy){
       viewStrategy = ViewStrategy.normalize(viewStrategy);
+      viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
     }
 
     return viewModelInfo.type.load(childContainer, viewModelInfo.value, viewStrategy).then(behaviorType => {

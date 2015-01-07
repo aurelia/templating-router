@@ -1,3 +1,17 @@
+## 0.7.0 (2015-01-07)
+
+
+#### Bug Fixes
+
+* **package:** update dependencies to latest ([c8277386](http://github.com/aurelia/templating-router/commit/c827738699d940293461bb5ae0d04edf8e1bdcb1))
+
+
+#### Features
+
+* **all:** make route config view and moduleId relative to router's owner ([2aec99bd](http://github.com/aurelia/templating-router/commit/2aec99bd33e125231a6aebf47f18983aac6f3fea))
+* **router-view:** delayed view loading ([76389e77](http://github.com/aurelia/templating-router/commit/76389e776e3db94dc916c6f878259b10a4c4b46b))
+
+
 ## 0.6.0 (2015-01-06)
 
 

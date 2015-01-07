@@ -1,4 +1,4 @@
-define(["exports", "aurelia-templating", "aurelia-router"], function (exports, _aureliaTemplating, _aureliaRouter) {
+define(["exports", "aurelia-templating", "aurelia-router", "aurelia-path", "aurelia-metadata"], function (exports, _aureliaTemplating, _aureliaRouter, _aureliaPath, _aureliaMetadata) {
   "use strict";
 
   var _inherits = function (child, parent) {
@@ -16,22 +16,39 @@ define(["exports", "aurelia-templating", "aurelia-router"], function (exports, _
     if (parent) child.__proto__ = parent;
   };
 
-  var ResourceCoordinator = _aureliaTemplating.ResourceCoordinator;
+  var CompositionEngine = _aureliaTemplating.CompositionEngine;
   var RouteLoader = _aureliaRouter.RouteLoader;
+  var Router = _aureliaRouter.Router;
+  var relativeToFile = _aureliaPath.relativeToFile;
+  var Origin = _aureliaMetadata.Origin;
   var TemplatingRouteLoader = (function () {
     var _RouteLoader = RouteLoader;
-    var TemplatingRouteLoader = function TemplatingRouteLoader(resourceCoordinator) {
-      this.resourceCoordinator = resourceCoordinator;
+    var TemplatingRouteLoader = function TemplatingRouteLoader(compositionEngine) {
+      this.compositionEngine = compositionEngine;
     };
 
     _inherits(TemplatingRouteLoader, _RouteLoader);
 
     TemplatingRouteLoader.inject = function () {
-      return [ResourceCoordinator];
+      return [CompositionEngine];
     };
 
-    TemplatingRouteLoader.prototype.loadRoute = function (config) {
-      return this.resourceCoordinator.loadViewModelInfo(config.moduleId);
+    TemplatingRouteLoader.prototype.loadRoute = function (router, config) {
+      var childContainer = router.container.createChild(), instruction = {
+        viewModel: relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId),
+        childContainer: childContainer,
+        view: config.view
+      }, childRouter;
+
+      childContainer.registerHandler(Router, function (c) {
+        return childRouter || (childRouter = router.createChild(childContainer));
+      });
+
+      return this.compositionEngine.createViewModel(instruction).then(function (instruction) {
+        instruction.executionContext = instruction.viewModel;
+        instruction.router = router;
+        return instruction;
+      });
     };
 
     return TemplatingRouteLoader;

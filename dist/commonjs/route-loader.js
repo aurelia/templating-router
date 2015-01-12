@@ -1,18 +1,23 @@
 "use strict";
 
-var _inherits = function (child, parent) {
-  if (typeof parent !== "function" && parent !== null) {
-    throw new TypeError("Super expression must either be null or a function, not " + typeof parent);
+var _prototypeProperties = function (child, staticProps, instanceProps) {
+  if (staticProps) Object.defineProperties(child, staticProps);
+  if (instanceProps) Object.defineProperties(child.prototype, instanceProps);
+};
+
+var _inherits = function (subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
   }
-  child.prototype = Object.create(parent && parent.prototype, {
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
     constructor: {
-      value: child,
+      value: subClass,
       enumerable: false,
       writable: true,
       configurable: true
     }
   });
-  if (parent) child.__proto__ = parent;
+  if (superClass) subClass.__proto__ = superClass;
 };
 
 var CompositionEngine = require("aurelia-templating").CompositionEngine;
@@ -20,37 +25,50 @@ var RouteLoader = require("aurelia-router").RouteLoader;
 var Router = require("aurelia-router").Router;
 var relativeToFile = require("aurelia-path").relativeToFile;
 var Origin = require("aurelia-metadata").Origin;
-var TemplatingRouteLoader = (function () {
-  var _RouteLoader = RouteLoader;
-  var TemplatingRouteLoader = function TemplatingRouteLoader(compositionEngine) {
+var TemplatingRouteLoader = (function (RouteLoader) {
+  function TemplatingRouteLoader(compositionEngine) {
     this.compositionEngine = compositionEngine;
-  };
+  }
 
-  _inherits(TemplatingRouteLoader, _RouteLoader);
+  _inherits(TemplatingRouteLoader, RouteLoader);
 
-  TemplatingRouteLoader.inject = function () {
-    return [CompositionEngine];
-  };
+  _prototypeProperties(TemplatingRouteLoader, {
+    inject: {
+      value: function () {
+        return [CompositionEngine];
+      },
+      writable: true,
+      enumerable: true,
+      configurable: true
+    }
+  }, {
+    loadRoute: {
+      value: function (router, config) {
+        var childContainer = router.container.createChild(),
+            instruction = {
+          viewModel: relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId),
+          childContainer: childContainer,
+          view: config.view
+        },
+            childRouter;
 
-  TemplatingRouteLoader.prototype.loadRoute = function (router, config) {
-    var childContainer = router.container.createChild(), instruction = {
-      viewModel: relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId),
-      childContainer: childContainer,
-      view: config.view
-    }, childRouter;
+        childContainer.registerHandler(Router, function (c) {
+          return childRouter || (childRouter = router.createChild(childContainer));
+        });
 
-    childContainer.registerHandler(Router, function (c) {
-      return childRouter || (childRouter = router.createChild(childContainer));
-    });
-
-    return this.compositionEngine.createViewModel(instruction).then(function (instruction) {
-      instruction.executionContext = instruction.viewModel;
-      instruction.router = router;
-      return instruction;
-    });
-  };
+        return this.compositionEngine.createViewModel(instruction).then(function (instruction) {
+          instruction.executionContext = instruction.viewModel;
+          instruction.router = router;
+          return instruction;
+        });
+      },
+      writable: true,
+      enumerable: true,
+      configurable: true
+    }
+  });
 
   return TemplatingRouteLoader;
-})();
+})(RouteLoader);
 
 exports.TemplatingRouteLoader = TemplatingRouteLoader;

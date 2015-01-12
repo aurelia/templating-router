@@ -1,3 +1,11 @@
+## 0.8.0 (2015-01-12)
+
+
+#### Bug Fixes
+
+* **package:** update Aurelia dependencies ([21897ecd](http://github.com/aurelia/templating-router/commit/21897ecd693d32eeea48e1a14c28821575226adb))
+
+
 ## 0.7.0 (2015-01-07)
 
 

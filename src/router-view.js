@@ -4,7 +4,7 @@ import {Router} from 'aurelia-router';
 import {Origin} from 'aurelia-metadata';
 
 export class RouterView {
-  static annotations(){
+  static metadata(){
     return [
       new CustomElement('router-view'),
       new NoView()

@@ -1,3 +1,17 @@
+## 0.9.0 (2015-01-22)
+
+
+#### Bug Fixes
+
+* **package:** update dependencies ([f956c4ff](http://github.com/aurelia/templating-router/commit/f956c4ff85900c7e2c323d18b161a8ae74fa2dbb))
+* **router-view:** update to latest metadata api ([9813b21a](http://github.com/aurelia/templating-router/commit/9813b21a71b8d4c301625724a9e2ec203c78ab00))
+
+
+#### Features
+
+* **router-view:** update to new fluent metadata ([3335a303](http://github.com/aurelia/templating-router/commit/3335a3030f24c41357a28bcf4995c5a0556acbca))
+
+
 ## 0.8.0 (2015-01-12)
 
 

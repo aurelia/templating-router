@@ -6,12 +6,10 @@ var _prototypeProperties = function (child, staticProps, instanceProps) {
 };
 
 var Container = require("aurelia-dependency-injection").Container;
-var CustomElement = require("aurelia-templating").CustomElement;
 var ViewSlot = require("aurelia-templating").ViewSlot;
 var ViewStrategy = require("aurelia-templating").ViewStrategy;
-var UseView = require("aurelia-templating").UseView;
-var NoView = require("aurelia-templating").NoView;
 var Router = require("aurelia-router").Router;
+var Metadata = require("aurelia-metadata").Metadata;
 var Origin = require("aurelia-metadata").Origin;
 var RouterView = (function () {
   function RouterView(element, container, viewSlot, router) {
@@ -23,16 +21,16 @@ var RouterView = (function () {
   }
 
   _prototypeProperties(RouterView, {
-    annotations: {
-      value: function () {
-        return [new CustomElement("router-view"), new NoView()];
+    metadata: {
+      value: function metadata() {
+        return Metadata.customElement("router-view").noView();
       },
       writable: true,
       enumerable: true,
       configurable: true
     },
     inject: {
-      value: function () {
+      value: function inject() {
         return [Element, Container, ViewSlot, Router];
       },
       writable: true,
@@ -41,7 +39,7 @@ var RouterView = (function () {
     }
   }, {
     process: {
-      value: function (viewPortInstruction, waitToSwap) {
+      value: function process(viewPortInstruction, waitToSwap) {
         var _this = this;
         var component = viewPortInstruction.component,
             viewStrategy = component.view,
@@ -73,7 +71,7 @@ var RouterView = (function () {
       configurable: true
     },
     swap: {
-      value: function (viewPortInstruction) {
+      value: function swap(viewPortInstruction) {
         this.viewSlot.swap(viewPortInstruction.behavior.view);
 
         if (this.view) {

@@ -34,7 +34,7 @@ var TemplatingRouteLoader = (function (RouteLoader) {
 
   _prototypeProperties(TemplatingRouteLoader, {
     inject: {
-      value: function () {
+      value: function inject() {
         return [CompositionEngine];
       },
       writable: true,
@@ -43,7 +43,7 @@ var TemplatingRouteLoader = (function (RouteLoader) {
     }
   }, {
     loadRoute: {
-      value: function (router, config) {
+      value: function loadRoute(router, config) {
         var childContainer = router.container.createChild(),
             instruction = {
           viewModel: relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId),

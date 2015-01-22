@@ -7,12 +7,10 @@ define(["exports", "aurelia-dependency-injection", "aurelia-templating", "aureli
   };
 
   var Container = _aureliaDependencyInjection.Container;
-  var CustomElement = _aureliaTemplating.CustomElement;
   var ViewSlot = _aureliaTemplating.ViewSlot;
   var ViewStrategy = _aureliaTemplating.ViewStrategy;
-  var UseView = _aureliaTemplating.UseView;
-  var NoView = _aureliaTemplating.NoView;
   var Router = _aureliaRouter.Router;
+  var Metadata = _aureliaMetadata.Metadata;
   var Origin = _aureliaMetadata.Origin;
   var RouterView = (function () {
     function RouterView(element, container, viewSlot, router) {
@@ -24,16 +22,16 @@ define(["exports", "aurelia-dependency-injection", "aurelia-templating", "aureli
     }
 
     _prototypeProperties(RouterView, {
-      annotations: {
-        value: function () {
-          return [new CustomElement("router-view"), new NoView()];
+      metadata: {
+        value: function metadata() {
+          return Metadata.customElement("router-view").noView();
         },
         writable: true,
         enumerable: true,
         configurable: true
       },
       inject: {
-        value: function () {
+        value: function inject() {
           return [Element, Container, ViewSlot, Router];
         },
         writable: true,
@@ -42,7 +40,7 @@ define(["exports", "aurelia-dependency-injection", "aurelia-templating", "aureli
       }
     }, {
       process: {
-        value: function (viewPortInstruction, waitToSwap) {
+        value: function process(viewPortInstruction, waitToSwap) {
           var _this = this;
           var component = viewPortInstruction.component,
               viewStrategy = component.view,
@@ -74,7 +72,7 @@ define(["exports", "aurelia-dependency-injection", "aurelia-templating", "aureli
         configurable: true
       },
       swap: {
-        value: function (viewPortInstruction) {
+        value: function swap(viewPortInstruction) {
           this.viewSlot.swap(viewPortInstruction.behavior.view);
 
           if (this.view) {

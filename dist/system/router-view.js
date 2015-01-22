@@ -1,19 +1,17 @@
 System.register(["aurelia-dependency-injection", "aurelia-templating", "aurelia-router", "aurelia-metadata"], function (_export) {
   "use strict";
 
-  var Container, CustomElement, ViewSlot, ViewStrategy, UseView, NoView, Router, Origin, _prototypeProperties, RouterView;
+  var Container, ViewSlot, ViewStrategy, Router, Metadata, Origin, _prototypeProperties, RouterView;
   return {
     setters: [function (_aureliaDependencyInjection) {
       Container = _aureliaDependencyInjection.Container;
     }, function (_aureliaTemplating) {
-      CustomElement = _aureliaTemplating.CustomElement;
       ViewSlot = _aureliaTemplating.ViewSlot;
       ViewStrategy = _aureliaTemplating.ViewStrategy;
-      UseView = _aureliaTemplating.UseView;
-      NoView = _aureliaTemplating.NoView;
     }, function (_aureliaRouter) {
       Router = _aureliaRouter.Router;
     }, function (_aureliaMetadata) {
+      Metadata = _aureliaMetadata.Metadata;
       Origin = _aureliaMetadata.Origin;
     }],
     execute: function () {
@@ -32,16 +30,16 @@ System.register(["aurelia-dependency-injection", "aurelia-templating", "aurelia-
         }
 
         _prototypeProperties(RouterView, {
-          annotations: {
-            value: function () {
-              return [new CustomElement("router-view"), new NoView()];
+          metadata: {
+            value: function metadata() {
+              return Metadata.customElement("router-view").noView();
             },
             writable: true,
             enumerable: true,
             configurable: true
           },
           inject: {
-            value: function () {
+            value: function inject() {
               return [Element, Container, ViewSlot, Router];
             },
             writable: true,
@@ -50,7 +48,7 @@ System.register(["aurelia-dependency-injection", "aurelia-templating", "aurelia-
           }
         }, {
           process: {
-            value: function (viewPortInstruction, waitToSwap) {
+            value: function process(viewPortInstruction, waitToSwap) {
               var _this = this;
               var component = viewPortInstruction.component,
                   viewStrategy = component.view,
@@ -82,7 +80,7 @@ System.register(["aurelia-dependency-injection", "aurelia-templating", "aurelia-
             configurable: true
           },
           swap: {
-            value: function (viewPortInstruction) {
+            value: function swap(viewPortInstruction) {
               this.viewSlot.swap(viewPortInstruction.behavior.view);
 
               if (this.view) {

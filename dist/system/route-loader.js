@@ -43,7 +43,7 @@ System.register(["aurelia-templating", "aurelia-router", "aurelia-path", "aureli
 
         _prototypeProperties(TemplatingRouteLoader, {
           inject: {
-            value: function () {
+            value: function inject() {
               return [CompositionEngine];
             },
             writable: true,
@@ -52,7 +52,7 @@ System.register(["aurelia-templating", "aurelia-router", "aurelia-path", "aureli
           }
         }, {
           loadRoute: {
-            value: function (router, config) {
+            value: function loadRoute(router, config) {
               var childContainer = router.container.createChild(),
                   instruction = {
                 viewModel: relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId),

@@ -1,3 +1,11 @@
+### 0.9.2 (2015-01-24)
+
+
+#### Bug Fixes
+
+* **package:** update deps and fix bower semver ranges ([6c09a5e1](http://github.com/aurelia/templating-router/commit/6c09a5e16672fff67d23a578c4d3c2d4fd348ed0))
+
+
 ### 0.9.1 (2015-01-24)
 
 

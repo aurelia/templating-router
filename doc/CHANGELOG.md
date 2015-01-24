@@ -1,3 +1,11 @@
+### 0.9.1 (2015-01-24)
+
+
+#### Bug Fixes
+
+* **router-view:** ensure that bind callbacks execute ([07d789fc](http://github.com/aurelia/templating-router/commit/07d789fc4820498218d22c478dff73769a68d940))
+
+
 ## 0.9.0 (2015-01-22)
 
 

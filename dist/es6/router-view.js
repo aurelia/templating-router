@@ -31,7 +31,7 @@ export class RouterView {
     }
 
     return viewModelInfo.type.load(childContainer, viewModelInfo.value, viewStrategy).then(behaviorType => {
-      viewPortInstruction.behavior = behaviorType.create(childContainer, {executionContext:viewModel});
+      viewPortInstruction.behavior = behaviorType.create(childContainer, {executionContext:viewModel, suppressBind:true});
       
       if(waitToSwap){
         return;
@@ -42,6 +42,7 @@ export class RouterView {
   }
 
   swap(viewPortInstruction){
+    viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.executionContext);
     this.viewSlot.swap(viewPortInstruction.behavior.view);
 
     if(this.view){

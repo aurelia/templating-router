@@ -66,7 +66,7 @@ System.register(["aurelia-dependency-injection", "aurelia-templating", "aurelia-
               }
 
               return viewModelInfo.type.load(childContainer, viewModelInfo.value, viewStrategy).then(function (behaviorType) {
-                viewPortInstruction.behavior = behaviorType.create(childContainer, { executionContext: viewModel });
+                viewPortInstruction.behavior = behaviorType.create(childContainer, { executionContext: viewModel, suppressBind: true });
 
                 if (waitToSwap) {
                   return;
@@ -81,6 +81,7 @@ System.register(["aurelia-dependency-injection", "aurelia-templating", "aurelia-
           },
           swap: {
             value: function swap(viewPortInstruction) {
+              viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.executionContext);
               this.viewSlot.swap(viewPortInstruction.behavior.view);
 
               if (this.view) {

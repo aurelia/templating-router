@@ -1,3 +1,12 @@
+### 0.9.3 (2015-02-28)
+
+
+#### Bug Fixes
+
+* **build:** add missing bower bump ([00090a2e](http://github.com/aurelia/templating-router/commit/00090a2e4e95f2504617a9df48a380cb7b86314a))
+* **package:** update dependencies ([bc40d4e9](http://github.com/aurelia/templating-router/commit/bc40d4e99f72c6f50ab97d83be8bd43e7d3a0e9a))
+
+
 ### 0.9.2 (2015-01-24)
 
 

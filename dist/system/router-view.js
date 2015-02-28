@@ -1,7 +1,6 @@
 System.register(["aurelia-dependency-injection", "aurelia-templating", "aurelia-router", "aurelia-metadata"], function (_export) {
-  "use strict";
+  var Container, ViewSlot, ViewStrategy, Router, Metadata, Origin, _prototypeProperties, _classCallCheck, RouterView;
 
-  var Container, ViewSlot, ViewStrategy, Router, Metadata, Origin, _prototypeProperties, RouterView;
   return {
     setters: [function (_aureliaDependencyInjection) {
       Container = _aureliaDependencyInjection.Container;
@@ -15,13 +14,16 @@ System.register(["aurelia-dependency-injection", "aurelia-templating", "aurelia-
       Origin = _aureliaMetadata.Origin;
     }],
     execute: function () {
-      _prototypeProperties = function (child, staticProps, instanceProps) {
-        if (staticProps) Object.defineProperties(child, staticProps);
-        if (instanceProps) Object.defineProperties(child.prototype, instanceProps);
-      };
+      "use strict";
 
-      RouterView = (function () {
+      _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
+
+      _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+      RouterView = _export("RouterView", (function () {
         function RouterView(element, container, viewSlot, router) {
+          _classCallCheck(this, RouterView);
+
           this.element = element;
           this.container = container;
           this.viewSlot = viewSlot;
@@ -35,7 +37,6 @@ System.register(["aurelia-dependency-injection", "aurelia-templating", "aurelia-
               return Metadata.customElement("router-view").noView();
             },
             writable: true,
-            enumerable: true,
             configurable: true
           },
           inject: {
@@ -43,13 +44,13 @@ System.register(["aurelia-dependency-injection", "aurelia-templating", "aurelia-
               return [Element, Container, ViewSlot, Router];
             },
             writable: true,
-            enumerable: true,
             configurable: true
           }
         }, {
           process: {
             value: function process(viewPortInstruction, waitToSwap) {
               var _this = this;
+
               var component = viewPortInstruction.component,
                   viewStrategy = component.view,
                   viewModelInfo = component.viewModelInfo,
@@ -76,7 +77,6 @@ System.register(["aurelia-dependency-injection", "aurelia-templating", "aurelia-
               });
             },
             writable: true,
-            enumerable: true,
             configurable: true
           },
           swap: {
@@ -91,14 +91,12 @@ System.register(["aurelia-dependency-injection", "aurelia-templating", "aurelia-
               this.view = viewPortInstruction.behavior.view;
             },
             writable: true,
-            enumerable: true,
             configurable: true
           }
         });
 
         return RouterView;
-      })();
-      _export("RouterView", RouterView);
+      })());
     }
   };
 });

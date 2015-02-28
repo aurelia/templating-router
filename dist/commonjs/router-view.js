@@ -1,18 +1,27 @@
 "use strict";
 
-var _prototypeProperties = function (child, staticProps, instanceProps) {
-  if (staticProps) Object.defineProperties(child, staticProps);
-  if (instanceProps) Object.defineProperties(child.prototype, instanceProps);
-};
+var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
 var Container = require("aurelia-dependency-injection").Container;
-var ViewSlot = require("aurelia-templating").ViewSlot;
-var ViewStrategy = require("aurelia-templating").ViewStrategy;
+
+var _aureliaTemplating = require("aurelia-templating");
+
+var ViewSlot = _aureliaTemplating.ViewSlot;
+var ViewStrategy = _aureliaTemplating.ViewStrategy;
+
 var Router = require("aurelia-router").Router;
-var Metadata = require("aurelia-metadata").Metadata;
-var Origin = require("aurelia-metadata").Origin;
-var RouterView = (function () {
+
+var _aureliaMetadata = require("aurelia-metadata");
+
+var Metadata = _aureliaMetadata.Metadata;
+var Origin = _aureliaMetadata.Origin;
+
+var RouterView = exports.RouterView = (function () {
   function RouterView(element, container, viewSlot, router) {
+    _classCallCheck(this, RouterView);
+
     this.element = element;
     this.container = container;
     this.viewSlot = viewSlot;
@@ -26,7 +35,6 @@ var RouterView = (function () {
         return Metadata.customElement("router-view").noView();
       },
       writable: true,
-      enumerable: true,
       configurable: true
     },
     inject: {
@@ -34,13 +42,13 @@ var RouterView = (function () {
         return [Element, Container, ViewSlot, Router];
       },
       writable: true,
-      enumerable: true,
       configurable: true
     }
   }, {
     process: {
       value: function process(viewPortInstruction, waitToSwap) {
         var _this = this;
+
         var component = viewPortInstruction.component,
             viewStrategy = component.view,
             viewModelInfo = component.viewModelInfo,
@@ -67,7 +75,6 @@ var RouterView = (function () {
         });
       },
       writable: true,
-      enumerable: true,
       configurable: true
     },
     swap: {
@@ -82,7 +89,6 @@ var RouterView = (function () {
         this.view = viewPortInstruction.behavior.view;
       },
       writable: true,
-      enumerable: true,
       configurable: true
     }
   });
@@ -90,4 +96,6 @@ var RouterView = (function () {
   return RouterView;
 })();
 
-exports.RouterView = RouterView;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});

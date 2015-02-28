@@ -1,10 +1,9 @@
 define(["exports", "aurelia-dependency-injection", "aurelia-templating", "aurelia-router", "aurelia-metadata"], function (exports, _aureliaDependencyInjection, _aureliaTemplating, _aureliaRouter, _aureliaMetadata) {
   "use strict";
 
-  var _prototypeProperties = function (child, staticProps, instanceProps) {
-    if (staticProps) Object.defineProperties(child, staticProps);
-    if (instanceProps) Object.defineProperties(child.prototype, instanceProps);
-  };
+  var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
+
+  var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
   var Container = _aureliaDependencyInjection.Container;
   var ViewSlot = _aureliaTemplating.ViewSlot;
@@ -12,8 +11,11 @@ define(["exports", "aurelia-dependency-injection", "aurelia-templating", "aureli
   var Router = _aureliaRouter.Router;
   var Metadata = _aureliaMetadata.Metadata;
   var Origin = _aureliaMetadata.Origin;
-  var RouterView = (function () {
+
+  var RouterView = exports.RouterView = (function () {
     function RouterView(element, container, viewSlot, router) {
+      _classCallCheck(this, RouterView);
+
       this.element = element;
       this.container = container;
       this.viewSlot = viewSlot;
@@ -27,7 +29,6 @@ define(["exports", "aurelia-dependency-injection", "aurelia-templating", "aureli
           return Metadata.customElement("router-view").noView();
         },
         writable: true,
-        enumerable: true,
         configurable: true
       },
       inject: {
@@ -35,13 +36,13 @@ define(["exports", "aurelia-dependency-injection", "aurelia-templating", "aureli
           return [Element, Container, ViewSlot, Router];
         },
         writable: true,
-        enumerable: true,
         configurable: true
       }
     }, {
       process: {
         value: function process(viewPortInstruction, waitToSwap) {
           var _this = this;
+
           var component = viewPortInstruction.component,
               viewStrategy = component.view,
               viewModelInfo = component.viewModelInfo,
@@ -68,7 +69,6 @@ define(["exports", "aurelia-dependency-injection", "aurelia-templating", "aureli
           });
         },
         writable: true,
-        enumerable: true,
         configurable: true
       },
       swap: {
@@ -83,7 +83,6 @@ define(["exports", "aurelia-dependency-injection", "aurelia-templating", "aureli
           this.view = viewPortInstruction.behavior.view;
         },
         writable: true,
-        enumerable: true,
         configurable: true
       }
     });
@@ -91,5 +90,7 @@ define(["exports", "aurelia-dependency-injection", "aurelia-templating", "aureli
     return RouterView;
   })();
 
-  exports.RouterView = RouterView;
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 });

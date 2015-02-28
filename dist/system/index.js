@@ -1,8 +1,5 @@
 System.register(["aurelia-router", "./route-loader", "./router-view"], function (_export) {
-  "use strict";
-
   var Router, AppRouter, RouteLoader, TemplatingRouteLoader, RouterView;
-
 
   function install(aurelia) {
     aurelia.withSingleton(RouteLoader, TemplatingRouteLoader).withSingleton(Router, AppRouter).withResources(RouterView);
@@ -19,6 +16,8 @@ System.register(["aurelia-router", "./route-loader", "./router-view"], function 
       RouterView = _routerView.RouterView;
     }],
     execute: function () {
+      "use strict";
+
       _export("TemplatingRouteLoader", TemplatingRouteLoader);
 
       _export("RouterView", RouterView);

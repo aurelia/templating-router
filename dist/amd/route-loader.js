@@ -1,33 +1,22 @@
 define(["exports", "aurelia-templating", "aurelia-router", "aurelia-path", "aurelia-metadata"], function (exports, _aureliaTemplating, _aureliaRouter, _aureliaPath, _aureliaMetadata) {
   "use strict";
 
-  var _prototypeProperties = function (child, staticProps, instanceProps) {
-    if (staticProps) Object.defineProperties(child, staticProps);
-    if (instanceProps) Object.defineProperties(child.prototype, instanceProps);
-  };
+  var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
 
-  var _inherits = function (subClass, superClass) {
-    if (typeof superClass !== "function" && superClass !== null) {
-      throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-    }
-    subClass.prototype = Object.create(superClass && superClass.prototype, {
-      constructor: {
-        value: subClass,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
-    if (superClass) subClass.__proto__ = superClass;
-  };
+  var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+
+  var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
   var CompositionEngine = _aureliaTemplating.CompositionEngine;
   var RouteLoader = _aureliaRouter.RouteLoader;
   var Router = _aureliaRouter.Router;
   var relativeToFile = _aureliaPath.relativeToFile;
   var Origin = _aureliaMetadata.Origin;
-  var TemplatingRouteLoader = (function (RouteLoader) {
+
+  var TemplatingRouteLoader = exports.TemplatingRouteLoader = (function (RouteLoader) {
     function TemplatingRouteLoader(compositionEngine) {
+      _classCallCheck(this, TemplatingRouteLoader);
+
       this.compositionEngine = compositionEngine;
     }
 
@@ -39,7 +28,6 @@ define(["exports", "aurelia-templating", "aurelia-router", "aurelia-path", "aure
           return [CompositionEngine];
         },
         writable: true,
-        enumerable: true,
         configurable: true
       }
     }, {
@@ -64,7 +52,6 @@ define(["exports", "aurelia-templating", "aurelia-router", "aurelia-path", "aure
           });
         },
         writable: true,
-        enumerable: true,
         configurable: true
       }
     });
@@ -72,5 +59,7 @@ define(["exports", "aurelia-templating", "aurelia-router", "aurelia-path", "aure
     return TemplatingRouteLoader;
   })(RouteLoader);
 
-  exports.TemplatingRouteLoader = TemplatingRouteLoader;
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
 });

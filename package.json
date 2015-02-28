@@ -25,11 +25,11 @@
       "lib": "dist"
     },
     "dependencies": {
-      "aurelia-dependency-injection": "^0.4.1",
-      "aurelia-metadata": "^0.3.0",
-      "aurelia-path": "^0.4.1",
-      "aurelia-router": "^0.5.1",
-      "aurelia-templating": "^0.8.4"
+      "aurelia-dependency-injection": "github:aurelia/dependency-injection@^0.4.4",
+      "aurelia-metadata": "github:aurelia/metadata@^0.3.2",
+      "aurelia-path": "github:aurelia/path@^0.4.4",
+      "aurelia-router": "github:aurelia/router@^0.5.7",
+      "aurelia-templating": "github:aurelia/templating@^0.8.13"
     }
   },
   "devDependencies": {

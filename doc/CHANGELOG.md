@@ -1,3 +1,11 @@
+### 0.9.4 (2015-02-28)
+
+
+#### Bug Fixes
+
+* **package:** change jspm directories ([98734f03](http://github.com/aurelia/templating-router/commit/98734f03e29dad7ad7a17ec4aeb1eff454f3359d))
+
+
 ### 0.9.3 (2015-02-28)
 
 

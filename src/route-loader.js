@@ -11,15 +11,15 @@ export class TemplatingRouteLoader extends RouteLoader {
 
   loadRoute(router, config){
     var childContainer = router.container.createChild(),
-        instruction = { 
-          viewModel: relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId), 
+        instruction = {
+          viewModel: relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId),
           childContainer:childContainer,
-          view:config.view
+          view:config.view || config.viewStrategy
         },
         childRouter;
 
-    childContainer.registerHandler(Router, c => { 
-      return childRouter || (childRouter = router.createChild(childContainer)); 
+    childContainer.registerHandler(Router, c => {
+      return childRouter || (childRouter = router.createChild(childContainer));
     });
 
     return this.compositionEngine.createViewModel(instruction).then(instruction => {

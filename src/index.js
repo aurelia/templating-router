@@ -5,7 +5,7 @@ import {RouterView} from './router-view';
 function install(aurelia){
   aurelia.withSingleton(RouteLoader, TemplatingRouteLoader)
          .withSingleton(Router, AppRouter)
-         .withResources('./router-view');
+         .globalizeResources('./router-view');
 }
 
 export {

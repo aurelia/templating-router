@@ -51,9 +51,10 @@ var RouterView = exports.RouterView = (function () {
 
         var component = viewPortInstruction.component,
             viewStrategy = component.view,
-            viewModelInfo = component.viewModelInfo,
             childContainer = component.childContainer,
-            viewModel = component.executionContext;
+            viewModel = component.executionContext,
+            viewModelResource = component.viewModelResource,
+            metadata = viewModelResource.metadata;
 
         if (!viewStrategy && "getViewStrategy" in viewModel) {
           viewStrategy = viewModel.getViewStrategy();
@@ -64,8 +65,12 @@ var RouterView = exports.RouterView = (function () {
           viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
         }
 
-        return viewModelInfo.type.load(childContainer, viewModelInfo.value, viewStrategy).then(function (behaviorType) {
-          viewPortInstruction.behavior = behaviorType.create(childContainer, { executionContext: viewModel, suppressBind: true });
+        return metadata.load(childContainer, viewModelResource.value, viewStrategy, true).then(function (viewFactory) {
+          viewPortInstruction.behavior = metadata.create(childContainer, {
+            executionContext: viewModel,
+            viewFactory: viewFactory,
+            suppressBind: true
+          });
 
           if (waitToSwap) {
             return;

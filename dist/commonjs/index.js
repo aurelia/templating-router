@@ -11,7 +11,7 @@ var TemplatingRouteLoader = require("./route-loader").TemplatingRouteLoader;
 var RouterView = require("./router-view").RouterView;
 
 function install(aurelia) {
-  aurelia.withSingleton(RouteLoader, TemplatingRouteLoader).withSingleton(Router, AppRouter).withResources(RouterView);
+  aurelia.withSingleton(RouteLoader, TemplatingRouteLoader).withSingleton(Router, AppRouter).globalizeResources("./router-view");
 }
 
 exports.TemplatingRouteLoader = TemplatingRouteLoader;

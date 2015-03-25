@@ -8,7 +8,7 @@ define(["exports", "aurelia-router", "./route-loader", "./router-view"], functio
   var RouterView = _routerView.RouterView;
 
   function install(aurelia) {
-    aurelia.withSingleton(RouteLoader, TemplatingRouteLoader).withSingleton(Router, AppRouter).withResources(RouterView);
+    aurelia.withSingleton(RouteLoader, TemplatingRouteLoader).withSingleton(Router, AppRouter).globalizeResources("./router-view");
   }
 
   exports.TemplatingRouteLoader = TemplatingRouteLoader;

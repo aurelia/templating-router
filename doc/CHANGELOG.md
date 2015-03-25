@@ -1,3 +1,12 @@
+## 0.10.0 (2015-03-25)
+
+
+#### Bug Fixes
+
+* **all:** update to new resource loading processing pipeline ([122f7e9d](http://github.com/aurelia/templating-router/commit/122f7e9d8f2145a3b7ae944b64f2992bf53418df))
+* **index:** plugin now uses new id-base api for resources ([79bb1906](http://github.com/aurelia/templating-router/commit/79bb19065de4fe2631c5ecc8f92e3b0057d17a58))
+
+
 ### 0.9.4 (2015-02-28)
 
 
@@ -143,4 +152,3 @@
 #### Bug Fixes
 
 * **package:** updating dependencies to their latest versions ([c91a7d75](http://github.com/aurelia/templating-router/commit/c91a7d7523b4dc4da1fae089c436eee579000c2e))
-

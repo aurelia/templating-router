@@ -17,9 +17,10 @@ export class RouterView {
   process(viewPortInstruction, waitToSwap) {
     var component = viewPortInstruction.component,
         viewStrategy = component.view,
-        viewModelInfo = component.viewModelInfo,
         childContainer = component.childContainer,
-        viewModel = component.executionContext;
+        viewModel = component.executionContext,
+        viewModelResource = component.viewModelResource,
+        metadata = viewModelResource.metadata;
 
     if(!viewStrategy && 'getViewStrategy' in viewModel){
       viewStrategy = viewModel.getViewStrategy();
@@ -30,13 +31,17 @@ export class RouterView {
       viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
     }
 
-    return viewModelInfo.type.load(childContainer, viewModelInfo.value, viewStrategy).then(behaviorType => {
-      viewPortInstruction.behavior = behaviorType.create(childContainer, {executionContext:viewModel, suppressBind:true});
-      
+    return metadata.load(childContainer, viewModelResource.value, viewStrategy, true).then(viewFactory => {
+      viewPortInstruction.behavior = metadata.create(childContainer, {
+        executionContext:viewModel,
+        viewFactory:viewFactory,
+        suppressBind:true
+      });
+
       if(waitToSwap){
         return;
       }
-      
+
       this.swap(viewPortInstruction);
     });
   }

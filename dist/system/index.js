@@ -2,7 +2,7 @@ System.register(["aurelia-router", "./route-loader", "./router-view"], function 
   var Router, AppRouter, RouteLoader, TemplatingRouteLoader, RouterView;
 
   function install(aurelia) {
-    aurelia.withSingleton(RouteLoader, TemplatingRouteLoader).withSingleton(Router, AppRouter).withResources(RouterView);
+    aurelia.withSingleton(RouteLoader, TemplatingRouteLoader).withSingleton(Router, AppRouter).globalizeResources("./router-view");
   }
 
   return {

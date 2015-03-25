@@ -45,7 +45,7 @@ System.register(["aurelia-templating", "aurelia-router", "aurelia-path", "aureli
                   instruction = {
                 viewModel: relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId),
                 childContainer: childContainer,
-                view: config.view
+                view: config.view || config.viewStrategy
               },
                   childRouter;
 

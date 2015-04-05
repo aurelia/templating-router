@@ -1,11 +1,13 @@
+import {inject} from 'aurelia-dependency-injection';
 import {CompositionEngine} from 'aurelia-templating';
 import {RouteLoader, Router} from 'aurelia-router';
 import {relativeToFile} from 'aurelia-path';
 import {Origin} from 'aurelia-metadata';
 
+@inject(CompositionEngine)
 export class TemplatingRouteLoader extends RouteLoader {
-  static inject(){ return [CompositionEngine]; }
   constructor(compositionEngine){
+    super();
     this.compositionEngine = compositionEngine;
   }
 

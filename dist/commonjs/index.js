@@ -1,22 +1,19 @@
-"use strict";
+'use strict';
 
-var _aureliaRouter = require("aurelia-router");
-
-var Router = _aureliaRouter.Router;
-var AppRouter = _aureliaRouter.AppRouter;
-var RouteLoader = _aureliaRouter.RouteLoader;
-
-var TemplatingRouteLoader = require("./route-loader").TemplatingRouteLoader;
-
-var RouterView = require("./router-view").RouterView;
-
-function install(aurelia) {
-  aurelia.withSingleton(RouteLoader, TemplatingRouteLoader).withSingleton(Router, AppRouter).globalizeResources("./router-view");
-}
-
-exports.TemplatingRouteLoader = TemplatingRouteLoader;
-exports.RouterView = RouterView;
-exports.install = install;
-Object.defineProperty(exports, "__esModule", {
+Object.defineProperty(exports, '__esModule', {
   value: true
 });
+
+var _Router$AppRouter$RouteLoader = require('aurelia-router');
+
+var _TemplatingRouteLoader = require('./route-loader');
+
+var _RouterView = require('./router-view');
+
+function install(aurelia) {
+  aurelia.withSingleton(_Router$AppRouter$RouteLoader.RouteLoader, _TemplatingRouteLoader.TemplatingRouteLoader).withSingleton(_Router$AppRouter$RouteLoader.Router, _Router$AppRouter$RouteLoader.AppRouter).globalizeResources('./router-view');
+}
+
+exports.TemplatingRouteLoader = _TemplatingRouteLoader.TemplatingRouteLoader;
+exports.RouterView = _RouterView.RouterView;
+exports.install = install;

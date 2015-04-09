@@ -1,8 +1,8 @@
-System.register(["aurelia-router", "./route-loader", "./router-view"], function (_export) {
+System.register(['aurelia-router', './route-loader', './router-view'], function (_export) {
   var Router, AppRouter, RouteLoader, TemplatingRouteLoader, RouterView;
 
   function install(aurelia) {
-    aurelia.withSingleton(RouteLoader, TemplatingRouteLoader).withSingleton(Router, AppRouter).globalizeResources("./router-view");
+    aurelia.withSingleton(RouteLoader, TemplatingRouteLoader).withSingleton(Router, AppRouter).globalizeResources('./router-view');
   }
 
   return {
@@ -16,13 +16,13 @@ System.register(["aurelia-router", "./route-loader", "./router-view"], function 
       RouterView = _routerView.RouterView;
     }],
     execute: function () {
-      "use strict";
+      'use strict';
 
-      _export("TemplatingRouteLoader", TemplatingRouteLoader);
+      _export('TemplatingRouteLoader', TemplatingRouteLoader);
 
-      _export("RouterView", RouterView);
+      _export('RouterView', RouterView);
 
-      _export("install", install);
+      _export('install', install);
     }
   };
 });

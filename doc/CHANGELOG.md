@@ -1,3 +1,11 @@
+## 0.11.0 (2015-04-09)
+
+
+#### Features
+
+* **all:** upgrade compiler and integrate decorators ([d9d8594a](http://github.com/aurelia/templating-router/commit/d9d8594a17ebc03ad5ce9d81e6a5e4e95980d6a3))
+
+
 ## 0.10.0 (2015-03-25)
 
 

@@ -12,7 +12,11 @@ export class RouterView {
     this.container = container;
     this.viewSlot = viewSlot;
     this.router = router;
-    router.registerViewPort(this, element.getAttribute('name'));
+    this.router.registerViewPort(this, this.element.getAttribute('name'));
+  }
+
+  bind(executionContext){
+    this.container.viewModel = executionContext;
   }
 
   process(viewPortInstruction, waitToSwap) {

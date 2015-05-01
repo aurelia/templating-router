@@ -1,5 +1,5 @@
 System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-router', 'aurelia-metadata'], function (_export) {
-  var Container, inject, ViewSlot, ViewStrategy, customElement, noView, Router, Metadata, Origin, _classCallCheck, _createClass, RouterView;
+  var Container, inject, ViewSlot, ViewStrategy, customElement, noView, Router, Metadata, Origin, _classCallCheck, RouterView;
 
   return {
     setters: [function (_aureliaDependencyInjection) {
@@ -21,74 +21,71 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
 
       _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
-      _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
       RouterView = (function () {
         function RouterView(element, container, viewSlot, router) {
-          _classCallCheck(this, RouterView);
+          _classCallCheck(this, _RouterView);
 
           this.element = element;
           this.container = container;
           this.viewSlot = viewSlot;
           this.router = router;
-          router.registerViewPort(this, element.getAttribute('name'));
+          this.router.registerViewPort(this, this.element.getAttribute('name'));
         }
 
-        _createClass(RouterView, [{
-          key: 'process',
-          value: function process(viewPortInstruction, waitToSwap) {
-            var _this = this;
+        var _RouterView = RouterView;
 
-            var component = viewPortInstruction.component,
-                viewStrategy = component.view,
-                childContainer = component.childContainer,
-                viewModel = component.executionContext,
-                viewModelResource = component.viewModelResource,
-                metadata = viewModelResource.metadata;
+        _RouterView.prototype.bind = function bind(executionContext) {
+          this.container.viewModel = executionContext;
+        };
 
-            if (!viewStrategy && 'getViewStrategy' in viewModel) {
-              viewStrategy = viewModel.getViewStrategy();
-            }
+        _RouterView.prototype.process = function process(viewPortInstruction, waitToSwap) {
+          var _this = this;
 
-            if (viewStrategy) {
-              viewStrategy = ViewStrategy.normalize(viewStrategy);
-              viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
-            }
+          var component = viewPortInstruction.component,
+              viewStrategy = component.view,
+              childContainer = component.childContainer,
+              viewModel = component.executionContext,
+              viewModelResource = component.viewModelResource,
+              metadata = viewModelResource.metadata;
 
-            return metadata.load(childContainer, viewModelResource.value, viewStrategy, true).then(function (viewFactory) {
-              viewPortInstruction.behavior = metadata.create(childContainer, {
-                executionContext: viewModel,
-                viewFactory: viewFactory,
-                suppressBind: true
-              });
+          if (!viewStrategy && 'getViewStrategy' in viewModel) {
+            viewStrategy = viewModel.getViewStrategy();
+          }
 
-              if (waitToSwap) {
-                return;
-              }
+          if (viewStrategy) {
+            viewStrategy = ViewStrategy.normalize(viewStrategy);
+            viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
+          }
 
-              _this.swap(viewPortInstruction);
+          return metadata.load(childContainer, viewModelResource.value, viewStrategy, true).then(function (viewFactory) {
+            viewPortInstruction.behavior = metadata.create(childContainer, {
+              executionContext: viewModel,
+              viewFactory: viewFactory,
+              suppressBind: true
             });
-          }
-        }, {
-          key: 'swap',
-          value: function swap(viewPortInstruction) {
-            viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.executionContext);
-            this.viewSlot.swap(viewPortInstruction.behavior.view);
 
-            if (this.view) {
-              this.view.unbind();
+            if (waitToSwap) {
+              return;
             }
 
-            this.view = viewPortInstruction.behavior.view;
+            _this.swap(viewPortInstruction);
+          });
+        };
+
+        _RouterView.prototype.swap = function swap(viewPortInstruction) {
+          viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.executionContext);
+          this.viewSlot.swap(viewPortInstruction.behavior.view);
+
+          if (this.view) {
+            this.view.unbind();
           }
-        }]);
 
-        _export('RouterView', RouterView = customElement('router-view')(RouterView) || RouterView);
+          this.view = viewPortInstruction.behavior.view;
+        };
 
-        _export('RouterView', RouterView = noView(RouterView) || RouterView);
-
-        _export('RouterView', RouterView = inject(Element, Container, ViewSlot, Router)(RouterView) || RouterView);
-
+        RouterView = inject(Element, Container, ViewSlot, Router)(RouterView) || RouterView;
+        RouterView = noView(RouterView) || RouterView;
+        RouterView = customElement('router-view')(RouterView) || RouterView;
         return RouterView;
       })();
 

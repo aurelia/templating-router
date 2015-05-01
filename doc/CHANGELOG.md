@@ -1,3 +1,17 @@
+## 0.12.0 (2015-05-01)
+
+
+#### Bug Fixes
+
+* **all:** update to latest plugin api ([c75a8236](http://github.com/aurelia/templating-router/commit/c75a8236669733017d987a98d90ad9c20b125961))
+
+
+#### Features
+
+* **all:** new router configuration strategy ([1dd6686b](http://github.com/aurelia/templating-router/commit/1dd6686be491a5dacfe0870b67ede9806b4c0995))
+* **route-href:** add custom attribute for generating hrefs for named routes ([e6b94ce6](http://github.com/aurelia/templating-router/commit/e6b94ce6f3e9ebdb1e3e1b625225d06fa0a23d82))
+
+
 ## 0.11.0 (2015-04-09)
 
 

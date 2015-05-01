@@ -1,15 +1,14 @@
-define(['exports', 'aurelia-router', './route-loader', './router-view'], function (exports, _aureliaRouter, _routeLoader, _routerView) {
+define(['exports', 'aurelia-router', './route-loader', './router-view', './route-href'], function (exports, _aureliaRouter, _routeLoader, _routerView, _routeHref) {
   'use strict';
 
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
+  exports.__esModule = true;
 
-  function install(aurelia) {
-    aurelia.withSingleton(_aureliaRouter.RouteLoader, _routeLoader.TemplatingRouteLoader).withSingleton(_aureliaRouter.Router, _aureliaRouter.AppRouter).globalizeResources('./router-view');
+  function configure(aurelia) {
+    aurelia.withSingleton(_aureliaRouter.RouteLoader, _routeLoader.TemplatingRouteLoader).withSingleton(_aureliaRouter.Router, _aureliaRouter.AppRouter).globalizeResources('./router-view', './route-href');
   }
 
   exports.TemplatingRouteLoader = _routeLoader.TemplatingRouteLoader;
   exports.RouterView = _routerView.RouterView;
-  exports.install = install;
+  exports.RouteHref = _routeHref.RouteHref;
+  exports.configure = configure;
 });

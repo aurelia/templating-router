@@ -17,12 +17,17 @@ export class TemplatingRouteLoader extends RouteLoader {
           viewModel: relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId),
           childContainer:childContainer,
           view:config.view || config.viewStrategy
-        },
-        childRouter;
+        };
 
-    childContainer.registerHandler(Router, c => {
-      return childRouter || (childRouter = router.createChild(childContainer));
-    });
+    childContainer.getChildRouter = function(){
+      var childRouter;
+
+      childContainer.registerHandler(Router, c => {
+        return childRouter || (childRouter = router.createChild(childContainer));
+      });
+
+      return childContainer.get(Router);
+    };
 
     return this.compositionEngine.createViewModel(instruction).then(instruction => {
       instruction.executionContext = instruction.viewModel;

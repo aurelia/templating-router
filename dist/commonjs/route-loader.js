@@ -1,20 +1,20 @@
 'use strict';
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
-
-var _inherits = function (subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
-
 exports.__esModule = true;
 
-var _inject = require('aurelia-dependency-injection');
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var _CompositionEngine = require('aurelia-templating');
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
-var _RouteLoader$Router = require('aurelia-router');
+var _aureliaDependencyInjection = require('aurelia-dependency-injection');
 
-var _relativeToFile = require('aurelia-path');
+var _aureliaTemplating = require('aurelia-templating');
 
-var _Origin = require('aurelia-metadata');
+var _aureliaRouter = require('aurelia-router');
+
+var _aureliaPath = require('aurelia-path');
+
+var _aureliaMetadata = require('aurelia-metadata');
 
 var TemplatingRouteLoader = (function (_RouteLoader) {
   function TemplatingRouteLoader(compositionEngine) {
@@ -31,7 +31,7 @@ var TemplatingRouteLoader = (function (_RouteLoader) {
   _TemplatingRouteLoader.prototype.loadRoute = function loadRoute(router, config) {
     var childContainer = router.container.createChild(),
         instruction = {
-      viewModel: _relativeToFile.relativeToFile(config.moduleId, _Origin.Origin.get(router.container.viewModel.constructor).moduleId),
+      viewModel: (0, _aureliaPath.relativeToFile)(config.moduleId, _aureliaMetadata.Origin.get(router.container.viewModel.constructor).moduleId),
       childContainer: childContainer,
       view: config.view || config.viewStrategy
     };
@@ -39,11 +39,11 @@ var TemplatingRouteLoader = (function (_RouteLoader) {
     childContainer.getChildRouter = function () {
       var childRouter;
 
-      childContainer.registerHandler(_RouteLoader$Router.Router, function (c) {
+      childContainer.registerHandler(_aureliaRouter.Router, function (c) {
         return childRouter || (childRouter = router.createChild(childContainer));
       });
 
-      return childContainer.get(_RouteLoader$Router.Router);
+      return childContainer.get(_aureliaRouter.Router);
     };
 
     return this.compositionEngine.createViewModel(instruction).then(function (instruction) {
@@ -53,8 +53,8 @@ var TemplatingRouteLoader = (function (_RouteLoader) {
     });
   };
 
-  TemplatingRouteLoader = _inject.inject(_CompositionEngine.CompositionEngine)(TemplatingRouteLoader) || TemplatingRouteLoader;
+  TemplatingRouteLoader = (0, _aureliaDependencyInjection.inject)(_aureliaTemplating.CompositionEngine)(TemplatingRouteLoader) || TemplatingRouteLoader;
   return TemplatingRouteLoader;
-})(_RouteLoader$Router.RouteLoader);
+})(_aureliaRouter.RouteLoader);
 
 exports.TemplatingRouteLoader = TemplatingRouteLoader;

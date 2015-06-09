@@ -2,19 +2,19 @@
 
 exports.__esModule = true;
 
-var _Router$AppRouter$RouteLoader = require('aurelia-router');
+var _aureliaRouter = require('aurelia-router');
 
-var _TemplatingRouteLoader = require('./route-loader');
+var _routeLoader = require('./route-loader');
 
-var _RouterView = require('./router-view');
+var _routerView = require('./router-view');
 
-var _RouteHref = require('./route-href');
+var _routeHref = require('./route-href');
 
 function configure(aurelia) {
-  aurelia.withSingleton(_Router$AppRouter$RouteLoader.RouteLoader, _TemplatingRouteLoader.TemplatingRouteLoader).withSingleton(_Router$AppRouter$RouteLoader.Router, _Router$AppRouter$RouteLoader.AppRouter).globalizeResources('./router-view', './route-href');
+  aurelia.withSingleton(_aureliaRouter.RouteLoader, _routeLoader.TemplatingRouteLoader).withSingleton(_aureliaRouter.Router, _aureliaRouter.AppRouter).globalizeResources('./router-view', './route-href');
 }
 
-exports.TemplatingRouteLoader = _TemplatingRouteLoader.TemplatingRouteLoader;
-exports.RouterView = _RouterView.RouterView;
-exports.RouteHref = _RouteHref.RouteHref;
+exports.TemplatingRouteLoader = _routeLoader.TemplatingRouteLoader;
+exports.RouterView = _routerView.RouterView;
+exports.RouteHref = _routeHref.RouteHref;
 exports.configure = configure;

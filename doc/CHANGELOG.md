@@ -1,3 +1,11 @@
+## 0.13.0 (2015-06-08)
+
+
+#### Features
+
+* **router-view:** support syncChildren ([8a40ba7c](http://github.com/aurelia/templating-router/commit/8a40ba7c35a1cf461a81129eabfa3a4066d26db9))
+
+
 ## 0.12.0 (2015-05-01)
 
 

@@ -1,14 +1,14 @@
 'use strict';
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
-
 exports.__esModule = true;
 
-var _customAttribute$bindable = require('aurelia-templating');
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var _inject = require('aurelia-dependency-injection');
+var _aureliaTemplating = require('aurelia-templating');
 
-var _Router = require('aurelia-router');
+var _aureliaDependencyInjection = require('aurelia-dependency-injection');
+
+var _aureliaRouter = require('aurelia-router');
 
 var RouteHref = (function () {
   function RouteHref(router, element) {
@@ -37,11 +37,11 @@ var RouteHref = (function () {
     this.element.setAttribute(this.attribute, href);
   };
 
-  RouteHref = _inject.inject(_Router.Router, Element)(RouteHref) || RouteHref;
-  RouteHref = _customAttribute$bindable.bindable({ name: 'attribute', defaultValue: 'href' })(RouteHref) || RouteHref;
-  RouteHref = _customAttribute$bindable.bindable({ name: 'params', changeHandler: 'processChange' })(RouteHref) || RouteHref;
-  RouteHref = _customAttribute$bindable.bindable({ name: 'route', changeHandler: 'processChange' })(RouteHref) || RouteHref;
-  RouteHref = _customAttribute$bindable.customAttribute('route-href')(RouteHref) || RouteHref;
+  RouteHref = (0, _aureliaDependencyInjection.inject)(_aureliaRouter.Router, Element)(RouteHref) || RouteHref;
+  RouteHref = (0, _aureliaTemplating.bindable)({ name: 'attribute', defaultValue: 'href' })(RouteHref) || RouteHref;
+  RouteHref = (0, _aureliaTemplating.bindable)({ name: 'params', changeHandler: 'processChange' })(RouteHref) || RouteHref;
+  RouteHref = (0, _aureliaTemplating.bindable)({ name: 'route', changeHandler: 'processChange' })(RouteHref) || RouteHref;
+  RouteHref = (0, _aureliaTemplating.customAttribute)('route-href')(RouteHref) || RouteHref;
   return RouteHref;
 })();
 

@@ -1,4 +1,6 @@
 System.register(['aurelia-router', './route-loader', './router-view', './route-href'], function (_export) {
+  'use strict';
+
   var Router, AppRouter, RouteLoader, TemplatingRouteLoader, RouterView, RouteHref;
 
   function configure(aurelia) {
@@ -18,8 +20,6 @@ System.register(['aurelia-router', './route-loader', './router-view', './route-h
       RouteHref = _routeHref.RouteHref;
     }],
     execute: function () {
-      'use strict';
-
       _export('TemplatingRouteLoader', TemplatingRouteLoader);
 
       _export('RouterView', RouterView);

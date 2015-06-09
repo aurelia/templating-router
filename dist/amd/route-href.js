@@ -1,9 +1,9 @@
 define(['exports', 'aurelia-templating', 'aurelia-dependency-injection', 'aurelia-router'], function (exports, _aureliaTemplating, _aureliaDependencyInjection, _aureliaRouter) {
   'use strict';
 
-  var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
-
   exports.__esModule = true;
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
   var RouteHref = (function () {
     function RouteHref(router, element) {
@@ -32,11 +32,11 @@ define(['exports', 'aurelia-templating', 'aurelia-dependency-injection', 'aureli
       this.element.setAttribute(this.attribute, href);
     };
 
-    RouteHref = _aureliaDependencyInjection.inject(_aureliaRouter.Router, Element)(RouteHref) || RouteHref;
-    RouteHref = _aureliaTemplating.bindable({ name: 'attribute', defaultValue: 'href' })(RouteHref) || RouteHref;
-    RouteHref = _aureliaTemplating.bindable({ name: 'params', changeHandler: 'processChange' })(RouteHref) || RouteHref;
-    RouteHref = _aureliaTemplating.bindable({ name: 'route', changeHandler: 'processChange' })(RouteHref) || RouteHref;
-    RouteHref = _aureliaTemplating.customAttribute('route-href')(RouteHref) || RouteHref;
+    RouteHref = (0, _aureliaDependencyInjection.inject)(_aureliaRouter.Router, Element)(RouteHref) || RouteHref;
+    RouteHref = (0, _aureliaTemplating.bindable)({ name: 'attribute', defaultValue: 'href' })(RouteHref) || RouteHref;
+    RouteHref = (0, _aureliaTemplating.bindable)({ name: 'params', changeHandler: 'processChange' })(RouteHref) || RouteHref;
+    RouteHref = (0, _aureliaTemplating.bindable)({ name: 'route', changeHandler: 'processChange' })(RouteHref) || RouteHref;
+    RouteHref = (0, _aureliaTemplating.customAttribute)('route-href')(RouteHref) || RouteHref;
     return RouteHref;
   })();
 

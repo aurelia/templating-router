@@ -1,5 +1,9 @@
 System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-router', 'aurelia-metadata'], function (_export) {
-  var Container, inject, ViewSlot, ViewStrategy, customElement, noView, Router, Metadata, Origin, _classCallCheck, RouterView;
+  'use strict';
+
+  var Container, inject, ViewSlot, ViewStrategy, customElement, noView, Router, Metadata, Origin, RouterView;
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
   return {
     setters: [function (_aureliaDependencyInjection) {
@@ -17,10 +21,6 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
       Origin = _aureliaMetadata.Origin;
     }],
     execute: function () {
-      'use strict';
-
-      _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
-
       RouterView = (function () {
         function RouterView(element, container, viewSlot, router) {
           _classCallCheck(this, _RouterView);
@@ -61,7 +61,8 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
             viewPortInstruction.behavior = metadata.create(childContainer, {
               executionContext: viewModel,
               viewFactory: viewFactory,
-              suppressBind: true
+              suppressBind: true,
+              host: _this.element
             });
 
             if (waitToSwap) {

@@ -1,9 +1,9 @@
 define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aurelia-router', 'aurelia-metadata'], function (exports, _aureliaDependencyInjection, _aureliaTemplating, _aureliaRouter, _aureliaMetadata) {
   'use strict';
 
-  var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
-
   exports.__esModule = true;
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
   var RouterView = (function () {
     function RouterView(element, container, viewSlot, router) {
@@ -45,7 +45,8 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
         viewPortInstruction.behavior = metadata.create(childContainer, {
           executionContext: viewModel,
           viewFactory: viewFactory,
-          suppressBind: true
+          suppressBind: true,
+          host: _this.element
         });
 
         if (waitToSwap) {
@@ -67,9 +68,9 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
       this.view = viewPortInstruction.behavior.view;
     };
 
-    RouterView = _aureliaDependencyInjection.inject(Element, _aureliaDependencyInjection.Container, _aureliaTemplating.ViewSlot, _aureliaRouter.Router)(RouterView) || RouterView;
-    RouterView = _aureliaTemplating.noView(RouterView) || RouterView;
-    RouterView = _aureliaTemplating.customElement('router-view')(RouterView) || RouterView;
+    RouterView = (0, _aureliaDependencyInjection.inject)(Element, _aureliaDependencyInjection.Container, _aureliaTemplating.ViewSlot, _aureliaRouter.Router)(RouterView) || RouterView;
+    RouterView = (0, _aureliaTemplating.noView)(RouterView) || RouterView;
+    RouterView = (0, _aureliaTemplating.customElement)('router-view')(RouterView) || RouterView;
     return RouterView;
   })();
 

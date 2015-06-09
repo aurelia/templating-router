@@ -1,5 +1,9 @@
 System.register(['aurelia-templating', 'aurelia-dependency-injection', 'aurelia-router'], function (_export) {
-  var customAttribute, bindable, inject, Router, _classCallCheck, RouteHref;
+  'use strict';
+
+  var customAttribute, bindable, inject, Router, RouteHref;
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
   return {
     setters: [function (_aureliaTemplating) {
@@ -11,10 +15,6 @@ System.register(['aurelia-templating', 'aurelia-dependency-injection', 'aurelia-
       Router = _aureliaRouter.Router;
     }],
     execute: function () {
-      'use strict';
-
-      _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
-
       RouteHref = (function () {
         function RouteHref(router, element) {
           _classCallCheck(this, _RouteHref);

@@ -1,16 +1,16 @@
 'use strict';
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
-
 exports.__esModule = true;
 
-var _Container$inject = require('aurelia-dependency-injection');
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var _ViewSlot$ViewStrategy$customElement$noView = require('aurelia-templating');
+var _aureliaDependencyInjection = require('aurelia-dependency-injection');
 
-var _Router = require('aurelia-router');
+var _aureliaTemplating = require('aurelia-templating');
 
-var _Metadata$Origin = require('aurelia-metadata');
+var _aureliaRouter = require('aurelia-router');
+
+var _aureliaMetadata = require('aurelia-metadata');
 
 var RouterView = (function () {
   function RouterView(element, container, viewSlot, router) {
@@ -44,15 +44,16 @@ var RouterView = (function () {
     }
 
     if (viewStrategy) {
-      viewStrategy = _ViewSlot$ViewStrategy$customElement$noView.ViewStrategy.normalize(viewStrategy);
-      viewStrategy.makeRelativeTo(_Metadata$Origin.Origin.get(component.router.container.viewModel.constructor).moduleId);
+      viewStrategy = _aureliaTemplating.ViewStrategy.normalize(viewStrategy);
+      viewStrategy.makeRelativeTo(_aureliaMetadata.Origin.get(component.router.container.viewModel.constructor).moduleId);
     }
 
     return metadata.load(childContainer, viewModelResource.value, viewStrategy, true).then(function (viewFactory) {
       viewPortInstruction.behavior = metadata.create(childContainer, {
         executionContext: viewModel,
         viewFactory: viewFactory,
-        suppressBind: true
+        suppressBind: true,
+        host: _this.element
       });
 
       if (waitToSwap) {
@@ -74,9 +75,9 @@ var RouterView = (function () {
     this.view = viewPortInstruction.behavior.view;
   };
 
-  RouterView = _Container$inject.inject(Element, _Container$inject.Container, _ViewSlot$ViewStrategy$customElement$noView.ViewSlot, _Router.Router)(RouterView) || RouterView;
-  RouterView = _ViewSlot$ViewStrategy$customElement$noView.noView(RouterView) || RouterView;
-  RouterView = _ViewSlot$ViewStrategy$customElement$noView.customElement('router-view')(RouterView) || RouterView;
+  RouterView = (0, _aureliaDependencyInjection.inject)(Element, _aureliaDependencyInjection.Container, _aureliaTemplating.ViewSlot, _aureliaRouter.Router)(RouterView) || RouterView;
+  RouterView = (0, _aureliaTemplating.noView)(RouterView) || RouterView;
+  RouterView = (0, _aureliaTemplating.customElement)('router-view')(RouterView) || RouterView;
   return RouterView;
 })();
 

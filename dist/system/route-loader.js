@@ -1,5 +1,11 @@
 System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-router', 'aurelia-path', 'aurelia-metadata'], function (_export) {
-  var inject, CompositionEngine, RouteLoader, Router, relativeToFile, Origin, _classCallCheck, _inherits, TemplatingRouteLoader;
+  'use strict';
+
+  var inject, CompositionEngine, RouteLoader, Router, relativeToFile, Origin, TemplatingRouteLoader;
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+  function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
   return {
     setters: [function (_aureliaDependencyInjection) {
@@ -15,12 +21,6 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
       Origin = _aureliaMetadata.Origin;
     }],
     execute: function () {
-      'use strict';
-
-      _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
-
-      _inherits = function (subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
-
       TemplatingRouteLoader = (function (_RouteLoader) {
         function TemplatingRouteLoader(compositionEngine) {
           _classCallCheck(this, _TemplatingRouteLoader);

@@ -68,9 +68,9 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
       this.view = viewPortInstruction.behavior.view;
     };
 
-    RouterView = (0, _aureliaDependencyInjection.inject)(Element, _aureliaDependencyInjection.Container, _aureliaTemplating.ViewSlot, _aureliaRouter.Router)(RouterView) || RouterView;
-    RouterView = (0, _aureliaTemplating.noView)(RouterView) || RouterView;
-    RouterView = (0, _aureliaTemplating.customElement)('router-view')(RouterView) || RouterView;
+    RouterView = _aureliaDependencyInjection.inject(Element, _aureliaDependencyInjection.Container, _aureliaTemplating.ViewSlot, _aureliaRouter.Router)(RouterView) || RouterView;
+    RouterView = _aureliaTemplating.noView(RouterView) || RouterView;
+    RouterView = _aureliaTemplating.customElement('router-view')(RouterView) || RouterView;
     return RouterView;
   })();
 

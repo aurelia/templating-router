@@ -22,7 +22,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
     _TemplatingRouteLoader.prototype.loadRoute = function loadRoute(router, config) {
       var childContainer = router.container.createChild(),
           instruction = {
-        viewModel: (0, _aureliaPath.relativeToFile)(config.moduleId, _aureliaMetadata.Origin.get(router.container.viewModel.constructor).moduleId),
+        viewModel: _aureliaPath.relativeToFile(config.moduleId, _aureliaMetadata.Origin.get(router.container.viewModel.constructor).moduleId),
         childContainer: childContainer,
         view: config.view || config.viewStrategy
       };
@@ -44,7 +44,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
       });
     };
 
-    TemplatingRouteLoader = (0, _aureliaDependencyInjection.inject)(_aureliaTemplating.CompositionEngine)(TemplatingRouteLoader) || TemplatingRouteLoader;
+    TemplatingRouteLoader = _aureliaDependencyInjection.inject(_aureliaTemplating.CompositionEngine)(TemplatingRouteLoader) || TemplatingRouteLoader;
     return TemplatingRouteLoader;
   })(_aureliaRouter.RouteLoader);
 

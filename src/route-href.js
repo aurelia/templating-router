@@ -26,7 +26,9 @@ export class RouteHref {
   }
 
   processChange() {
-    let href = this.router.generate(this.route, this.params);
-    this.element.setAttribute(this.attribute, href);
+    this.router.ensureConfigured().then(() => {
+      let href = this.router.generate(this.route, this.params);
+      this.element.setAttribute(this.attribute, href);
+    });
   }
 }

@@ -13,13 +13,11 @@ define(['exports', 'aurelia-templating', 'aurelia-dependency-injection', 'aureli
       this.element = element;
     }
 
-    var _RouteHref = RouteHref;
-
-    _RouteHref.prototype.bind = function bind() {
+    RouteHref.prototype.bind = function bind() {
       this.processChange();
     };
 
-    _RouteHref.prototype.attributeChanged = function attributeChanged(value, previous) {
+    RouteHref.prototype.attributeChanged = function attributeChanged(value, previous) {
       if (previous) {
         this.element.removeAttribute(previous);
       }
@@ -27,11 +25,16 @@ define(['exports', 'aurelia-templating', 'aurelia-dependency-injection', 'aureli
       this.processChange();
     };
 
-    _RouteHref.prototype.processChange = function processChange() {
-      var href = this.router.generate(this.route, this.params);
-      this.element.setAttribute(this.attribute, href);
+    RouteHref.prototype.processChange = function processChange() {
+      var _this = this;
+
+      this.router.ensureConfigured().then(function () {
+        var href = _this.router.generate(_this.route, _this.params);
+        _this.element.setAttribute(_this.attribute, href);
+      });
     };
 
+    var _RouteHref = RouteHref;
     RouteHref = _aureliaDependencyInjection.inject(_aureliaRouter.Router, Element)(RouteHref) || RouteHref;
     RouteHref = _aureliaTemplating.bindable({ name: 'attribute', defaultValue: 'href' })(RouteHref) || RouteHref;
     RouteHref = _aureliaTemplating.bindable({ name: 'params', changeHandler: 'processChange' })(RouteHref) || RouteHref;

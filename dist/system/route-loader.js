@@ -5,7 +5,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-  function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+  function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
   return {
     setters: [function (_aureliaDependencyInjection) {
@@ -22,6 +22,8 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
     }],
     execute: function () {
       TemplatingRouteLoader = (function (_RouteLoader) {
+        _inherits(TemplatingRouteLoader, _RouteLoader);
+
         function TemplatingRouteLoader(compositionEngine) {
           _classCallCheck(this, _TemplatingRouteLoader);
 
@@ -29,11 +31,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
           this.compositionEngine = compositionEngine;
         }
 
-        _inherits(TemplatingRouteLoader, _RouteLoader);
-
-        var _TemplatingRouteLoader = TemplatingRouteLoader;
-
-        _TemplatingRouteLoader.prototype.loadRoute = function loadRoute(router, config) {
+        TemplatingRouteLoader.prototype.loadRoute = function loadRoute(router, config) {
           var childContainer = router.container.createChild(),
               instruction = {
             viewModel: relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId),
@@ -58,6 +56,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
           });
         };
 
+        var _TemplatingRouteLoader = TemplatingRouteLoader;
         TemplatingRouteLoader = inject(CompositionEngine)(TemplatingRouteLoader) || TemplatingRouteLoader;
         return TemplatingRouteLoader;
       })(RouteLoader);

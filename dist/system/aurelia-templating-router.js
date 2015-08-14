@@ -3,8 +3,8 @@ System.register(['aurelia-router', './route-loader', './router-view', './route-h
 
   var Router, AppRouter, RouteLoader, TemplatingRouteLoader, RouterView, RouteHref;
 
-  function configure(aurelia) {
-    aurelia.withSingleton(RouteLoader, TemplatingRouteLoader).withSingleton(Router, AppRouter).globalizeResources('./router-view', './route-href');
+  function configure(config) {
+    config.singleton(RouteLoader, TemplatingRouteLoader).singleton(Router, AppRouter).globalResources('./router-view', './route-href');
   }
 
   return {

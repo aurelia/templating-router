@@ -4,7 +4,7 @@ exports.__esModule = true;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var _aureliaDependencyInjection = require('aurelia-dependency-injection');
 
@@ -17,6 +17,8 @@ var _aureliaPath = require('aurelia-path');
 var _aureliaMetadata = require('aurelia-metadata');
 
 var TemplatingRouteLoader = (function (_RouteLoader) {
+  _inherits(TemplatingRouteLoader, _RouteLoader);
+
   function TemplatingRouteLoader(compositionEngine) {
     _classCallCheck(this, _TemplatingRouteLoader);
 
@@ -24,11 +26,7 @@ var TemplatingRouteLoader = (function (_RouteLoader) {
     this.compositionEngine = compositionEngine;
   }
 
-  _inherits(TemplatingRouteLoader, _RouteLoader);
-
-  var _TemplatingRouteLoader = TemplatingRouteLoader;
-
-  _TemplatingRouteLoader.prototype.loadRoute = function loadRoute(router, config) {
+  TemplatingRouteLoader.prototype.loadRoute = function loadRoute(router, config) {
     var childContainer = router.container.createChild(),
         instruction = {
       viewModel: _aureliaPath.relativeToFile(config.moduleId, _aureliaMetadata.Origin.get(router.container.viewModel.constructor).moduleId),
@@ -53,6 +51,7 @@ var TemplatingRouteLoader = (function (_RouteLoader) {
     });
   };
 
+  var _TemplatingRouteLoader = TemplatingRouteLoader;
   TemplatingRouteLoader = _aureliaDependencyInjection.inject(_aureliaTemplating.CompositionEngine)(TemplatingRouteLoader) || TemplatingRouteLoader;
   return TemplatingRouteLoader;
 })(_aureliaRouter.RouteLoader);

@@ -23,13 +23,11 @@ var RouterView = (function () {
     this.router.registerViewPort(this, this.element.getAttribute('name'));
   }
 
-  var _RouterView = RouterView;
-
-  _RouterView.prototype.bind = function bind(executionContext) {
+  RouterView.prototype.bind = function bind(executionContext) {
     this.container.viewModel = executionContext;
   };
 
-  _RouterView.prototype.process = function process(viewPortInstruction, waitToSwap) {
+  RouterView.prototype.process = function process(viewPortInstruction, waitToSwap) {
     var _this = this;
 
     var component = viewPortInstruction.component,
@@ -64,7 +62,7 @@ var RouterView = (function () {
     });
   };
 
-  _RouterView.prototype.swap = function swap(viewPortInstruction) {
+  RouterView.prototype.swap = function swap(viewPortInstruction) {
     viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.executionContext);
     this.viewSlot.swap(viewPortInstruction.behavior.view);
 
@@ -75,6 +73,7 @@ var RouterView = (function () {
     this.view = viewPortInstruction.behavior.view;
   };
 
+  var _RouterView = RouterView;
   RouterView = _aureliaDependencyInjection.inject(Element, _aureliaDependencyInjection.Container, _aureliaTemplating.ViewSlot, _aureliaRouter.Router)(RouterView) || RouterView;
   RouterView = _aureliaTemplating.noView(RouterView) || RouterView;
   RouterView = _aureliaTemplating.customElement('router-view')(RouterView) || RouterView;

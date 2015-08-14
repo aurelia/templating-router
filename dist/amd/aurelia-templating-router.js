@@ -3,8 +3,8 @@ define(['exports', 'aurelia-router', './route-loader', './router-view', './route
 
   exports.__esModule = true;
 
-  function configure(aurelia) {
-    aurelia.withSingleton(_aureliaRouter.RouteLoader, _routeLoader.TemplatingRouteLoader).withSingleton(_aureliaRouter.Router, _aureliaRouter.AppRouter).globalizeResources('./router-view', './route-href');
+  function configure(config) {
+    config.singleton(_aureliaRouter.RouteLoader, _routeLoader.TemplatingRouteLoader).singleton(_aureliaRouter.Router, _aureliaRouter.AppRouter).globalResources('./router-view', './route-href');
   }
 
   exports.TemplatingRouteLoader = _routeLoader.TemplatingRouteLoader;

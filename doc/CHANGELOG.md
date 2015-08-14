@@ -1,3 +1,12 @@
+## 0.15.0 (2015-08-14)
+
+
+#### Bug Fixes
+
+* **index:** update to latest configuration api ([19e90527](http://github.com/aurelia/templating-router/commit/19e905272049ede5d01149e4d150982ca5cdf950))
+* **route-href:** account for async router configs when generating route hrefs ([37933612](http://github.com/aurelia/templating-router/commit/379336128fb547919c5ab93ed83b9978ac128216))
+
+
 ### 0.14.1 (2015-07-29)
 
 * improve output file name

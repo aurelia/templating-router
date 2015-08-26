@@ -30,7 +30,7 @@ export class TemplatingRouteLoader extends RouteLoader {
     };
 
     return this.compositionEngine.createViewModel(instruction).then(instruction => {
-      instruction.executionContext = instruction.viewModel;
+      instruction.bindingContext = instruction.viewModel;
       instruction.router = router;
       return instruction;
     });

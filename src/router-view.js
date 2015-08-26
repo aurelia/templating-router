@@ -15,15 +15,15 @@ export class RouterView {
     this.router.registerViewPort(this, this.element.getAttribute('name'));
   }
 
-  bind(executionContext){
-    this.container.viewModel = executionContext;
+  bind(bindingContext){
+    this.container.viewModel = bindingContext;
   }
 
   process(viewPortInstruction, waitToSwap) {
     var component = viewPortInstruction.component,
         viewStrategy = component.view,
         childContainer = component.childContainer,
-        viewModel = component.executionContext,
+        viewModel = component.bindingContext,
         viewModelResource = component.viewModelResource,
         metadata = viewModelResource.metadata;
 
@@ -38,7 +38,7 @@ export class RouterView {
 
     return metadata.load(childContainer, viewModelResource.value, viewStrategy, true).then(viewFactory => {
       viewPortInstruction.behavior = metadata.create(childContainer, {
-        executionContext:viewModel,
+        bindingContext:viewModel,
         viewFactory:viewFactory,
         suppressBind:true,
         host:this.element
@@ -53,7 +53,7 @@ export class RouterView {
   }
 
   swap(viewPortInstruction){
-    viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.executionContext);
+    viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.bindingContext);
     this.viewSlot.swap(viewPortInstruction.behavior.view);
 
     if(this.view){

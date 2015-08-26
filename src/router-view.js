@@ -54,12 +54,7 @@ export class RouterView {
 
   swap(viewPortInstruction){
     viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.bindingContext);
-    this.viewSlot.swap(viewPortInstruction.behavior.view);
-
-    if(this.view){
-      this.view.unbind();
-    }
-
+    this.viewSlot.swap(viewPortInstruction.behavior.view, true);
     this.view = viewPortInstruction.behavior.view;
   }
 }

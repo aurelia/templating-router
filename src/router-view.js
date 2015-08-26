@@ -53,8 +53,18 @@ export class RouterView {
   }
 
   swap(viewPortInstruction){
-    viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.bindingContext);
-    this.viewSlot.swap(viewPortInstruction.behavior.view, true);
-    this.view = viewPortInstruction.behavior.view;
+    var removeResponse = this.viewSlot.removeAll(true);
+
+    if(removeResponse instanceof Promise){
+      return removeResponse.then(() => {
+        viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.bindingContext);
+        this.viewSlot.add(viewPortInstruction.behavior.view);
+        this.view = viewPortInstruction.behavior.view;
+      });
+    } else{
+      viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.bindingContext);
+      this.viewSlot.add(viewPortInstruction.behavior.view);
+      this.view = viewPortInstruction.behavior.view;
+    }
   }
 }

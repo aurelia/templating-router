@@ -3,7 +3,7 @@ import {TemplatingRouteLoader} from './route-loader';
 import {RouterView} from './router-view';
 import {RouteHref} from './route-href';
 
-function configure(config){
+function configure(config) {
   config
     .singleton(RouteLoader, TemplatingRouteLoader)
     .singleton(Router, AppRouter)

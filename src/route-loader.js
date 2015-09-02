@@ -6,21 +6,21 @@ import {Origin} from 'aurelia-metadata';
 
 @inject(CompositionEngine)
 export class TemplatingRouteLoader extends RouteLoader {
-  constructor(compositionEngine){
+  constructor(compositionEngine) {
     super();
     this.compositionEngine = compositionEngine;
   }
 
-  loadRoute(router, config){
-    var childContainer = router.container.createChild(),
-        instruction = {
-          viewModel: relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId),
-          childContainer:childContainer,
-          view:config.view || config.viewStrategy
-        };
+  loadRoute(router, config) {
+    let childContainer = router.container.createChild();
+    let instruction = {
+      viewModel: relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId),
+      childContainer: childContainer,
+      view: config.view || config.viewStrategy
+    };
 
-    childContainer.getChildRouter = function(){
-      var childRouter;
+    childContainer.getChildRouter = function() {
+      let childRouter;
 
       childContainer.registerHandler(Router, c => {
         return childRouter || (childRouter = router.createChild(childContainer));
@@ -29,10 +29,10 @@ export class TemplatingRouteLoader extends RouteLoader {
       return childContainer.get(Router);
     };
 
-    return this.compositionEngine.createViewModel(instruction).then(instruction => {
-      instruction.bindingContext = instruction.viewModel;
-      instruction.router = router;
-      return instruction;
+    return this.compositionEngine.createViewModel(instruction).then(ins => {
+      ins.bindingContext = ins.viewModel;
+      ins.router = router;
+      return ins;
     });
   }
 }

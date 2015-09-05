@@ -1,5 +1,5 @@
 import {Container, inject} from 'aurelia-dependency-injection';
-import {ViewSlot, ViewStrategy, customElement, noView} from 'aurelia-templating';
+import {ViewSlot, ViewStrategy, customElement, noView, BehaviorInstruction} from 'aurelia-templating';
 import {Router} from 'aurelia-router';
 import {Origin} from 'aurelia-metadata';
 
@@ -37,12 +37,13 @@ export class RouterView {
     }
 
     return metadata.load(childContainer, viewModelResource.value, viewStrategy, true).then(viewFactory => {
-      viewPortInstruction.behavior = metadata.create(childContainer, {
-        bindingContext: viewModel,
-        viewFactory: viewFactory,
-        suppressBind: true,
-        host: this.element
-      });
+      viewPortInstruction.behavior = metadata.create(childContainer,
+        BehaviorInstruction.dynamic(
+          this.element,
+          viewModel,
+          viewFactory
+        )
+      );
 
       if (waitToSwap) {
         return;

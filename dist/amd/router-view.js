@@ -40,12 +40,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
       }
 
       return metadata.load(childContainer, viewModelResource.value, viewStrategy, true).then(function (viewFactory) {
-        viewPortInstruction.behavior = metadata.create(childContainer, {
-          bindingContext: viewModel,
-          viewFactory: viewFactory,
-          suppressBind: true,
-          host: _this.element
-        });
+        viewPortInstruction.behavior = metadata.create(childContainer, _aureliaTemplating.BehaviorInstruction.dynamic(_this.element, viewModel, viewFactory));
 
         if (waitToSwap) {
           return;

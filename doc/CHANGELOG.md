@@ -1,3 +1,11 @@
+### 0.16.1 (2015-09-05)
+
+
+#### Bug Fixes
+
+* **router-view:** use correct behavior instruction ([4ea57f3a](http://github.com/aurelia/templating-router/commit/4ea57f3a18509f57c973c57bef995cf3b537dcae))
+
+
 ## 0.16.0 (2015-09-05)
 
 

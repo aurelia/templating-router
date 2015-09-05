@@ -1,7 +1,7 @@
 System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-router', 'aurelia-metadata'], function (_export) {
   'use strict';
 
-  var Container, inject, ViewSlot, ViewStrategy, customElement, noView, Router, Origin, RouterView;
+  var Container, inject, ViewSlot, ViewStrategy, customElement, noView, BehaviorInstruction, Router, Origin, RouterView;
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
@@ -14,6 +14,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
       ViewStrategy = _aureliaTemplating.ViewStrategy;
       customElement = _aureliaTemplating.customElement;
       noView = _aureliaTemplating.noView;
+      BehaviorInstruction = _aureliaTemplating.BehaviorInstruction;
     }, function (_aureliaRouter) {
       Router = _aureliaRouter.Router;
     }, function (_aureliaMetadata) {
@@ -55,12 +56,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
           }
 
           return metadata.load(childContainer, viewModelResource.value, viewStrategy, true).then(function (viewFactory) {
-            viewPortInstruction.behavior = metadata.create(childContainer, {
-              bindingContext: viewModel,
-              viewFactory: viewFactory,
-              suppressBind: true,
-              host: _this.element
-            });
+            viewPortInstruction.behavior = metadata.create(childContainer, BehaviorInstruction.dynamic(_this.element, viewModel, viewFactory));
 
             if (waitToSwap) {
               return;

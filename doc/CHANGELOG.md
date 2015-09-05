@@ -1,3 +1,20 @@
+## 0.16.0 (2015-09-05)
+
+
+#### Bug Fixes
+
+* **all:** update executionContext naming to bindingContext ([451a21e1](http://github.com/aurelia/templating-router/commit/451a21e18e5ef7380d3b86f99369858e83dfa21a))
+* **build:** update linting, testing and tools ([6c297c13](http://github.com/aurelia/templating-router/commit/6c297c13f2e064e606d5ba155ca2ada03a3918b1))
+* **router-view:**
+  * remove reliance on swap method of slot ([9b96894c](http://github.com/aurelia/templating-router/commit/9b96894cdb532a1df2068ab7156038f43ee1afe0))
+  * view swapping now unbinds after detach and returns to cache ([d9f81cca](http://github.com/aurelia/templating-router/commit/d9f81ccad1a8ca9b4732877d81d56dde06bbcaea))
+
+
+#### Features
+
+* **docs:** generate api.json from .d.ts file ([6e576cfc](http://github.com/aurelia/templating-router/commit/6e576cfc603c20aa1043ba13b49ce93828e0e798))
+
+
 ## 0.15.0 (2015-08-14)
 
 

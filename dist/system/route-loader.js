@@ -32,15 +32,15 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
         }
 
         TemplatingRouteLoader.prototype.loadRoute = function loadRoute(router, config) {
-          var childContainer = router.container.createChild(),
-              instruction = {
+          var childContainer = router.container.createChild();
+          var instruction = {
             viewModel: relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId),
             childContainer: childContainer,
             view: config.view || config.viewStrategy
           };
 
           childContainer.getChildRouter = function () {
-            var childRouter;
+            var childRouter = undefined;
 
             childContainer.registerHandler(Router, function (c) {
               return childRouter || (childRouter = router.createChild(childContainer));
@@ -49,10 +49,10 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
             return childContainer.get(Router);
           };
 
-          return this.compositionEngine.createViewModel(instruction).then(function (instruction) {
-            instruction.executionContext = instruction.viewModel;
-            instruction.router = router;
-            return instruction;
+          return this.compositionEngine.createViewModel(instruction).then(function (ins) {
+            ins.bindingContext = ins.viewModel;
+            ins.router = router;
+            return ins;
           });
         };
 

@@ -1,7 +1,7 @@
 import {Container, inject} from 'aurelia-dependency-injection';
 import {ViewSlot, ViewStrategy, customElement, noView} from 'aurelia-templating';
 import {Router} from 'aurelia-router';
-import {Metadata, Origin} from 'aurelia-metadata';
+import {Origin} from 'aurelia-metadata';
 
 @customElement('router-view')
 @noView
@@ -15,36 +15,36 @@ export class RouterView {
     this.router.registerViewPort(this, this.element.getAttribute('name'));
   }
 
-  bind(executionContext){
-    this.container.viewModel = executionContext;
+  bind(bindingContext) {
+    this.container.viewModel = bindingContext;
   }
 
   process(viewPortInstruction, waitToSwap) {
-    var component = viewPortInstruction.component,
-        viewStrategy = component.view,
-        childContainer = component.childContainer,
-        viewModel = component.executionContext,
-        viewModelResource = component.viewModelResource,
-        metadata = viewModelResource.metadata;
+    let component = viewPortInstruction.component;
+    let viewStrategy = component.view;
+    let childContainer = component.childContainer;
+    let viewModel = component.bindingContext;
+    let viewModelResource = component.viewModelResource;
+    let metadata = viewModelResource.metadata;
 
-    if(!viewStrategy && 'getViewStrategy' in viewModel){
+    if (!viewStrategy && 'getViewStrategy' in viewModel) {
       viewStrategy = viewModel.getViewStrategy();
     }
 
-    if(viewStrategy){
+    if (viewStrategy) {
       viewStrategy = ViewStrategy.normalize(viewStrategy);
       viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
     }
 
     return metadata.load(childContainer, viewModelResource.value, viewStrategy, true).then(viewFactory => {
       viewPortInstruction.behavior = metadata.create(childContainer, {
-        executionContext:viewModel,
-        viewFactory:viewFactory,
-        suppressBind:true,
-        host:this.element
+        bindingContext: viewModel,
+        viewFactory: viewFactory,
+        suppressBind: true,
+        host: this.element
       });
 
-      if(waitToSwap){
+      if (waitToSwap) {
         return;
       }
 
@@ -52,14 +52,19 @@ export class RouterView {
     });
   }
 
-  swap(viewPortInstruction){
-    viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.executionContext);
-    this.viewSlot.swap(viewPortInstruction.behavior.view);
+  swap(viewPortInstruction) {
+    let removeResponse = this.viewSlot.removeAll(true);
 
-    if(this.view){
-      this.view.unbind();
+    if (removeResponse instanceof Promise) {
+      return removeResponse.then(() => {
+        viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.bindingContext);
+        this.viewSlot.add(viewPortInstruction.behavior.view);
+        this.view = viewPortInstruction.behavior.view;
+      });
     }
 
+    viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.bindingContext);
+    this.viewSlot.add(viewPortInstruction.behavior.view);
     this.view = viewPortInstruction.behavior.view;
   }
 }

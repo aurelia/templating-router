@@ -16,19 +16,19 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
       this.router.registerViewPort(this, this.element.getAttribute('name'));
     }
 
-    RouterView.prototype.bind = function bind(executionContext) {
-      this.container.viewModel = executionContext;
+    RouterView.prototype.bind = function bind(bindingContext) {
+      this.container.viewModel = bindingContext;
     };
 
     RouterView.prototype.process = function process(viewPortInstruction, waitToSwap) {
       var _this = this;
 
-      var component = viewPortInstruction.component,
-          viewStrategy = component.view,
-          childContainer = component.childContainer,
-          viewModel = component.executionContext,
-          viewModelResource = component.viewModelResource,
-          metadata = viewModelResource.metadata;
+      var component = viewPortInstruction.component;
+      var viewStrategy = component.view;
+      var childContainer = component.childContainer;
+      var viewModel = component.bindingContext;
+      var viewModelResource = component.viewModelResource;
+      var metadata = viewModelResource.metadata;
 
       if (!viewStrategy && 'getViewStrategy' in viewModel) {
         viewStrategy = viewModel.getViewStrategy();
@@ -41,7 +41,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
 
       return metadata.load(childContainer, viewModelResource.value, viewStrategy, true).then(function (viewFactory) {
         viewPortInstruction.behavior = metadata.create(childContainer, {
-          executionContext: viewModel,
+          bindingContext: viewModel,
           viewFactory: viewFactory,
           suppressBind: true,
           host: _this.element
@@ -56,13 +56,20 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
     };
 
     RouterView.prototype.swap = function swap(viewPortInstruction) {
-      viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.executionContext);
-      this.viewSlot.swap(viewPortInstruction.behavior.view);
+      var _this2 = this;
 
-      if (this.view) {
-        this.view.unbind();
+      var removeResponse = this.viewSlot.removeAll(true);
+
+      if (removeResponse instanceof Promise) {
+        return removeResponse.then(function () {
+          viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.bindingContext);
+          _this2.viewSlot.add(viewPortInstruction.behavior.view);
+          _this2.view = viewPortInstruction.behavior.view;
+        });
       }
 
+      viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.bindingContext);
+      this.viewSlot.add(viewPortInstruction.behavior.view);
       this.view = viewPortInstruction.behavior.view;
     };
 

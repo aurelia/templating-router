@@ -16,6 +16,7 @@ System.config({
   map: {
     "aurelia-dependency-injection": "github:aurelia/dependency-injection@0.10.0",
     "aurelia-metadata": "github:aurelia/metadata@0.8.0",
+    "aurelia-pal": "github:aurelia/pal@0.1.10",
     "aurelia-path": "github:aurelia/path@0.9.0",
     "aurelia-router": "github:aurelia/router@0.12.0",
     "aurelia-templating": "github:aurelia/templating@0.15.0",

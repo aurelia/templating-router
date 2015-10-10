@@ -2,10 +2,11 @@ import {Container, inject} from 'aurelia-dependency-injection';
 import {ViewSlot, ViewStrategy, customElement, noView, BehaviorInstruction} from 'aurelia-templating';
 import {Router} from 'aurelia-router';
 import {Origin} from 'aurelia-metadata';
+import {DOM} from 'aurelia-pal';
 
 @customElement('router-view')
 @noView
-@inject(Element, Container, ViewSlot, Router)
+@inject(DOM.Element, Container, ViewSlot, Router)
 export class RouterView {
   constructor(element, container, viewSlot, router) {
     this.element = element;

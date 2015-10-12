@@ -38,7 +38,7 @@ export class RouterView {
     }
 
     return metadata.load(childContainer, viewModelResource.value, viewStrategy, true).then(viewFactory => {
-      viewPortInstruction.behavior = metadata.create(childContainer,
+      viewPortInstruction.controller = metadata.create(childContainer,
         BehaviorInstruction.dynamic(
           this.element,
           viewModel,
@@ -59,14 +59,14 @@ export class RouterView {
 
     if (removeResponse instanceof Promise) {
       return removeResponse.then(() => {
-        viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.bindingContext);
-        this.viewSlot.add(viewPortInstruction.behavior.view);
-        this.view = viewPortInstruction.behavior.view;
+        viewPortInstruction.controller.view.bind(viewPortInstruction.controller.model);
+        this.viewSlot.add(viewPortInstruction.controller.view);
+        this.view = viewPortInstruction.controller.view;
       });
     }
 
-    viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.bindingContext);
-    this.viewSlot.add(viewPortInstruction.behavior.view);
-    this.view = viewPortInstruction.behavior.view;
+    viewPortInstruction.controller.view.bind(viewPortInstruction.controller.model);
+    this.viewSlot.add(viewPortInstruction.controller.view);
+    this.view = viewPortInstruction.controller.view;
   }
 }

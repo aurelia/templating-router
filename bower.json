@@ -1,6 +1,6 @@
 {
   "name": "aurelia-templating-router",
-  "version": "0.16.1",
+  "version": "0.17.0",
   "description": "An implementation of the RouteLoader interface for use with the router module. Also contains a custom element that allows the templating engine to display the current route.",
   "keywords": [
     "aurelia",
@@ -17,10 +17,11 @@
     "url": "http://github.com/aurelia/templating-router"
   },
   "dependencies": {
-    "aurelia-dependency-injection": "^0.10.0",
-    "aurelia-metadata": "^0.8.0",
-    "aurelia-path": "^0.9.0",
-    "aurelia-router": "^0.12.0",
-    "aurelia-templating": "^0.15.0"
+    "aurelia-dependency-injection": "^0.11.0",
+    "aurelia-metadata": "^0.9.0",
+    "aurelia-pal": "^0.2.0",
+    "aurelia-path": "^0.10.0",
+    "aurelia-router": "^0.13.0",
+    "aurelia-templating": "^0.16.0"
   }
 }

@@ -1,7 +1,7 @@
-System.register(['aurelia-templating', 'aurelia-dependency-injection', 'aurelia-router'], function (_export) {
+System.register(['aurelia-templating', 'aurelia-dependency-injection', 'aurelia-router', 'aurelia-pal'], function (_export) {
   'use strict';
 
-  var customAttribute, bindable, inject, Router, RouteHref;
+  var customAttribute, bindable, inject, Router, DOM, RouteHref;
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
@@ -13,6 +13,8 @@ System.register(['aurelia-templating', 'aurelia-dependency-injection', 'aurelia-
       inject = _aureliaDependencyInjection.inject;
     }, function (_aureliaRouter) {
       Router = _aureliaRouter.Router;
+    }, function (_aureliaPal) {
+      DOM = _aureliaPal.DOM;
     }],
     execute: function () {
       RouteHref = (function () {
@@ -45,7 +47,7 @@ System.register(['aurelia-templating', 'aurelia-dependency-injection', 'aurelia-
         };
 
         var _RouteHref = RouteHref;
-        RouteHref = inject(Router, Element)(RouteHref) || RouteHref;
+        RouteHref = inject(Router, DOM.Element)(RouteHref) || RouteHref;
         RouteHref = bindable({ name: 'attribute', defaultValue: 'href' })(RouteHref) || RouteHref;
         RouteHref = bindable({ name: 'params', changeHandler: 'processChange' })(RouteHref) || RouteHref;
         RouteHref = bindable({ name: 'route', changeHandler: 'processChange' })(RouteHref) || RouteHref;

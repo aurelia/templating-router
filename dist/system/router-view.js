@@ -1,7 +1,7 @@
-System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-router', 'aurelia-metadata'], function (_export) {
+System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-router', 'aurelia-metadata', 'aurelia-pal'], function (_export) {
   'use strict';
 
-  var Container, inject, ViewSlot, ViewStrategy, customElement, noView, BehaviorInstruction, Router, Origin, RouterView;
+  var Container, inject, ViewSlot, ViewStrategy, customElement, noView, BehaviorInstruction, Router, Origin, DOM, RouterView;
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
@@ -19,6 +19,8 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
       Router = _aureliaRouter.Router;
     }, function (_aureliaMetadata) {
       Origin = _aureliaMetadata.Origin;
+    }, function (_aureliaPal) {
+      DOM = _aureliaPal.DOM;
     }],
     execute: function () {
       RouterView = (function () {
@@ -56,7 +58,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
           }
 
           return metadata.load(childContainer, viewModelResource.value, viewStrategy, true).then(function (viewFactory) {
-            viewPortInstruction.behavior = metadata.create(childContainer, BehaviorInstruction.dynamic(_this.element, viewModel, viewFactory));
+            viewPortInstruction.controller = metadata.create(childContainer, BehaviorInstruction.dynamic(_this.element, viewModel, viewFactory));
 
             if (waitToSwap) {
               return;
@@ -73,19 +75,19 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
 
           if (removeResponse instanceof Promise) {
             return removeResponse.then(function () {
-              viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.bindingContext);
-              _this2.viewSlot.add(viewPortInstruction.behavior.view);
-              _this2.view = viewPortInstruction.behavior.view;
+              viewPortInstruction.controller.view.bind(viewPortInstruction.controller.model);
+              _this2.viewSlot.add(viewPortInstruction.controller.view);
+              _this2.view = viewPortInstruction.controller.view;
             });
           }
 
-          viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.bindingContext);
-          this.viewSlot.add(viewPortInstruction.behavior.view);
-          this.view = viewPortInstruction.behavior.view;
+          viewPortInstruction.controller.view.bind(viewPortInstruction.controller.model);
+          this.viewSlot.add(viewPortInstruction.controller.view);
+          this.view = viewPortInstruction.controller.view;
         };
 
         var _RouterView = RouterView;
-        RouterView = inject(Element, Container, ViewSlot, Router)(RouterView) || RouterView;
+        RouterView = inject(DOM.Element, Container, ViewSlot, Router)(RouterView) || RouterView;
         RouterView = noView(RouterView) || RouterView;
         RouterView = customElement('router-view')(RouterView) || RouterView;
         return RouterView;

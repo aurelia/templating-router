@@ -12,6 +12,8 @@ var _aureliaRouter = require('aurelia-router');
 
 var _aureliaMetadata = require('aurelia-metadata');
 
+var _aureliaPal = require('aurelia-pal');
+
 var RouterView = (function () {
   function RouterView(element, container, viewSlot, router) {
     _classCallCheck(this, _RouterView);
@@ -47,7 +49,7 @@ var RouterView = (function () {
     }
 
     return metadata.load(childContainer, viewModelResource.value, viewStrategy, true).then(function (viewFactory) {
-      viewPortInstruction.behavior = metadata.create(childContainer, _aureliaTemplating.BehaviorInstruction.dynamic(_this.element, viewModel, viewFactory));
+      viewPortInstruction.controller = metadata.create(childContainer, _aureliaTemplating.BehaviorInstruction.dynamic(_this.element, viewModel, viewFactory));
 
       if (waitToSwap) {
         return;
@@ -64,19 +66,19 @@ var RouterView = (function () {
 
     if (removeResponse instanceof Promise) {
       return removeResponse.then(function () {
-        viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.bindingContext);
-        _this2.viewSlot.add(viewPortInstruction.behavior.view);
-        _this2.view = viewPortInstruction.behavior.view;
+        viewPortInstruction.controller.view.bind(viewPortInstruction.controller.model);
+        _this2.viewSlot.add(viewPortInstruction.controller.view);
+        _this2.view = viewPortInstruction.controller.view;
       });
     }
 
-    viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.bindingContext);
-    this.viewSlot.add(viewPortInstruction.behavior.view);
-    this.view = viewPortInstruction.behavior.view;
+    viewPortInstruction.controller.view.bind(viewPortInstruction.controller.model);
+    this.viewSlot.add(viewPortInstruction.controller.view);
+    this.view = viewPortInstruction.controller.view;
   };
 
   var _RouterView = RouterView;
-  RouterView = _aureliaDependencyInjection.inject(Element, _aureliaDependencyInjection.Container, _aureliaTemplating.ViewSlot, _aureliaRouter.Router)(RouterView) || RouterView;
+  RouterView = _aureliaDependencyInjection.inject(_aureliaPal.DOM.Element, _aureliaDependencyInjection.Container, _aureliaTemplating.ViewSlot, _aureliaRouter.Router)(RouterView) || RouterView;
   RouterView = _aureliaTemplating.noView(RouterView) || RouterView;
   RouterView = _aureliaTemplating.customElement('router-view')(RouterView) || RouterView;
   return RouterView;

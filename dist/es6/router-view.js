@@ -2,10 +2,11 @@ import {Container, inject} from 'aurelia-dependency-injection';
 import {ViewSlot, ViewStrategy, customElement, noView, BehaviorInstruction} from 'aurelia-templating';
 import {Router} from 'aurelia-router';
 import {Origin} from 'aurelia-metadata';
+import {DOM} from 'aurelia-pal';
 
 @customElement('router-view')
 @noView
-@inject(Element, Container, ViewSlot, Router)
+@inject(DOM.Element, Container, ViewSlot, Router)
 export class RouterView {
   constructor(element, container, viewSlot, router) {
     this.element = element;
@@ -37,7 +38,7 @@ export class RouterView {
     }
 
     return metadata.load(childContainer, viewModelResource.value, viewStrategy, true).then(viewFactory => {
-      viewPortInstruction.behavior = metadata.create(childContainer,
+      viewPortInstruction.controller = metadata.create(childContainer,
         BehaviorInstruction.dynamic(
           this.element,
           viewModel,
@@ -58,14 +59,14 @@ export class RouterView {
 
     if (removeResponse instanceof Promise) {
       return removeResponse.then(() => {
-        viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.bindingContext);
-        this.viewSlot.add(viewPortInstruction.behavior.view);
-        this.view = viewPortInstruction.behavior.view;
+        viewPortInstruction.controller.view.bind(viewPortInstruction.controller.model);
+        this.viewSlot.add(viewPortInstruction.controller.view);
+        this.view = viewPortInstruction.controller.view;
       });
     }
 
-    viewPortInstruction.behavior.view.bind(viewPortInstruction.behavior.bindingContext);
-    this.viewSlot.add(viewPortInstruction.behavior.view);
-    this.view = viewPortInstruction.behavior.view;
+    viewPortInstruction.controller.view.bind(viewPortInstruction.controller.model);
+    this.viewSlot.add(viewPortInstruction.controller.view);
+    this.view = viewPortInstruction.controller.view;
   }
 }

@@ -10,6 +10,8 @@ var _aureliaDependencyInjection = require('aurelia-dependency-injection');
 
 var _aureliaRouter = require('aurelia-router');
 
+var _aureliaPal = require('aurelia-pal');
+
 var RouteHref = (function () {
   function RouteHref(router, element) {
     _classCallCheck(this, _RouteHref);
@@ -40,7 +42,7 @@ var RouteHref = (function () {
   };
 
   var _RouteHref = RouteHref;
-  RouteHref = _aureliaDependencyInjection.inject(_aureliaRouter.Router, Element)(RouteHref) || RouteHref;
+  RouteHref = _aureliaDependencyInjection.inject(_aureliaRouter.Router, _aureliaPal.DOM.Element)(RouteHref) || RouteHref;
   RouteHref = _aureliaTemplating.bindable({ name: 'attribute', defaultValue: 'href' })(RouteHref) || RouteHref;
   RouteHref = _aureliaTemplating.bindable({ name: 'params', changeHandler: 'processChange' })(RouteHref) || RouteHref;
   RouteHref = _aureliaTemplating.bindable({ name: 'route', changeHandler: 'processChange' })(RouteHref) || RouteHref;

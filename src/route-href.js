@@ -15,7 +15,12 @@ export class RouteHref {
   }
 
   bind() {
+    this.isActive = true;
     this.processChange();
+  }
+
+  unbind() {
+    this.isActive = false;
   }
 
   attributeChanged(value, previous) {
@@ -28,6 +33,10 @@ export class RouteHref {
 
   processChange() {
     this.router.ensureConfigured().then(() => {
+      if (!this.isActive) {
+        return;
+      }
+
       let href = this.router.generate(this.route, this.params);
       this.element.setAttribute(this.attribute, href);
     });

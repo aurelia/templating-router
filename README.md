@@ -14,6 +14,7 @@ This library is part of the [Aurelia](http://www.aurelia.io/) platform and conta
 * [aurelia-dependency-injection](https://github.com/aurelia/dependency-injection)
 * [aurelia-path](https://github.com/aurelia/path)
 * [aurelia-metadata](https://github.com/aurelia/metadata)
+* [aurelia-logging](https://github.com/aurelia/logging)
 
 ## Used By
 

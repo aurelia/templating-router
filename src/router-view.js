@@ -24,7 +24,7 @@ export class RouterView {
     let component = viewPortInstruction.component;
     let viewStrategy = component.view;
     let childContainer = component.childContainer;
-    let viewModel = component.bindingContext;
+    let viewModel = component.viewModel;
     let viewModelResource = component.viewModelResource;
     let metadata = viewModelResource.metadata;
 

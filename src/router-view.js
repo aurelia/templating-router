@@ -59,13 +59,13 @@ export class RouterView {
 
     if (removeResponse instanceof Promise) {
       return removeResponse.then(() => {
-        viewPortInstruction.controller.view.bind(viewPortInstruction.controller.model);
+        viewPortInstruction.controller.bind(viewPortInstruction.controller.view);
         this.viewSlot.add(viewPortInstruction.controller.view);
         this.view = viewPortInstruction.controller.view;
       });
     }
 
-    viewPortInstruction.controller.view.bind(viewPortInstruction.controller.model);
+    viewPortInstruction.controller.bind(viewPortInstruction.controller.view);
     this.viewSlot.add(viewPortInstruction.controller.view);
     this.view = viewPortInstruction.controller.view;
   }

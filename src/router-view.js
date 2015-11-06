@@ -33,7 +33,7 @@ export class RouterView {
       viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
     }
 
-    return metadata.load(childContainer, viewModelResource.value, viewStrategy, true).then(viewFactory => {
+    return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true).then(viewFactory => {
       viewPortInstruction.controller = metadata.create(childContainer,
         BehaviorInstruction.dynamic(
           this.element,

@@ -1,13 +1,34 @@
 import {Container, inject} from 'aurelia-dependency-injection';
 import {ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction} from 'aurelia-templating';
+import {bindable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {Origin} from 'aurelia-metadata';
 import {DOM} from 'aurelia-pal';
+
+var timingFunctions = {
+  // animate the next view in before removing the current view;
+  before(viewSlot, view, callback) {
+    let promised = callback();
+    if (view) promised ? promised.then(()=> viewSlot.remove(view)) : viewSlot.remove(view);
+  },
+  // animate the next view at the same time the current view is removed
+  with(viewSlot, view, callback) {
+    view && viewSlot.remove(view);
+    callback();
+  },
+  // animate the next view in after the current view has been removed
+  after(viewSlot, view, callback) {
+    let promised = viewSlot.removeAll(true);
+    promised ? promised.then(callback) : callback();
+  }
+};
 
 @customElement('router-view')
 @noView
 @inject(DOM.Element, Container, ViewSlot, Router, ViewLocator)
 export class RouterView {
+  @bindable animationTiming = 'after';
+
   constructor(element, container, viewSlot, router, viewLocator) {
     this.element = element;
     this.container = container;
@@ -51,18 +72,27 @@ export class RouterView {
   }
 
   swap(viewPortInstruction) {
-    let removeResponse = this.viewSlot.removeAll(true);
 
-    if (removeResponse instanceof Promise) {
-      return removeResponse.then(() => {
-        viewPortInstruction.controller.automate();
-        this.viewSlot.add(viewPortInstruction.controller.view);
-        this.view = viewPortInstruction.controller.view;
-      });
+    let self = this;
+    let view = this.view;
+    let viewSlot = this.viewSlot;
+    let timingFunction = this.animationTiming in timingFunctions
+      ? timingFunctions[this.animationTiming]
+      : timingFunctions.after;
+
+    if (timingFunction) {
+      timingFunction(viewSlot, view, next);
     }
 
-    viewPortInstruction.controller.automate();
-    this.viewSlot.add(viewPortInstruction.controller.view);
     this.view = viewPortInstruction.controller.view;
+
+    /**
+     * Function(): next
+     * @description bind viewModel, and add view to this viewSlot
+     */
+    function next() {
+      viewPortInstruction.controller.view.bind(viewPortInstruction.controller.model);
+      viewSlot.add(viewPortInstruction.controller.view);
+    }
   }
 }

@@ -91,7 +91,7 @@ export class RouterView {
      * @description bind viewModel, and add view to this viewSlot
      */
     function next() {
-      viewPortInstruction.controller.view.bind(viewPortInstruction.controller.model);
+      viewPortInstruction.controller.automate();
       viewSlot.add(viewPortInstruction.controller.view);
     }
   }

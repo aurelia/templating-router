@@ -27,7 +27,7 @@ const swapStrategies = {
 @noView
 @inject(DOM.Element, Container, ViewSlot, Router, ViewLocator)
 export class RouterView {
-  @bindable viewSwap = swapStrategies[swapStrategies.default];
+  @bindable swapOrder = swapStrategies[swapStrategies.default];
 
   constructor(element, container, viewSlot, router, viewLocator) {
     this.element = element;
@@ -74,8 +74,8 @@ export class RouterView {
   swap(viewPortInstruction) {
     let view = this.view;
     let viewSlot = this.viewSlot;
-    let swapStrategy = this.swapView in swapStrategies
-      ? swapStrategies[this.swapView]
+    let swapStrategy = this.swapOrder in swapStrategies
+      ? swapStrategies[this.swapOrder]
       : swapStrategies[swapStrategies.default];
 
     if (swapStrategy) {

@@ -4,7 +4,7 @@ import {Router} from 'aurelia-router';
 import {Origin} from 'aurelia-metadata';
 import {DOM} from 'aurelia-pal';
 
-const timingFunctions = {
+const swapStrategies = {
   default: 'before',
   // animate the next view in before removing the current view;
   before(viewSlot, view, callback) {
@@ -27,7 +27,7 @@ const timingFunctions = {
 @noView
 @inject(DOM.Element, Container, ViewSlot, Router, ViewLocator)
 export class RouterView {
-  @bindable animationTiming = timingFunctions[timingFunctions.default];
+  @bindable viewSwap = swapStrategies[swapStrategies.default];
 
   constructor(element, container, viewSlot, router, viewLocator) {
     this.element = element;
@@ -74,12 +74,12 @@ export class RouterView {
   swap(viewPortInstruction) {
     let view = this.view;
     let viewSlot = this.viewSlot;
-    let timingFunction = this.animationTiming in timingFunctions
-      ? timingFunctions[this.animationTiming]
-      : timingFunctions.after;
+    let swapStrategy = this.swapView in swapStrategies
+      ? swapStrategies[this.swapView]
+      : swapStrategies[swapStrategies.default];
 
-    if (timingFunction) {
-      timingFunction(viewSlot, view, next);
+    if (swapStrategy) {
+      swapStrategy(viewSlot, view, next);
     }
 
     this.view = viewPortInstruction.controller.view;

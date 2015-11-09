@@ -1,15 +1,14 @@
 import {Container, inject} from 'aurelia-dependency-injection';
-import {ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction} from 'aurelia-templating';
-import {bindable} from 'aurelia-framework';
+import {ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable} from 'aurelia-templating';
 import {Router} from 'aurelia-router';
 import {Origin} from 'aurelia-metadata';
 import {DOM} from 'aurelia-pal';
 
-var timingFunctions = {
+const timingFunctions = {
   // animate the next view in before removing the current view;
   before(viewSlot, view, callback) {
     let promised = callback();
-    if (view) promised ? promised.then(()=> viewSlot.remove(view)) : viewSlot.remove(view);
+    Promise.resolve(promised).then(()=> viewSlot.remove(view));
   },
   // animate the next view at the same time the current view is removed
   with(viewSlot, view, callback) {
@@ -19,7 +18,7 @@ var timingFunctions = {
   // animate the next view in after the current view has been removed
   after(viewSlot, view, callback) {
     let promised = viewSlot.removeAll(true);
-    promised ? promised.then(callback) : callback();
+    Promise.resolve(promised).then(callback);
   }
 };
 
@@ -72,8 +71,6 @@ export class RouterView {
   }
 
   swap(viewPortInstruction) {
-
-    let self = this;
     let view = this.view;
     let viewSlot = this.viewSlot;
     let timingFunction = this.animationTiming in timingFunctions
@@ -86,13 +83,10 @@ export class RouterView {
 
     this.view = viewPortInstruction.controller.view;
 
-    /**
-     * Function(): next
-     * @description bind viewModel, and add view to this viewSlot
-     */
     function next() {
       viewPortInstruction.controller.automate();
       viewSlot.add(viewPortInstruction.controller.view);
     }
   }
+
 }

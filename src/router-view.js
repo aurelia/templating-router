@@ -5,6 +5,7 @@ import {Origin} from 'aurelia-metadata';
 import {DOM} from 'aurelia-pal';
 
 const timingFunctions = {
+  default: 'before',
   // animate the next view in before removing the current view;
   before(viewSlot, view, callback) {
     let promised = callback();
@@ -26,7 +27,7 @@ const timingFunctions = {
 @noView
 @inject(DOM.Element, Container, ViewSlot, Router, ViewLocator)
 export class RouterView {
-  @bindable animationTiming = 'after';
+  @bindable animationTiming = timingFunctions[timingFunctions.default];
 
   constructor(element, container, viewSlot, router, viewLocator) {
     this.element = element;

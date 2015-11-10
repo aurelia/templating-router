@@ -4,6 +4,7 @@ System.config({
   babelOptions: {
     "optional": [
       "runtime",
+      "es7.classProperties",
       "es7.decorators"
     ]
   },

@@ -14,6 +14,7 @@ module.exports = {
   stage:2,
   loose: "all",
   optional: [
+    "es7.classProperties",
     "es7.decorators"
   ]
 };

@@ -9,7 +9,10 @@ const swapStrategies = {
   // animate the next view in before removing the current view;
   before(viewSlot, view, callback) {
     let promised = callback();
-    Promise.resolve(promised).then(()=> viewSlot.remove(view));
+    let promise = Promise.resolve(promised);
+    if (view !== undefined) {
+      promise.then(() => viewSlot.remove(view));
+    }
   },
   // animate the next view at the same time the current view is removed
   with(viewSlot, view, callback) {

@@ -1,3 +1,30 @@
+## 0.18.0 (2015-11-10)
+
+
+#### Bug Fixes
+
+* **all:** utilize the viewModel property instead of bindingContext ([7e4590fe](http://github.com/aurelia/templating-router/commit/7e4590fe25b5899754c36881cea2a0dbd89dbc29))
+* **route-href:** ensure the component is bound before processing changes ([f7612d6c](http://github.com/aurelia/templating-router/commit/f7612d6ce488b4318e6ab9c63d06eacb39de8ab7))
+* **route-loader:** update to latest composition engine ([b9a8b4bb](http://github.com/aurelia/templating-router/commit/b9a8b4bb328345c57dc4c7cdcbd94236b40f7609))
+* **router-view:**
+  * update to latest templating resource load api ([aeb200d0](http://github.com/aurelia/templating-router/commit/aeb200d0520fbcc0f1376463bc40361b4e28f414))
+  * update to use view locator ([77db54d1](http://github.com/aurelia/templating-router/commit/77db54d12325dd83bc0ed1e50b3da28f3f6794c3))
+  * use the new Controller#automate api ([b0db6464](http://github.com/aurelia/templating-router/commit/b0db64649844726b507af69cbe1782fba810b5d0))
+  * correctly bind controller for consistent binding order ([2f50e532](http://github.com/aurelia/templating-router/commit/2f50e5325d7f6f0b2154548b2afad8d479f99a4f))
+* **swapStrategies:** handle undefined view ([b2818021](http://github.com/aurelia/templating-router/commit/b2818021d7746b1e64a39eaf03ad3d4617da4051))
+
+
+#### Features
+
+* **animation-timing:**
+  * Re-apply viewInstruction controller automat ([d2d14bda](http://github.com/aurelia/templating-router/commit/d2d14bda62d1dc077a8e1d801765899ec49cd5ed))
+  * Apply animationTimings to the router-view before|with|after ([5e504193](http://github.com/aurelia/templating-router/commit/5e5041933f038e6cc65b894746c372be87e47ebd))
+* **default-animation-timing:** Set the default animation-timing function to 'before' ([9a2e530e](http://github.com/aurelia/templating-router/commit/9a2e530eb9c9cf0447bb713ead94a1d5841b97c5))
+* **route-href:** report errors via aurelia-logging ([ac8dc0fb](http://github.com/aurelia/templating-router/commit/ac8dc0fb9ff03978f6dbe63b39b379505bd7050c))
+* **swap-order:** Rename Bindable animationTiming to swapOrder ([2be906a9](http://github.com/aurelia/templating-router/commit/2be906a93636a01db2f8a1d2cdd4e5e6337d6758))
+* **swap-view:** Rename Bindable Property form Animation-Timing to Swap-View ([0a849540](http://github.com/aurelia/templating-router/commit/0a8495408e6aa4c692ddd7b6634e39f949a68495))
+
+
 ## 0.17.0 (2015-10-13)
 
 

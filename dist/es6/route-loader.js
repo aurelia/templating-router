@@ -16,7 +16,8 @@ export class TemplatingRouteLoader extends RouteLoader {
     let instruction = {
       viewModel: relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId),
       childContainer: childContainer,
-      view: config.view || config.viewStrategy
+      view: config.view || config.viewStrategy,
+      router: router
     };
 
     childContainer.getChildRouter = function() {
@@ -29,10 +30,6 @@ export class TemplatingRouteLoader extends RouteLoader {
       return childContainer.get(Router);
     };
 
-    return this.compositionEngine.createViewModel(instruction).then(ins => {
-      ins.bindingContext = ins.viewModel;
-      ins.router = router;
-      return ins;
-    });
+    return this.compositionEngine.ensureViewModel(instruction);
   }
 }

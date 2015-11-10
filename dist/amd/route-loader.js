@@ -22,7 +22,8 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
       var instruction = {
         viewModel: _aureliaPath.relativeToFile(config.moduleId, _aureliaMetadata.Origin.get(router.container.viewModel.constructor).moduleId),
         childContainer: childContainer,
-        view: config.view || config.viewStrategy
+        view: config.view || config.viewStrategy,
+        router: router
       };
 
       childContainer.getChildRouter = function () {
@@ -35,11 +36,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
         return childContainer.get(_aureliaRouter.Router);
       };
 
-      return this.compositionEngine.createViewModel(instruction).then(function (ins) {
-        ins.bindingContext = ins.viewModel;
-        ins.router = router;
-        return ins;
-      });
+      return this.compositionEngine.ensureViewModel(instruction);
     };
 
     var _TemplatingRouteLoader = TemplatingRouteLoader;

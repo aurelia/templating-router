@@ -1,18 +1,43 @@
 import {Container, inject} from 'aurelia-dependency-injection';
-import {ViewSlot, ViewStrategy, customElement, noView, BehaviorInstruction} from 'aurelia-templating';
+import {ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable} from 'aurelia-templating';
 import {Router} from 'aurelia-router';
 import {Origin} from 'aurelia-metadata';
 import {DOM} from 'aurelia-pal';
 
+const swapStrategies = {
+  default: 'before',
+  // animate the next view in before removing the current view;
+  before(viewSlot, view, callback) {
+    let promised = callback();
+    let promise = Promise.resolve(promised);
+    if (view !== undefined) {
+      promise.then(() => viewSlot.remove(view));
+    }
+  },
+  // animate the next view at the same time the current view is removed
+  with(viewSlot, view, callback) {
+    view && viewSlot.remove(view);
+    callback();
+  },
+  // animate the next view in after the current view has been removed
+  after(viewSlot, view, callback) {
+    let promised = viewSlot.removeAll(true);
+    Promise.resolve(promised).then(callback);
+  }
+};
+
 @customElement('router-view')
 @noView
-@inject(DOM.Element, Container, ViewSlot, Router)
+@inject(DOM.Element, Container, ViewSlot, Router, ViewLocator)
 export class RouterView {
-  constructor(element, container, viewSlot, router) {
+  @bindable swapOrder = swapStrategies[swapStrategies.default];
+
+  constructor(element, container, viewSlot, router, viewLocator) {
     this.element = element;
     this.container = container;
     this.viewSlot = viewSlot;
     this.router = router;
+    this.viewLocator = viewLocator;
     this.router.registerViewPort(this, this.element.getAttribute('name'));
   }
 
@@ -22,22 +47,17 @@ export class RouterView {
 
   process(viewPortInstruction, waitToSwap) {
     let component = viewPortInstruction.component;
-    let viewStrategy = component.view;
     let childContainer = component.childContainer;
-    let viewModel = component.bindingContext;
+    let viewModel = component.viewModel;
     let viewModelResource = component.viewModelResource;
     let metadata = viewModelResource.metadata;
 
-    if (!viewStrategy && 'getViewStrategy' in viewModel) {
-      viewStrategy = viewModel.getViewStrategy();
-    }
-
+    let viewStrategy = this.viewLocator.getViewStrategy(component.view || viewModel);
     if (viewStrategy) {
-      viewStrategy = ViewStrategy.normalize(viewStrategy);
       viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
     }
 
-    return metadata.load(childContainer, viewModelResource.value, viewStrategy, true).then(viewFactory => {
+    return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true).then(viewFactory => {
       viewPortInstruction.controller = metadata.create(childContainer,
         BehaviorInstruction.dynamic(
           this.element,
@@ -55,18 +75,22 @@ export class RouterView {
   }
 
   swap(viewPortInstruction) {
-    let removeResponse = this.viewSlot.removeAll(true);
+    let view = this.view;
+    let viewSlot = this.viewSlot;
+    let swapStrategy = this.swapOrder in swapStrategies
+      ? swapStrategies[this.swapOrder]
+      : swapStrategies[swapStrategies.default];
 
-    if (removeResponse instanceof Promise) {
-      return removeResponse.then(() => {
-        viewPortInstruction.controller.view.bind(viewPortInstruction.controller.model);
-        this.viewSlot.add(viewPortInstruction.controller.view);
-        this.view = viewPortInstruction.controller.view;
-      });
+    if (swapStrategy) {
+      swapStrategy(viewSlot, view, next);
     }
 
-    viewPortInstruction.controller.view.bind(viewPortInstruction.controller.model);
-    this.viewSlot.add(viewPortInstruction.controller.view);
     this.view = viewPortInstruction.controller.view;
+
+    function next() {
+      viewPortInstruction.controller.automate();
+      viewSlot.add(viewPortInstruction.controller.view);
+    }
   }
+
 }

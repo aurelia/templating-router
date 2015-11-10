@@ -1,7 +1,7 @@
-System.register(['aurelia-templating', 'aurelia-dependency-injection', 'aurelia-router', 'aurelia-pal'], function (_export) {
+System.register(['aurelia-templating', 'aurelia-dependency-injection', 'aurelia-router', 'aurelia-pal', 'aurelia-logging'], function (_export) {
   'use strict';
 
-  var customAttribute, bindable, inject, Router, DOM, RouteHref;
+  var customAttribute, bindable, inject, Router, DOM, LogManager, logger, RouteHref;
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
@@ -15,8 +15,12 @@ System.register(['aurelia-templating', 'aurelia-dependency-injection', 'aurelia-
       Router = _aureliaRouter.Router;
     }, function (_aureliaPal) {
       DOM = _aureliaPal.DOM;
+    }, function (_aureliaLogging) {
+      LogManager = _aureliaLogging;
     }],
     execute: function () {
+      logger = LogManager.getLogger('route-href');
+
       RouteHref = (function () {
         function RouteHref(router, element) {
           _classCallCheck(this, _RouteHref);
@@ -26,7 +30,12 @@ System.register(['aurelia-templating', 'aurelia-dependency-injection', 'aurelia-
         }
 
         RouteHref.prototype.bind = function bind() {
+          this.isActive = true;
           this.processChange();
+        };
+
+        RouteHref.prototype.unbind = function unbind() {
+          this.isActive = false;
         };
 
         RouteHref.prototype.attributeChanged = function attributeChanged(value, previous) {
@@ -40,9 +49,15 @@ System.register(['aurelia-templating', 'aurelia-dependency-injection', 'aurelia-
         RouteHref.prototype.processChange = function processChange() {
           var _this = this;
 
-          this.router.ensureConfigured().then(function () {
+          return this.router.ensureConfigured().then(function () {
+            if (!_this.isActive) {
+              return;
+            }
+
             var href = _this.router.generate(_this.route, _this.params);
             _this.element.setAttribute(_this.attribute, href);
+          })['catch'](function (reason) {
+            logger.error(reason);
           });
         };
 

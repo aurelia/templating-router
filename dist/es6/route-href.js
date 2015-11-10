@@ -2,6 +2,9 @@ import {customAttribute, bindable} from 'aurelia-templating';
 import {inject} from 'aurelia-dependency-injection';
 import {Router} from 'aurelia-router';
 import {DOM} from 'aurelia-pal';
+import * as LogManager from 'aurelia-logging';
+
+const logger = LogManager.getLogger('route-href');
 
 @customAttribute('route-href')
 @bindable({name: 'route', changeHandler: 'processChange'})
@@ -15,7 +18,12 @@ export class RouteHref {
   }
 
   bind() {
+    this.isActive = true;
     this.processChange();
+  }
+
+  unbind() {
+    this.isActive = false;
   }
 
   attributeChanged(value, previous) {
@@ -27,9 +35,17 @@ export class RouteHref {
   }
 
   processChange() {
-    this.router.ensureConfigured().then(() => {
-      let href = this.router.generate(this.route, this.params);
-      this.element.setAttribute(this.attribute, href);
-    });
+    return this.router.ensureConfigured()
+      .then(() => {
+        if (!this.isActive) {
+          return;
+        }
+
+        let href = this.router.generate(this.route, this.params);
+        this.element.setAttribute(this.attribute, href);
+      })
+      .catch(reason => {
+        logger.error(reason);
+      });
   }
 }

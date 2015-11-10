@@ -1,9 +1,11 @@
-define(['exports', 'aurelia-templating', 'aurelia-dependency-injection', 'aurelia-router', 'aurelia-pal'], function (exports, _aureliaTemplating, _aureliaDependencyInjection, _aureliaRouter, _aureliaPal) {
+define(['exports', 'aurelia-templating', 'aurelia-dependency-injection', 'aurelia-router', 'aurelia-pal', 'aurelia-logging'], function (exports, _aureliaTemplating, _aureliaDependencyInjection, _aureliaRouter, _aureliaPal, _aureliaLogging) {
   'use strict';
 
   exports.__esModule = true;
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+  var logger = _aureliaLogging.getLogger('route-href');
 
   var RouteHref = (function () {
     function RouteHref(router, element) {
@@ -14,7 +16,12 @@ define(['exports', 'aurelia-templating', 'aurelia-dependency-injection', 'aureli
     }
 
     RouteHref.prototype.bind = function bind() {
+      this.isActive = true;
       this.processChange();
+    };
+
+    RouteHref.prototype.unbind = function unbind() {
+      this.isActive = false;
     };
 
     RouteHref.prototype.attributeChanged = function attributeChanged(value, previous) {
@@ -28,9 +35,15 @@ define(['exports', 'aurelia-templating', 'aurelia-dependency-injection', 'aureli
     RouteHref.prototype.processChange = function processChange() {
       var _this = this;
 
-      this.router.ensureConfigured().then(function () {
+      return this.router.ensureConfigured().then(function () {
+        if (!_this.isActive) {
+          return;
+        }
+
         var href = _this.router.generate(_this.route, _this.params);
         _this.element.setAttribute(_this.attribute, href);
+      })['catch'](function (reason) {
+        logger.error(reason);
       });
     };
 

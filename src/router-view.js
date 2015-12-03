@@ -7,22 +7,26 @@ import {DOM} from 'aurelia-pal';
 const swapStrategies = {
   default: 'before',
   // animate the next view in before removing the current view;
-  before(viewSlot, view, callback) {
-    let promised = callback();
-    let promise = Promise.resolve(promised);
-    if (view !== undefined) {
-      promise.then(() => viewSlot.remove(view));
+  before(viewSlot, previousView, callback) {
+    let promise = Promise.resolve(callback());
+
+    if (previousView !== undefined) {
+      return promise.then(() => viewSlot.remove(previousView, true));
     }
+
+    return promise;
   },
   // animate the next view at the same time the current view is removed
-  with(viewSlot, view, callback) {
-    view && viewSlot.remove(view);
-    callback();
+  with(viewSlot, previousView, callback) {
+    if(previousView !== undefined) {
+      viewSlot.remove(previousView, true);
+    }
+
+    return callback();
   },
   // animate the next view in after the current view has been removed
-  after(viewSlot, view, callback) {
-    let promised = viewSlot.removeAll(true);
-    Promise.resolve(promised).then(callback);
+  after(viewSlot, previousView, callback) {
+    return Promise.resolve(viewSlot.removeAll(true)).then(callback);
   }
 };
 
@@ -75,22 +79,18 @@ export class RouterView {
   }
 
   swap(viewPortInstruction) {
-    let view = this.view;
+    let previousView = this.view;
     let viewSlot = this.viewSlot;
     let swapStrategy = this.swapOrder in swapStrategies
       ? swapStrategies[this.swapOrder]
       : swapStrategies[swapStrategies.default];
 
-    if (swapStrategy) {
-      swapStrategy(viewSlot, view, next);
-    }
-
+    swapStrategy(viewSlot, previousView, addNextView);
     this.view = viewPortInstruction.controller.view;
 
-    function next() {
+    function addNextView() {
       viewPortInstruction.controller.automate();
-      viewSlot.add(viewPortInstruction.controller.view);
+      return viewSlot.add(viewPortInstruction.controller.view);
     }
   }
-
 }

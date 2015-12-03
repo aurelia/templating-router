@@ -18,7 +18,7 @@ const swapStrategies = {
   },
   // animate the next view at the same time the current view is removed
   with(viewSlot, previousView, callback) {
-    if(previousView !== undefined) {
+    if (previousView !== undefined) {
       viewSlot.remove(previousView, true);
     }
 

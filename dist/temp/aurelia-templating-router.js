@@ -84,24 +84,28 @@ exports.RouteHref = RouteHref;
 var swapStrategies = {
   'default': 'before',
 
-  before: function before(viewSlot, view, callback) {
-    var promised = callback();
-    var promise = Promise.resolve(promised);
-    if (view !== undefined) {
-      promise.then(function () {
-        return viewSlot.remove(view);
+  before: function before(viewSlot, previousView, callback) {
+    var promise = Promise.resolve(callback());
+
+    if (previousView !== undefined) {
+      return promise.then(function () {
+        return viewSlot.remove(previousView, true);
       });
     }
+
+    return promise;
   },
 
-  'with': function _with(viewSlot, view, callback) {
-    view && viewSlot.remove(view);
-    callback();
+  'with': function _with(viewSlot, previousView, callback) {
+    if (previousView !== undefined) {
+      viewSlot.remove(previousView, true);
+    }
+
+    return callback();
   },
 
-  after: function after(viewSlot, view, callback) {
-    var promised = viewSlot.removeAll(true);
-    Promise.resolve(promised).then(callback);
+  after: function after(viewSlot, previousView, callback) {
+    return Promise.resolve(viewSlot.removeAll(true)).then(callback);
   }
 };
 
@@ -160,19 +164,16 @@ var RouterView = (function () {
   };
 
   RouterView.prototype.swap = function swap(viewPortInstruction) {
-    var view = this.view;
+    var previousView = this.view;
     var viewSlot = this.viewSlot;
     var swapStrategy = this.swapOrder in swapStrategies ? swapStrategies[this.swapOrder] : swapStrategies[swapStrategies['default']];
 
-    if (swapStrategy) {
-      swapStrategy(viewSlot, view, next);
-    }
-
+    swapStrategy(viewSlot, previousView, addNextView);
     this.view = viewPortInstruction.controller.view;
 
-    function next() {
+    function addNextView() {
       viewPortInstruction.controller.automate();
-      viewSlot.add(viewPortInstruction.controller.view);
+      return viewSlot.add(viewPortInstruction.controller.view);
     }
   };
 

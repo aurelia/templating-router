@@ -1,3 +1,11 @@
+## 1.0.0-beta.1.0.2 (2015-12-03)
+
+
+#### Bug Fixes
+
+* **router-view:** ensure unbind prev view ([a2197205](http://github.com/aurelia/templating-router/commit/a2197205e018f88778ac9d1afa2719429b0232db), closes [#16](http://github.com/aurelia/templating-router/issues/16))
+
+
 ## 1.0.0-beta.1.0.1 (2015-11-16)
 
 

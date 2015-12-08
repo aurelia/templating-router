@@ -5,7 +5,7 @@ import {Origin} from 'aurelia-metadata';
 import {DOM} from 'aurelia-pal';
 
 
-export class SwapStategies {
+class SwapStategies {
   static default = 'after';
 
   // animate the next view in before removing the current view;
@@ -31,20 +31,22 @@ export class SwapStategies {
   }
 }
 
+
+const swapStrategies = new SwapStategies();
+
 @customElement('router-view')
 @noView
-@inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, SwapStategies)
+@inject(DOM.Element, Container, ViewSlot, Router, ViewLocator)
 export class RouterView {
   @bindable swapOrder;
   defaultSwapOrder = SwapStrategies.default;
 
-  constructor(element, container, viewSlot, router, viewLocator, swapStrategies) {
+  constructor(element, container, viewSlot, router, viewLocator) {
     this.element = element;
     this.container = container;
     this.viewSlot = viewSlot;
     this.router = router;
     this.viewLocator = viewLocator;
-    this.swapStrategies = swapStrategies;
     this.router.registerViewPort(this, this.element.getAttribute('name'));
   }
 
@@ -86,11 +88,9 @@ export class RouterView {
     let viewSlot = this.viewSlot;
     let swapStrategy;
 
-    if (this.swapOrder in this.swapStrategies) {
-      swapStrategy = this.swapStrategies[this.swapOrder];
-    } else {
-      swapStrategy = this.swapStrategies[this.defaultSwapOrder];
-    }
+    swapStrategy = this.swapOrder in swapStrategies
+                 ? swapStrategies[this.swapOrder]
+                 : swapStrategies[this.defaultSwapOrder];
 
     swapStrategy(viewSlot, previousView, addNextView);
     this.view = viewPortInstruction.controller.view;

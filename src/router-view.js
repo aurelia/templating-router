@@ -4,44 +4,47 @@ import {Router} from 'aurelia-router';
 import {Origin} from 'aurelia-metadata';
 import {DOM} from 'aurelia-pal';
 
-const swapStrategies = {
-  default: 'before',
+
+export class SwapStategies {
+  static default = 'after';
+
   // animate the next view in before removing the current view;
   before(viewSlot, previousView, callback) {
     let promise = Promise.resolve(callback());
-
     if (previousView !== undefined) {
       return promise.then(() => viewSlot.remove(previousView, true));
     }
-
     return promise;
-  },
+  }
+
   // animate the next view at the same time the current view is removed
   with(viewSlot, previousView, callback) {
     if (previousView !== undefined) {
       viewSlot.remove(previousView, true);
     }
-
     return callback();
-  },
+  }
+
   // animate the next view in after the current view has been removed
   after(viewSlot, previousView, callback) {
     return Promise.resolve(viewSlot.removeAll(true)).then(callback);
   }
-};
+}
 
 @customElement('router-view')
 @noView
-@inject(DOM.Element, Container, ViewSlot, Router, ViewLocator)
+@inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, SwapStategies)
 export class RouterView {
-  @bindable swapOrder = swapStrategies[swapStrategies.default];
+  @bindable swapOrder;
+  defaultSwapOrder = SwapStrategies.default;
 
-  constructor(element, container, viewSlot, router, viewLocator) {
+  constructor(element, container, viewSlot, router, viewLocator, swapStrategies) {
     this.element = element;
     this.container = container;
     this.viewSlot = viewSlot;
     this.router = router;
     this.viewLocator = viewLocator;
+    this.swapStrategies = swapStrategies;
     this.router.registerViewPort(this, this.element.getAttribute('name'));
   }
 
@@ -81,9 +84,13 @@ export class RouterView {
   swap(viewPortInstruction) {
     let previousView = this.view;
     let viewSlot = this.viewSlot;
-    let swapStrategy = this.swapOrder in swapStrategies
-      ? swapStrategies[this.swapOrder]
-      : swapStrategies[swapStrategies.default];
+    let swapStrategy;
+
+    if (this.swapOrder in this.swapStrategies) {
+      swapStrategy = this.swapStrategies[this.swapOrder];
+    } else {
+      swapStrategy = this.swapStrategies[this.defaultSwapOrder];
+    }
 
     swapStrategy(viewSlot, previousView, addNextView);
     this.view = viewPortInstruction.controller.view;

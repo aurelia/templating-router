@@ -19,10 +19,11 @@ class SwapStrategies {
 
   // animate the next view at the same time the current view is removed
   with(viewSlot, previousView, callback) {
+    callback();
     if (previousView !== undefined) {
       viewSlot.remove(previousView, true);
     }
-    return callback();
+    return Promise.resolve();
   }
 
   // animate the next view in after the current view has been removed

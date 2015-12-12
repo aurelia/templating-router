@@ -5,7 +5,7 @@ import {Origin} from 'aurelia-metadata';
 import {DOM} from 'aurelia-pal';
 
 
-class SwapStategies {
+class SwapStrategies {
   static default = 'after';
 
   // animate the next view in before removing the current view;
@@ -32,7 +32,7 @@ class SwapStategies {
 }
 
 
-const swapStrategies = new SwapStategies();
+const swapStrategies = new SwapStrategies();
 
 @customElement('router-view')
 @noView

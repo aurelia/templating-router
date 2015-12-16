@@ -13,6 +13,17 @@ declare module 'aurelia-templating-router' {
     attributeChanged(value: any, previous: any): any;
     processChange(): any;
   }
+  class SwapStrategies {
+    
+    //  animate the next view in before removing the current view;
+    before(viewSlot: any, previousView: any, callback: any): any;
+    
+    //  animate the next view at the same time the current view is removed
+    with(viewSlot: any, previousView: any, callback: any): any;
+    
+    //  animate the next view in after the current view has been removed
+    after(viewSlot: any, previousView: any, callback: any): any;
+  }
   export class RouterView {
     swapOrder: any;
     constructor(element: any, container: any, viewSlot: any, router: any, viewLocator: any);

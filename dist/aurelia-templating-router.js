@@ -52,8 +52,7 @@ export class RouteHref {
   }
 }
 
-const swapStrategies = {
-  default: 'before',
+class SwapStrategies {
   // animate the next view in before removing the current view;
   before(viewSlot, previousView, callback) {
     let promise = Promise.resolve(callback());
@@ -63,26 +62,32 @@ const swapStrategies = {
     }
 
     return promise;
-  },
+  }
+
   // animate the next view at the same time the current view is removed
   with(viewSlot, previousView, callback) {
+    let promise = Promise.resolve(callback());
+
     if (previousView !== undefined) {
-      viewSlot.remove(previousView, true);
+      return Promise.all(viewSlot.remove(previousView, true), promise);
     }
 
-    return callback();
-  },
+    return promise;
+  }
+
   // animate the next view in after the current view has been removed
   after(viewSlot, previousView, callback) {
     return Promise.resolve(viewSlot.removeAll(true)).then(callback);
   }
-};
+}
+
+const swapStrategies = new SwapStrategies();
 
 @customElement('router-view')
 @noView
 @inject(DOM.Element, Container, ViewSlot, Router, ViewLocator)
 export class RouterView {
-  @bindable swapOrder = swapStrategies[swapStrategies.default];
+  @bindable swapOrder;
 
   constructor(element, container, viewSlot, router, viewLocator) {
     this.element = element;
@@ -129,9 +134,11 @@ export class RouterView {
   swap(viewPortInstruction) {
     let previousView = this.view;
     let viewSlot = this.viewSlot;
-    let swapStrategy = this.swapOrder in swapStrategies
-      ? swapStrategies[this.swapOrder]
-      : swapStrategies[swapStrategies.default];
+    let swapStrategy;
+
+    swapStrategy = this.swapOrder in swapStrategies
+                 ? swapStrategies[this.swapOrder]
+                 : swapStrategies.after;
 
     swapStrategy(viewSlot, previousView, addNextView);
     this.view = viewPortInstruction.controller.view;

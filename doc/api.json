@@ -196,7 +196,7 @@
       ]
     },
     {
-      "id": 18,
+      "id": 34,
       "name": "RouterView",
       "kind": 128,
       "kindString": "Class",
@@ -205,7 +205,7 @@
       },
       "children": [
         {
-          "id": 20,
+          "id": 36,
           "name": "constructor",
           "kind": 512,
           "kindString": "Constructor",
@@ -214,14 +214,14 @@
           },
           "signatures": [
             {
-              "id": 21,
+              "id": 37,
               "name": "new RouterView",
               "kind": 16384,
               "kindString": "Constructor signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 22,
+                  "id": 38,
                   "name": "element",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -232,7 +232,7 @@
                   }
                 },
                 {
-                  "id": 23,
+                  "id": 39,
                   "name": "container",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -243,7 +243,7 @@
                   }
                 },
                 {
-                  "id": 24,
+                  "id": 40,
                   "name": "viewSlot",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -254,7 +254,7 @@
                   }
                 },
                 {
-                  "id": 25,
+                  "id": 41,
                   "name": "router",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -265,7 +265,7 @@
                   }
                 },
                 {
-                  "id": 26,
+                  "id": 42,
                   "name": "viewLocator",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -279,14 +279,14 @@
               "type": {
                 "type": "reference",
                 "name": "RouterView",
-                "id": 18,
+                "id": 34,
                 "moduleName": "\"aurelia-templating-router\""
               }
             }
           ]
         },
         {
-          "id": 19,
+          "id": 35,
           "name": "swapOrder",
           "kind": 1024,
           "kindString": "Property",
@@ -299,7 +299,7 @@
           }
         },
         {
-          "id": 27,
+          "id": 43,
           "name": "bind",
           "kind": 2048,
           "kindString": "Method",
@@ -308,14 +308,14 @@
           },
           "signatures": [
             {
-              "id": 28,
+              "id": 44,
               "name": "bind",
               "kind": 4096,
               "kindString": "Call signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 29,
+                  "id": 45,
                   "name": "bindingContext",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -334,7 +334,7 @@
           ]
         },
         {
-          "id": 30,
+          "id": 46,
           "name": "process",
           "kind": 2048,
           "kindString": "Method",
@@ -343,14 +343,14 @@
           },
           "signatures": [
             {
-              "id": 31,
+              "id": 47,
               "name": "process",
               "kind": 4096,
               "kindString": "Call signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 32,
+                  "id": 48,
                   "name": "viewPortInstruction",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -361,7 +361,7 @@
                   }
                 },
                 {
-                  "id": 33,
+                  "id": 49,
                   "name": "waitToSwap",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -380,7 +380,7 @@
           ]
         },
         {
-          "id": 34,
+          "id": 50,
           "name": "swap",
           "kind": 2048,
           "kindString": "Method",
@@ -389,14 +389,14 @@
           },
           "signatures": [
             {
-              "id": 35,
+              "id": 51,
               "name": "swap",
               "kind": 4096,
               "kindString": "Call signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 36,
+                  "id": 52,
                   "name": "viewPortInstruction",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -420,29 +420,214 @@
           "title": "Constructors",
           "kind": 512,
           "children": [
-            20
+            36
           ]
         },
         {
           "title": "Properties",
           "kind": 1024,
           "children": [
-            19
+            35
           ]
         },
         {
           "title": "Methods",
           "kind": 2048,
           "children": [
-            27,
-            30,
-            34
+            43,
+            46,
+            50
           ]
         }
       ]
     },
     {
-      "id": 37,
+      "id": 18,
+      "name": "SwapStrategies",
+      "kind": 128,
+      "kindString": "Class",
+      "flags": {},
+      "children": [
+        {
+          "id": 29,
+          "name": "after",
+          "kind": 2048,
+          "kindString": "Method",
+          "flags": {},
+          "signatures": [
+            {
+              "id": 30,
+              "name": "after",
+              "kind": 4096,
+              "kindString": "Call signature",
+              "flags": {},
+              "parameters": [
+                {
+                  "id": 31,
+                  "name": "viewSlot",
+                  "kind": 32768,
+                  "kindString": "Parameter",
+                  "flags": {},
+                  "type": {
+                    "type": "instrinct",
+                    "name": "any"
+                  }
+                },
+                {
+                  "id": 32,
+                  "name": "previousView",
+                  "kind": 32768,
+                  "kindString": "Parameter",
+                  "flags": {},
+                  "type": {
+                    "type": "instrinct",
+                    "name": "any"
+                  }
+                },
+                {
+                  "id": 33,
+                  "name": "callback",
+                  "kind": 32768,
+                  "kindString": "Parameter",
+                  "flags": {},
+                  "type": {
+                    "type": "instrinct",
+                    "name": "any"
+                  }
+                }
+              ],
+              "type": {
+                "type": "instrinct",
+                "name": "any"
+              }
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "name": "before",
+          "kind": 2048,
+          "kindString": "Method",
+          "flags": {},
+          "signatures": [
+            {
+              "id": 20,
+              "name": "before",
+              "kind": 4096,
+              "kindString": "Call signature",
+              "flags": {},
+              "parameters": [
+                {
+                  "id": 21,
+                  "name": "viewSlot",
+                  "kind": 32768,
+                  "kindString": "Parameter",
+                  "flags": {},
+                  "type": {
+                    "type": "instrinct",
+                    "name": "any"
+                  }
+                },
+                {
+                  "id": 22,
+                  "name": "previousView",
+                  "kind": 32768,
+                  "kindString": "Parameter",
+                  "flags": {},
+                  "type": {
+                    "type": "instrinct",
+                    "name": "any"
+                  }
+                },
+                {
+                  "id": 23,
+                  "name": "callback",
+                  "kind": 32768,
+                  "kindString": "Parameter",
+                  "flags": {},
+                  "type": {
+                    "type": "instrinct",
+                    "name": "any"
+                  }
+                }
+              ],
+              "type": {
+                "type": "instrinct",
+                "name": "any"
+              }
+            }
+          ]
+        },
+        {
+          "id": 24,
+          "name": "with",
+          "kind": 2048,
+          "kindString": "Method",
+          "flags": {},
+          "signatures": [
+            {
+              "id": 25,
+              "name": "with",
+              "kind": 4096,
+              "kindString": "Call signature",
+              "flags": {},
+              "parameters": [
+                {
+                  "id": 26,
+                  "name": "viewSlot",
+                  "kind": 32768,
+                  "kindString": "Parameter",
+                  "flags": {},
+                  "type": {
+                    "type": "instrinct",
+                    "name": "any"
+                  }
+                },
+                {
+                  "id": 27,
+                  "name": "previousView",
+                  "kind": 32768,
+                  "kindString": "Parameter",
+                  "flags": {},
+                  "type": {
+                    "type": "instrinct",
+                    "name": "any"
+                  }
+                },
+                {
+                  "id": 28,
+                  "name": "callback",
+                  "kind": 32768,
+                  "kindString": "Parameter",
+                  "flags": {},
+                  "type": {
+                    "type": "instrinct",
+                    "name": "any"
+                  }
+                }
+              ],
+              "type": {
+                "type": "instrinct",
+                "name": "any"
+              }
+            }
+          ]
+        }
+      ],
+      "groups": [
+        {
+          "title": "Methods",
+          "kind": 2048,
+          "children": [
+            29,
+            19,
+            24
+          ]
+        }
+      ]
+    },
+    {
+      "id": 53,
       "name": "TemplatingRouteLoader",
       "kind": 128,
       "kindString": "Class",
@@ -451,7 +636,7 @@
       },
       "children": [
         {
-          "id": 38,
+          "id": 54,
           "name": "constructor",
           "kind": 512,
           "kindString": "Constructor",
@@ -460,14 +645,14 @@
           },
           "signatures": [
             {
-              "id": 39,
+              "id": 55,
               "name": "new TemplatingRouteLoader",
               "kind": 16384,
               "kindString": "Constructor signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 40,
+                  "id": 56,
                   "name": "compositionEngine",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -481,14 +666,14 @@
               "type": {
                 "type": "reference",
                 "name": "TemplatingRouteLoader",
-                "id": 37,
+                "id": 53,
                 "moduleName": "\"aurelia-templating-router\""
               }
             }
           ]
         },
         {
-          "id": 41,
+          "id": 57,
           "name": "loadRoute",
           "kind": 2048,
           "kindString": "Method",
@@ -497,14 +682,14 @@
           },
           "signatures": [
             {
-              "id": 42,
+              "id": 58,
               "name": "loadRoute",
               "kind": 4096,
               "kindString": "Call signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 43,
+                  "id": 59,
                   "name": "router",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -515,7 +700,7 @@
                   }
                 },
                 {
-                  "id": 44,
+                  "id": 60,
                   "name": "config",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -533,14 +718,14 @@
               "overwrites": {
                 "type": "reference",
                 "name": "RouteLoader.loadRoute",
-                "id": 1276
+                "id": 1301
               }
             }
           ],
           "overwrites": {
             "type": "reference",
             "name": "RouteLoader.loadRoute",
-            "id": 1276
+            "id": 1301
           }
         }
       ],
@@ -549,14 +734,14 @@
           "title": "Constructors",
           "kind": 512,
           "children": [
-            38
+            54
           ]
         },
         {
           "title": "Methods",
           "kind": 2048,
           "children": [
-            41
+            57
           ]
         }
       ],
@@ -564,7 +749,7 @@
         {
           "type": "reference",
           "name": "RouteLoader",
-          "id": 1275
+          "id": 1300
         }
       ]
     }
@@ -575,8 +760,9 @@
       "kind": 128,
       "children": [
         3,
+        34,
         18,
-        37
+        53
       ]
     }
   ]

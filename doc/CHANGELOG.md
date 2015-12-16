@@ -1,3 +1,13 @@
+### 1.0.0-beta.1.0.3 (2015-12-16)
+
+
+#### Bug Fixes
+
+* **add-nextview-first:** Add the next first on with ([d188112c](http://github.com/aurelia/templating-router/commit/d188112c67bbfd290c046ad11ce95338386024ea))
+* **default-swap-order:** Set default swap order to after resolves aurelia/framework#263 ([984aeb12](http://github.com/aurelia/templating-router/commit/984aeb1260670a9202dcda0b933608a61b1daade))
+* **spelling:** Miss-Spelled SwapStrategies ([9b9fb9ea](http://github.com/aurelia/templating-router/commit/9b9fb9ea1990376d7d0642a39df23eae8700de84))
+
+
 ## 1.0.0-beta.1.0.2 (2015-12-03)
 
 

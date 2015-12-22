@@ -30,7 +30,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
       var promise = Promise.resolve(callback());
 
       if (previousView !== undefined) {
-        return Promise.all(viewSlot.remove(previousView, true), promise);
+        return Promise.all([viewSlot.remove(previousView, true), promise]);
       }
 
       return promise;

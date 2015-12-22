@@ -1,3 +1,11 @@
+### 1.0.0-beta.1.0.4 (2015-12-22)
+
+
+#### Bug Fixes
+
+* **promise-all:** Wrap Promise all args in an array ([a6dc58af](http://github.com/aurelia/templating-router/commit/a6dc58af49eadc084d49388ff75c91e0b05438f5))
+
+
 ### 1.0.0-beta.1.0.3 (2015-12-16)
 
 

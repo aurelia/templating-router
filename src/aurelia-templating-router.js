@@ -8,6 +8,8 @@ function configure(config) {
     .singleton(RouteLoader, TemplatingRouteLoader)
     .singleton(Router, AppRouter)
     .globalResources('./router-view', './route-href');
+
+  config.container.registerAlias(Router, AppRouter);
 }
 
 export {

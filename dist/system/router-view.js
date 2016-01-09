@@ -87,8 +87,13 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
           this.router.registerViewPort(this, this.element.getAttribute('name'));
         }
 
-        RouterView.prototype.bind = function bind(bindingContext) {
+        RouterView.prototype.created = function created(owningView) {
+          this.owningView = owningView;
+        };
+
+        RouterView.prototype.bind = function bind(bindingContext, overrideContext) {
           this.container.viewModel = bindingContext;
+          this.overrideContext = overrideContext;
         };
 
         RouterView.prototype.process = function process(viewPortInstruction, waitToSwap) {
@@ -117,19 +122,20 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
         };
 
         RouterView.prototype.swap = function swap(viewPortInstruction) {
+          var _this2 = this;
+
           var previousView = this.view;
           var viewSlot = this.viewSlot;
           var swapStrategy = undefined;
 
           swapStrategy = this.swapOrder in swapStrategies ? swapStrategies[this.swapOrder] : swapStrategies.after;
 
-          swapStrategy(viewSlot, previousView, addNextView);
-          this.view = viewPortInstruction.controller.view;
-
-          function addNextView() {
-            viewPortInstruction.controller.automate();
+          swapStrategy(viewSlot, previousView, function () {
+            viewPortInstruction.controller.automate(_this2.overrideContext, _this2.owningView);
             return viewSlot.add(viewPortInstruction.controller.view);
-          }
+          });
+
+          this.view = viewPortInstruction.controller.view;
         };
 
         var _RouterView = RouterView;

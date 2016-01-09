@@ -27,7 +27,8 @@ declare module 'aurelia-templating-router' {
   export class RouterView {
     swapOrder: any;
     constructor(element: any, container: any, viewSlot: any, router: any, viewLocator: any);
-    bind(bindingContext: any): any;
+    created(owningView: any): any;
+    bind(bindingContext: any, overrideContext: any): any;
     process(viewPortInstruction: any, waitToSwap: any): any;
     swap(viewPortInstruction: any): any;
   }

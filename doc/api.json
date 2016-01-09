@@ -299,7 +299,7 @@
           }
         },
         {
-          "id": 43,
+          "id": 46,
           "name": "bind",
           "kind": 2048,
           "kindString": "Method",
@@ -308,15 +308,26 @@
           },
           "signatures": [
             {
-              "id": 44,
+              "id": 47,
               "name": "bind",
               "kind": 4096,
               "kindString": "Call signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 45,
+                  "id": 48,
                   "name": "bindingContext",
+                  "kind": 32768,
+                  "kindString": "Parameter",
+                  "flags": {},
+                  "type": {
+                    "type": "instrinct",
+                    "name": "any"
+                  }
+                },
+                {
+                  "id": 49,
+                  "name": "overrideContext",
                   "kind": 32768,
                   "kindString": "Parameter",
                   "flags": {},
@@ -334,8 +345,8 @@
           ]
         },
         {
-          "id": 46,
-          "name": "process",
+          "id": 43,
+          "name": "created",
           "kind": 2048,
           "kindString": "Method",
           "flags": {
@@ -343,26 +354,15 @@
           },
           "signatures": [
             {
-              "id": 47,
-              "name": "process",
+              "id": 44,
+              "name": "created",
               "kind": 4096,
               "kindString": "Call signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 48,
-                  "name": "viewPortInstruction",
-                  "kind": 32768,
-                  "kindString": "Parameter",
-                  "flags": {},
-                  "type": {
-                    "type": "instrinct",
-                    "name": "any"
-                  }
-                },
-                {
-                  "id": 49,
-                  "name": "waitToSwap",
+                  "id": 45,
+                  "name": "owningView",
                   "kind": 32768,
                   "kindString": "Parameter",
                   "flags": {},
@@ -381,7 +381,7 @@
         },
         {
           "id": 50,
-          "name": "swap",
+          "name": "process",
           "kind": 2048,
           "kindString": "Method",
           "flags": {
@@ -390,13 +390,59 @@
           "signatures": [
             {
               "id": 51,
-              "name": "swap",
+              "name": "process",
               "kind": 4096,
               "kindString": "Call signature",
               "flags": {},
               "parameters": [
                 {
                   "id": 52,
+                  "name": "viewPortInstruction",
+                  "kind": 32768,
+                  "kindString": "Parameter",
+                  "flags": {},
+                  "type": {
+                    "type": "instrinct",
+                    "name": "any"
+                  }
+                },
+                {
+                  "id": 53,
+                  "name": "waitToSwap",
+                  "kind": 32768,
+                  "kindString": "Parameter",
+                  "flags": {},
+                  "type": {
+                    "type": "instrinct",
+                    "name": "any"
+                  }
+                }
+              ],
+              "type": {
+                "type": "instrinct",
+                "name": "any"
+              }
+            }
+          ]
+        },
+        {
+          "id": 54,
+          "name": "swap",
+          "kind": 2048,
+          "kindString": "Method",
+          "flags": {
+            "isExported": true
+          },
+          "signatures": [
+            {
+              "id": 55,
+              "name": "swap",
+              "kind": 4096,
+              "kindString": "Call signature",
+              "flags": {},
+              "parameters": [
+                {
+                  "id": 56,
                   "name": "viewPortInstruction",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -434,9 +480,10 @@
           "title": "Methods",
           "kind": 2048,
           "children": [
-            43,
             46,
-            50
+            43,
+            50,
+            54
           ]
         }
       ]
@@ -627,7 +674,7 @@
       ]
     },
     {
-      "id": 53,
+      "id": 57,
       "name": "TemplatingRouteLoader",
       "kind": 128,
       "kindString": "Class",
@@ -636,7 +683,7 @@
       },
       "children": [
         {
-          "id": 54,
+          "id": 58,
           "name": "constructor",
           "kind": 512,
           "kindString": "Constructor",
@@ -645,14 +692,14 @@
           },
           "signatures": [
             {
-              "id": 55,
+              "id": 59,
               "name": "new TemplatingRouteLoader",
               "kind": 16384,
               "kindString": "Constructor signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 56,
+                  "id": 60,
                   "name": "compositionEngine",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -666,14 +713,14 @@
               "type": {
                 "type": "reference",
                 "name": "TemplatingRouteLoader",
-                "id": 53,
+                "id": 57,
                 "moduleName": "\"aurelia-templating-router\""
               }
             }
           ]
         },
         {
-          "id": 57,
+          "id": 61,
           "name": "loadRoute",
           "kind": 2048,
           "kindString": "Method",
@@ -682,14 +729,14 @@
           },
           "signatures": [
             {
-              "id": 58,
+              "id": 62,
               "name": "loadRoute",
               "kind": 4096,
               "kindString": "Call signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 59,
+                  "id": 63,
                   "name": "router",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -700,7 +747,7 @@
                   }
                 },
                 {
-                  "id": 60,
+                  "id": 64,
                   "name": "config",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -718,14 +765,14 @@
               "overwrites": {
                 "type": "reference",
                 "name": "RouteLoader.loadRoute",
-                "id": 1301
+                "id": 1326
               }
             }
           ],
           "overwrites": {
             "type": "reference",
             "name": "RouteLoader.loadRoute",
-            "id": 1301
+            "id": 1326
           }
         }
       ],
@@ -734,14 +781,14 @@
           "title": "Constructors",
           "kind": 512,
           "children": [
-            54
+            58
           ]
         },
         {
           "title": "Methods",
           "kind": 2048,
           "children": [
-            57
+            61
           ]
         }
       ],
@@ -749,7 +796,7 @@
         {
           "type": "reference",
           "name": "RouteLoader",
-          "id": 1300
+          "id": 1325
         }
       ]
     }
@@ -762,7 +809,7 @@
         3,
         34,
         18,
-        53
+        57
       ]
     }
   ]

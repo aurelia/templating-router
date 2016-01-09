@@ -5,6 +5,8 @@ System.register(['aurelia-router', './route-loader', './router-view', './route-h
 
   function configure(config) {
     config.singleton(RouteLoader, TemplatingRouteLoader).singleton(Router, AppRouter).globalResources('./router-view', './route-href');
+
+    config.container.registerAlias(Router, AppRouter);
   }
 
   return {

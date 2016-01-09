@@ -1,3 +1,12 @@
+### 1.0.0-beta.1.0.5 (2016-01-08)
+
+
+#### Bug Fixes
+
+* **index:** AppRouter should point to the same root Router singleton as Router ([8c62f59f](http://github.com/aurelia/templating-router/commit/8c62f59f87b4e8793c62b5b951cd5589ff7904d3))
+* **router-view:** properly handle the created callback during dynamic composition ([05671f46](http://github.com/aurelia/templating-router/commit/05671f4676983cfbf7c6d2d90f879c8c91667459))
+
+
 ### 1.0.0-beta.1.0.4 (2015-12-22)
 
 

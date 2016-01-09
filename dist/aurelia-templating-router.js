@@ -98,8 +98,13 @@ export class RouterView {
     this.router.registerViewPort(this, this.element.getAttribute('name'));
   }
 
-  bind(bindingContext) {
+  created(owningView) {
+    this.owningView = owningView;
+  }
+
+  bind(bindingContext, overrideContext) {
     this.container.viewModel = bindingContext;
+    this.overrideContext = overrideContext;
   }
 
   process(viewPortInstruction, waitToSwap) {
@@ -140,13 +145,12 @@ export class RouterView {
                  ? swapStrategies[this.swapOrder]
                  : swapStrategies.after;
 
-    swapStrategy(viewSlot, previousView, addNextView);
-    this.view = viewPortInstruction.controller.view;
-
-    function addNextView() {
-      viewPortInstruction.controller.automate();
+    swapStrategy(viewSlot, previousView, () => {
+      viewPortInstruction.controller.automate(this.overrideContext, this.owningView);
       return viewSlot.add(viewPortInstruction.controller.view);
-    }
+    });
+
+    this.view = viewPortInstruction.controller.view;
   }
 }
 
@@ -185,6 +189,8 @@ function configure(config) {
     .singleton(RouteLoader, TemplatingRouteLoader)
     .singleton(Router, AppRouter)
     .globalResources('./router-view', './route-href');
+
+  config.container.registerAlias(Router, AppRouter);
 }
 
 export {

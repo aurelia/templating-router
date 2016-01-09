@@ -12,6 +12,8 @@ var _routeHref = require('./route-href');
 
 function configure(config) {
   config.singleton(_aureliaRouter.RouteLoader, _routeLoader.TemplatingRouteLoader).singleton(_aureliaRouter.Router, _aureliaRouter.AppRouter).globalResources('./router-view', './route-href');
+
+  config.container.registerAlias(_aureliaRouter.Router, _aureliaRouter.AppRouter);
 }
 
 exports.TemplatingRouteLoader = _routeLoader.TemplatingRouteLoader;

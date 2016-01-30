@@ -1,3 +1,10 @@
+### 1.0.0-beta.1.1.0 (2016-01-29)
+
+#### Features
+
+* **all:** update jspm meta; core-js; aurelia-dps ([e26b67e7](http://github.com/aurelia/templating-router/commit/e26b67e7ef9a4a6e66ebef8b01eb154e63ce21ba))
+
+
 ### 1.0.0-beta.1.0.5 (2016-01-08)
 
 

@@ -1,5 +1,5 @@
 import {Container, inject} from 'aurelia-dependency-injection';
-import {ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable} from 'aurelia-templating';
+import {ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction} from 'aurelia-templating';
 import {Router} from 'aurelia-router';
 import {Origin} from 'aurelia-metadata';
 import {DOM} from 'aurelia-pal';
@@ -37,17 +37,23 @@ const swapStrategies = new SwapStrategies();
 
 @customElement('router-view')
 @noView
-@inject(DOM.Element, Container, ViewSlot, Router, ViewLocator)
+@inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction)
 export class RouterView {
   @bindable swapOrder;
 
-  constructor(element, container, viewSlot, router, viewLocator) {
+  constructor(element, container, viewSlot, router, viewLocator, compositionTransaction) {
     this.element = element;
     this.container = container;
     this.viewSlot = viewSlot;
     this.router = router;
     this.viewLocator = viewLocator;
+    this.compositionTransaction = compositionTransaction;
     this.router.registerViewPort(this, this.element.getAttribute('name'));
+    
+    if (!('initialComposition' in compositionTransaction)) {
+      compositionTransaction.initialComposition = true;
+      this.compositionTransactionNotifier = compositionTransaction.enlist();
+    }
   }
 
   created(owningView) {
@@ -72,6 +78,10 @@ export class RouterView {
     }
 
     return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true).then(viewFactory => {
+      if (!this.compositionTransactionNotifier && !this.compositionTransaction.hasOwner) {
+        this.compositionTransactionOwnershipToken = this.compositionTransaction.tryCapture();
+      }
+      
       viewPortInstruction.controller = metadata.create(childContainer,
         BehaviorInstruction.dynamic(
           this.element,
@@ -89,19 +99,36 @@ export class RouterView {
   }
 
   swap(viewPortInstruction) {
-    let previousView = this.view;
-    let viewSlot = this.viewSlot;
-    let swapStrategy;
+    let work = () => {
+      let previousView = this.view;
+      let viewSlot = this.viewSlot;
+      let swapStrategy;
 
-    swapStrategy = this.swapOrder in swapStrategies
-                 ? swapStrategies[this.swapOrder]
-                 : swapStrategies.after;
+      swapStrategy = this.swapOrder in swapStrategies
+                  ? swapStrategies[this.swapOrder]
+                  : swapStrategies.after;
 
-    swapStrategy(viewSlot, previousView, () => {
-      viewPortInstruction.controller.automate(this.overrideContext, this.owningView);
-      return viewSlot.add(viewPortInstruction.controller.view);
-    });
+      swapStrategy(viewSlot, previousView, () => {
+        return Promise.resolve(viewSlot.add(viewPortInstruction.controller.view)).then(() => {
+          if (this.compositionTransactionNotifier) {
+            this.compositionTransactionNotifier.done();
+            this.compositionTransactionNotifier = null;
+          }
+        });
+      });
 
-    this.view = viewPortInstruction.controller.view;
+      this.view = viewPortInstruction.controller.view;
+    };
+    
+    viewPortInstruction.controller.automate(this.overrideContext, this.owningView);
+    
+    if (this.compositionTransactionOwnershipToken) {
+      return this.compositionTransactionOwnershipToken.waitForCompositionComplete().then(() => {
+        this.compositionTransactionOwnershipToken = null;
+        work();
+      });
+    } else {
+      work();
+    }
   }
 }

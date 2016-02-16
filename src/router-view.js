@@ -78,7 +78,7 @@ export class RouterView {
     }
 
     return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true).then(viewFactory => {
-      if (!this.compositionTransactionNotifier && !this.compositionTransaction.hasOwner) {
+      if (!this.compositionTransactionNotifier) {
         this.compositionTransactionOwnershipToken = this.compositionTransaction.tryCapture();
       }
       

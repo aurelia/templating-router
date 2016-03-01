@@ -49,7 +49,7 @@ export class RouterView {
     this.viewLocator = viewLocator;
     this.compositionTransaction = compositionTransaction;
     this.router.registerViewPort(this, this.element.getAttribute('name'));
-    
+
     if (!('initialComposition' in compositionTransaction)) {
       compositionTransaction.initialComposition = true;
       this.compositionTransactionNotifier = compositionTransaction.enlist();
@@ -81,7 +81,7 @@ export class RouterView {
       if (!this.compositionTransactionNotifier) {
         this.compositionTransactionOwnershipToken = this.compositionTransaction.tryCapture();
       }
-      
+
       viewPortInstruction.controller = metadata.create(childContainer,
         BehaviorInstruction.dynamic(
           this.element,
@@ -119,16 +119,16 @@ export class RouterView {
 
       this.view = viewPortInstruction.controller.view;
     };
-    
+
     viewPortInstruction.controller.automate(this.overrideContext, this.owningView);
-    
+
     if (this.compositionTransactionOwnershipToken) {
       return this.compositionTransactionOwnershipToken.waitForCompositionComplete().then(() => {
         this.compositionTransactionOwnershipToken = null;
         work();
       });
-    } else {
-      work();
     }
+
+    work();
   }
 }

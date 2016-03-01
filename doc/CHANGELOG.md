@@ -1,3 +1,16 @@
+### 1.0.0-beta.1.1.2 (2016-03-01)
+
+
+#### Bug Fixes
+
+* **router-view:** simplify composition transaction use ([76cdc978](http://github.com/aurelia/templating-router/commit/76cdc9780c58ecc3fc8114eb80808abcfbf6f6c8))
+
+
+#### Features
+
+* **router-view:** connect to composition transaction ([b95667e0](http://github.com/aurelia/templating-router/commit/b95667e0c4d8bbc5b2d4621157ccc191891245cd))
+
+
 ### 1.0.0-beta.1.1.1 (2016-02-08)
 
 

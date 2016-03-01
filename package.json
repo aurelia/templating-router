@@ -1,6 +1,6 @@
 {
   "name": "aurelia-templating-router",
-  "version": "1.0.0-beta.1.1.1",
+  "version": "1.0.0-beta.1.1.2",
   "description": "An implementation of the RouteLoader interface for use with the router module. Also contains a custom element that allows the templating engine to display the current route.",
   "keywords": [
     "aurelia",
@@ -33,7 +33,7 @@
       "aurelia-pal": "^1.0.0-beta.1.1.1",
       "aurelia-path": "^1.0.0-beta.1.1.0",
       "aurelia-router": "^1.0.0-beta.1.1.0",
-      "aurelia-templating": "^1.0.0-beta.1.1.0"
+      "aurelia-templating": "^1.0.0-beta.1.1.2"
     },
     "dependencies": {
       "aurelia-dependency-injection": "^1.0.0-beta.1.1.2",
@@ -42,7 +42,7 @@
       "aurelia-pal": "^1.0.0-beta.1.1.1",
       "aurelia-path": "^1.0.0-beta.1.1.0",
       "aurelia-router": "^1.0.0-beta.1.1.0",
-      "aurelia-templating": "^1.0.0-beta.1.1.0"
+      "aurelia-templating": "^1.0.0-beta.1.1.2"
     },
     "devDependencies": {
       "babel": "babel-core@^5.8.24",
@@ -57,7 +57,7 @@
     "aurelia-pal": "^1.0.0-beta.1.1.1",
     "aurelia-path": "^1.0.0-beta.1.1.0",
     "aurelia-router": "^1.0.0-beta.1.1.0",
-    "aurelia-templating": "^1.0.0-beta.1.1.0"
+    "aurelia-templating": "^1.0.0-beta.1.1.2"
   },
   "devDependencies": {
     "aurelia-tools": "^0.1.14",

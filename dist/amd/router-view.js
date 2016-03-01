@@ -55,7 +55,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
       enumerable: true
     }], null, _instanceInitializers);
 
-    function RouterView(element, container, viewSlot, router, viewLocator) {
+    function RouterView(element, container, viewSlot, router, viewLocator, compositionTransaction) {
       _classCallCheck(this, _RouterView);
 
       _defineDecoratedPropertyDescriptor(this, 'swapOrder', _instanceInitializers);
@@ -65,7 +65,13 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
       this.viewSlot = viewSlot;
       this.router = router;
       this.viewLocator = viewLocator;
+      this.compositionTransaction = compositionTransaction;
       this.router.registerViewPort(this, this.element.getAttribute('name'));
+
+      if (!('initialComposition' in compositionTransaction)) {
+        compositionTransaction.initialComposition = true;
+        this.compositionTransactionNotifier = compositionTransaction.enlist();
+      }
     }
 
     RouterView.prototype.created = function created(owningView) {
@@ -92,6 +98,10 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
       }
 
       return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true).then(function (viewFactory) {
+        if (!_this.compositionTransactionNotifier) {
+          _this.compositionTransactionOwnershipToken = _this.compositionTransaction.tryCapture();
+        }
+
         viewPortInstruction.controller = metadata.create(childContainer, _aureliaTemplating.BehaviorInstruction.dynamic(_this.element, viewModel, viewFactory));
 
         if (waitToSwap) {
@@ -105,22 +115,39 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
     RouterView.prototype.swap = function swap(viewPortInstruction) {
       var _this2 = this;
 
-      var previousView = this.view;
-      var viewSlot = this.viewSlot;
-      var swapStrategy = undefined;
+      var work = function work() {
+        var previousView = _this2.view;
+        var viewSlot = _this2.viewSlot;
+        var swapStrategy = undefined;
 
-      swapStrategy = this.swapOrder in swapStrategies ? swapStrategies[this.swapOrder] : swapStrategies.after;
+        swapStrategy = _this2.swapOrder in swapStrategies ? swapStrategies[_this2.swapOrder] : swapStrategies.after;
 
-      swapStrategy(viewSlot, previousView, function () {
-        viewPortInstruction.controller.automate(_this2.overrideContext, _this2.owningView);
-        return viewSlot.add(viewPortInstruction.controller.view);
-      });
+        swapStrategy(viewSlot, previousView, function () {
+          return Promise.resolve(viewSlot.add(viewPortInstruction.controller.view)).then(function () {
+            if (_this2.compositionTransactionNotifier) {
+              _this2.compositionTransactionNotifier.done();
+              _this2.compositionTransactionNotifier = null;
+            }
+          });
+        });
 
-      this.view = viewPortInstruction.controller.view;
+        _this2.view = viewPortInstruction.controller.view;
+      };
+
+      viewPortInstruction.controller.automate(this.overrideContext, this.owningView);
+
+      if (this.compositionTransactionOwnershipToken) {
+        return this.compositionTransactionOwnershipToken.waitForCompositionComplete().then(function () {
+          _this2.compositionTransactionOwnershipToken = null;
+          work();
+        });
+      }
+
+      work();
     };
 
     var _RouterView = RouterView;
-    RouterView = _aureliaDependencyInjection.inject(_aureliaPal.DOM.Element, _aureliaDependencyInjection.Container, _aureliaTemplating.ViewSlot, _aureliaRouter.Router, _aureliaTemplating.ViewLocator)(RouterView) || RouterView;
+    RouterView = _aureliaDependencyInjection.inject(_aureliaPal.DOM.Element, _aureliaDependencyInjection.Container, _aureliaTemplating.ViewSlot, _aureliaRouter.Router, _aureliaTemplating.ViewLocator, _aureliaTemplating.CompositionTransaction)(RouterView) || RouterView;
     RouterView = _aureliaTemplating.noView(RouterView) || RouterView;
     RouterView = _aureliaTemplating.customElement('router-view')(RouterView) || RouterView;
     return RouterView;

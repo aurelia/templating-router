@@ -1,7 +1,7 @@
 System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-router', 'aurelia-metadata', 'aurelia-pal'], function (_export) {
   'use strict';
 
-  var Container, inject, ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, Router, Origin, DOM, SwapStrategies, swapStrategies, RouterView;
+  var Container, inject, ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, Router, Origin, DOM, SwapStrategies, swapStrategies, RouterView;
 
   var _createDecoratedClass = (function () { function defineProperties(target, descriptors, initializers) { for (var i = 0; i < descriptors.length; i++) { var descriptor = descriptors[i]; var decorators = descriptor.decorators; var key = descriptor.key; delete descriptor.key; delete descriptor.decorators; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor || descriptor.initializer) descriptor.writable = true; if (decorators) { for (var f = 0; f < decorators.length; f++) { var decorator = decorators[f]; if (typeof decorator === 'function') { descriptor = decorator(target, key, descriptor) || descriptor; } else { throw new TypeError('The decorator for method ' + descriptor.key + ' is of the invalid type ' + typeof decorator); } } if (descriptor.initializer !== undefined) { initializers[key] = descriptor; continue; } } Object.defineProperty(target, key, descriptor); } } return function (Constructor, protoProps, staticProps, protoInitializers, staticInitializers) { if (protoProps) defineProperties(Constructor.prototype, protoProps, protoInitializers); if (staticProps) defineProperties(Constructor, staticProps, staticInitializers); return Constructor; }; })();
 
@@ -20,6 +20,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
       noView = _aureliaTemplating.noView;
       BehaviorInstruction = _aureliaTemplating.BehaviorInstruction;
       bindable = _aureliaTemplating.bindable;
+      CompositionTransaction = _aureliaTemplating.CompositionTransaction;
     }, function (_aureliaRouter) {
       Router = _aureliaRouter.Router;
     }, function (_aureliaMetadata) {
@@ -74,7 +75,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
           enumerable: true
         }], null, _instanceInitializers);
 
-        function RouterView(element, container, viewSlot, router, viewLocator) {
+        function RouterView(element, container, viewSlot, router, viewLocator, compositionTransaction) {
           _classCallCheck(this, _RouterView);
 
           _defineDecoratedPropertyDescriptor(this, 'swapOrder', _instanceInitializers);
@@ -84,7 +85,13 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
           this.viewSlot = viewSlot;
           this.router = router;
           this.viewLocator = viewLocator;
+          this.compositionTransaction = compositionTransaction;
           this.router.registerViewPort(this, this.element.getAttribute('name'));
+
+          if (!('initialComposition' in compositionTransaction)) {
+            compositionTransaction.initialComposition = true;
+            this.compositionTransactionNotifier = compositionTransaction.enlist();
+          }
         }
 
         RouterView.prototype.created = function created(owningView) {
@@ -111,6 +118,10 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
           }
 
           return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true).then(function (viewFactory) {
+            if (!_this.compositionTransactionNotifier) {
+              _this.compositionTransactionOwnershipToken = _this.compositionTransaction.tryCapture();
+            }
+
             viewPortInstruction.controller = metadata.create(childContainer, BehaviorInstruction.dynamic(_this.element, viewModel, viewFactory));
 
             if (waitToSwap) {
@@ -124,22 +135,39 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
         RouterView.prototype.swap = function swap(viewPortInstruction) {
           var _this2 = this;
 
-          var previousView = this.view;
-          var viewSlot = this.viewSlot;
-          var swapStrategy = undefined;
+          var work = function work() {
+            var previousView = _this2.view;
+            var viewSlot = _this2.viewSlot;
+            var swapStrategy = undefined;
 
-          swapStrategy = this.swapOrder in swapStrategies ? swapStrategies[this.swapOrder] : swapStrategies.after;
+            swapStrategy = _this2.swapOrder in swapStrategies ? swapStrategies[_this2.swapOrder] : swapStrategies.after;
 
-          swapStrategy(viewSlot, previousView, function () {
-            viewPortInstruction.controller.automate(_this2.overrideContext, _this2.owningView);
-            return viewSlot.add(viewPortInstruction.controller.view);
-          });
+            swapStrategy(viewSlot, previousView, function () {
+              return Promise.resolve(viewSlot.add(viewPortInstruction.controller.view)).then(function () {
+                if (_this2.compositionTransactionNotifier) {
+                  _this2.compositionTransactionNotifier.done();
+                  _this2.compositionTransactionNotifier = null;
+                }
+              });
+            });
 
-          this.view = viewPortInstruction.controller.view;
+            _this2.view = viewPortInstruction.controller.view;
+          };
+
+          viewPortInstruction.controller.automate(this.overrideContext, this.owningView);
+
+          if (this.compositionTransactionOwnershipToken) {
+            return this.compositionTransactionOwnershipToken.waitForCompositionComplete().then(function () {
+              _this2.compositionTransactionOwnershipToken = null;
+              work();
+            });
+          }
+
+          work();
         };
 
         var _RouterView = RouterView;
-        RouterView = inject(DOM.Element, Container, ViewSlot, Router, ViewLocator)(RouterView) || RouterView;
+        RouterView = inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction)(RouterView) || RouterView;
         RouterView = noView(RouterView) || RouterView;
         RouterView = customElement('router-view')(RouterView) || RouterView;
         return RouterView;

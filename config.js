@@ -20,6 +20,7 @@ System.config({
     "aurelia-metadata": "npm:aurelia-metadata@1.0.0-beta.1.1.5",
     "aurelia-pal": "npm:aurelia-pal@1.0.0-beta.1.1.1",
     "aurelia-path": "npm:aurelia-path@1.0.0-beta.1.1.1",
+    "aurelia-polyfills": "npm:aurelia-polyfills@1.0.0-beta.1.0.6",
     "aurelia-router": "npm:aurelia-router@1.0.0-beta.1.1.0",
     "aurelia-templating": "npm:aurelia-templating@1.0.0-beta.1.1.2",
     "babel": "npm:babel-core@5.8.35",
@@ -58,6 +59,9 @@ System.config({
       "aurelia-path": "npm:aurelia-path@1.0.0-beta.1.1.1"
     },
     "npm:aurelia-metadata@1.0.0-beta.1.1.5": {
+      "aurelia-pal": "npm:aurelia-pal@1.0.0-beta.1.1.1"
+    },
+    "npm:aurelia-polyfills@1.0.0-beta.1.0.6": {
       "aurelia-pal": "npm:aurelia-pal@1.0.0-beta.1.1.1"
     },
     "npm:aurelia-route-recognizer@1.0.0-beta.1.1.0": {

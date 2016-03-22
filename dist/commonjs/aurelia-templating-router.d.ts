@@ -1,28 +1,39 @@
 declare module 'aurelia-templating-router' {
   import * as LogManager from 'aurelia-logging';
-  import { customAttribute, bindable, ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, CompositionTransaction, CompositionEngine }  from 'aurelia-templating';
-  import { inject, Container }  from 'aurelia-dependency-injection';
-  import { Router, RouteLoader, AppRouter }  from 'aurelia-router';
-  import { DOM }  from 'aurelia-pal';
-  import { Origin }  from 'aurelia-metadata';
-  import { relativeToFile }  from 'aurelia-path';
+  import {
+    customAttribute,
+    bindable,
+    ViewSlot,
+    ViewLocator,
+    customElement,
+    noView,
+    BehaviorInstruction,
+    CompositionTransaction,
+    CompositionEngine
+  } from 'aurelia-templating';
+  import {
+    inject,
+    Container
+  } from 'aurelia-dependency-injection';
+  import {
+    Router,
+    RouteLoader
+  } from 'aurelia-router';
+  import {
+    DOM
+  } from 'aurelia-pal';
+  import {
+    Origin
+  } from 'aurelia-metadata';
+  import {
+    relativeToFile
+  } from 'aurelia-path';
   export class RouteHref {
     constructor(router: any, element: any);
     bind(): any;
     unbind(): any;
     attributeChanged(value: any, previous: any): any;
     processChange(): any;
-  }
-  class SwapStrategies {
-    
-    //  animate the next view in before removing the current view;
-    before(viewSlot: any, previousView: any, callback: any): any;
-    
-    //  animate the next view at the same time the current view is removed
-    with(viewSlot: any, previousView: any, callback: any): any;
-    
-    //  animate the next view in after the current view has been removed
-    after(viewSlot: any, previousView: any, callback: any): any;
   }
   export class RouterView {
     swapOrder: any;

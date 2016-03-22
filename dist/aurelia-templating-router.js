@@ -1,7 +1,7 @@
 import * as LogManager from 'aurelia-logging';
 import {customAttribute,bindable,ViewSlot,ViewLocator,customElement,noView,BehaviorInstruction,CompositionTransaction,CompositionEngine} from 'aurelia-templating';
 import {inject,Container} from 'aurelia-dependency-injection';
-import {Router,RouteLoader,AppRouter} from 'aurelia-router';
+import {Router,RouteLoader} from 'aurelia-router';
 import {DOM} from 'aurelia-pal';
 import {Origin} from 'aurelia-metadata';
 import {relativeToFile} from 'aurelia-path';
@@ -210,19 +210,3 @@ export class TemplatingRouteLoader extends RouteLoader {
     return this.compositionEngine.ensureViewModel(instruction);
   }
 }
-
-function configure(config) {
-  config
-    .singleton(RouteLoader, TemplatingRouteLoader)
-    .singleton(Router, AppRouter)
-    .globalResources('./router-view', './route-href');
-
-  config.container.registerAlias(Router, AppRouter);
-}
-
-export {
-  TemplatingRouteLoader,
-  RouterView,
-  RouteHref,
-  configure
-};

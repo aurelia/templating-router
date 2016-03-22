@@ -196,7 +196,7 @@
       ]
     },
     {
-      "id": 34,
+      "id": 18,
       "name": "RouterView",
       "kind": 128,
       "kindString": "Class",
@@ -205,7 +205,7 @@
       },
       "children": [
         {
-          "id": 36,
+          "id": 20,
           "name": "constructor",
           "kind": 512,
           "kindString": "Constructor",
@@ -214,14 +214,14 @@
           },
           "signatures": [
             {
-              "id": 37,
+              "id": 21,
               "name": "new RouterView",
               "kind": 16384,
               "kindString": "Constructor signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 38,
+                  "id": 22,
                   "name": "element",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -232,7 +232,7 @@
                   }
                 },
                 {
-                  "id": 39,
+                  "id": 23,
                   "name": "container",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -243,7 +243,7 @@
                   }
                 },
                 {
-                  "id": 40,
+                  "id": 24,
                   "name": "viewSlot",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -254,7 +254,7 @@
                   }
                 },
                 {
-                  "id": 41,
+                  "id": 25,
                   "name": "router",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -265,7 +265,7 @@
                   }
                 },
                 {
-                  "id": 42,
+                  "id": 26,
                   "name": "viewLocator",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -276,7 +276,7 @@
                   }
                 },
                 {
-                  "id": 43,
+                  "id": 27,
                   "name": "compositionTransaction",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -290,14 +290,14 @@
               "type": {
                 "type": "reference",
                 "name": "RouterView",
-                "id": 34,
+                "id": 18,
                 "moduleName": "\"aurelia-templating-router\""
               }
             }
           ]
         },
         {
-          "id": 35,
+          "id": 19,
           "name": "swapOrder",
           "kind": 1024,
           "kindString": "Property",
@@ -310,7 +310,7 @@
           }
         },
         {
-          "id": 47,
+          "id": 31,
           "name": "bind",
           "kind": 2048,
           "kindString": "Method",
@@ -319,14 +319,14 @@
           },
           "signatures": [
             {
-              "id": 48,
+              "id": 32,
               "name": "bind",
               "kind": 4096,
               "kindString": "Call signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 49,
+                  "id": 33,
                   "name": "bindingContext",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -337,7 +337,7 @@
                   }
                 },
                 {
-                  "id": 50,
+                  "id": 34,
                   "name": "overrideContext",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -356,7 +356,7 @@
           ]
         },
         {
-          "id": 44,
+          "id": 28,
           "name": "created",
           "kind": 2048,
           "kindString": "Method",
@@ -365,14 +365,14 @@
           },
           "signatures": [
             {
-              "id": 45,
+              "id": 29,
               "name": "created",
               "kind": 4096,
               "kindString": "Call signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 46,
+                  "id": 30,
                   "name": "owningView",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -391,7 +391,7 @@
           ]
         },
         {
-          "id": 51,
+          "id": 35,
           "name": "process",
           "kind": 2048,
           "kindString": "Method",
@@ -400,14 +400,14 @@
           },
           "signatures": [
             {
-              "id": 52,
+              "id": 36,
               "name": "process",
               "kind": 4096,
               "kindString": "Call signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 53,
+                  "id": 37,
                   "name": "viewPortInstruction",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -418,7 +418,7 @@
                   }
                 },
                 {
-                  "id": 54,
+                  "id": 38,
                   "name": "waitToSwap",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -437,7 +437,7 @@
           ]
         },
         {
-          "id": 55,
+          "id": 39,
           "name": "swap",
           "kind": 2048,
           "kindString": "Method",
@@ -446,14 +446,14 @@
           },
           "signatures": [
             {
-              "id": 56,
+              "id": 40,
               "name": "swap",
               "kind": 4096,
               "kindString": "Call signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 57,
+                  "id": 41,
                   "name": "viewPortInstruction",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -477,215 +477,30 @@
           "title": "Constructors",
           "kind": 512,
           "children": [
-            36
+            20
           ]
         },
         {
           "title": "Properties",
           "kind": 1024,
           "children": [
-            35
+            19
           ]
         },
         {
           "title": "Methods",
           "kind": 2048,
           "children": [
-            47,
-            44,
-            51,
-            55
+            31,
+            28,
+            35,
+            39
           ]
         }
       ]
     },
     {
-      "id": 18,
-      "name": "SwapStrategies",
-      "kind": 128,
-      "kindString": "Class",
-      "flags": {},
-      "children": [
-        {
-          "id": 29,
-          "name": "after",
-          "kind": 2048,
-          "kindString": "Method",
-          "flags": {},
-          "signatures": [
-            {
-              "id": 30,
-              "name": "after",
-              "kind": 4096,
-              "kindString": "Call signature",
-              "flags": {},
-              "parameters": [
-                {
-                  "id": 31,
-                  "name": "viewSlot",
-                  "kind": 32768,
-                  "kindString": "Parameter",
-                  "flags": {},
-                  "type": {
-                    "type": "instrinct",
-                    "name": "any"
-                  }
-                },
-                {
-                  "id": 32,
-                  "name": "previousView",
-                  "kind": 32768,
-                  "kindString": "Parameter",
-                  "flags": {},
-                  "type": {
-                    "type": "instrinct",
-                    "name": "any"
-                  }
-                },
-                {
-                  "id": 33,
-                  "name": "callback",
-                  "kind": 32768,
-                  "kindString": "Parameter",
-                  "flags": {},
-                  "type": {
-                    "type": "instrinct",
-                    "name": "any"
-                  }
-                }
-              ],
-              "type": {
-                "type": "instrinct",
-                "name": "any"
-              }
-            }
-          ]
-        },
-        {
-          "id": 19,
-          "name": "before",
-          "kind": 2048,
-          "kindString": "Method",
-          "flags": {},
-          "signatures": [
-            {
-              "id": 20,
-              "name": "before",
-              "kind": 4096,
-              "kindString": "Call signature",
-              "flags": {},
-              "parameters": [
-                {
-                  "id": 21,
-                  "name": "viewSlot",
-                  "kind": 32768,
-                  "kindString": "Parameter",
-                  "flags": {},
-                  "type": {
-                    "type": "instrinct",
-                    "name": "any"
-                  }
-                },
-                {
-                  "id": 22,
-                  "name": "previousView",
-                  "kind": 32768,
-                  "kindString": "Parameter",
-                  "flags": {},
-                  "type": {
-                    "type": "instrinct",
-                    "name": "any"
-                  }
-                },
-                {
-                  "id": 23,
-                  "name": "callback",
-                  "kind": 32768,
-                  "kindString": "Parameter",
-                  "flags": {},
-                  "type": {
-                    "type": "instrinct",
-                    "name": "any"
-                  }
-                }
-              ],
-              "type": {
-                "type": "instrinct",
-                "name": "any"
-              }
-            }
-          ]
-        },
-        {
-          "id": 24,
-          "name": "with",
-          "kind": 2048,
-          "kindString": "Method",
-          "flags": {},
-          "signatures": [
-            {
-              "id": 25,
-              "name": "with",
-              "kind": 4096,
-              "kindString": "Call signature",
-              "flags": {},
-              "parameters": [
-                {
-                  "id": 26,
-                  "name": "viewSlot",
-                  "kind": 32768,
-                  "kindString": "Parameter",
-                  "flags": {},
-                  "type": {
-                    "type": "instrinct",
-                    "name": "any"
-                  }
-                },
-                {
-                  "id": 27,
-                  "name": "previousView",
-                  "kind": 32768,
-                  "kindString": "Parameter",
-                  "flags": {},
-                  "type": {
-                    "type": "instrinct",
-                    "name": "any"
-                  }
-                },
-                {
-                  "id": 28,
-                  "name": "callback",
-                  "kind": 32768,
-                  "kindString": "Parameter",
-                  "flags": {},
-                  "type": {
-                    "type": "instrinct",
-                    "name": "any"
-                  }
-                }
-              ],
-              "type": {
-                "type": "instrinct",
-                "name": "any"
-              }
-            }
-          ]
-        }
-      ],
-      "groups": [
-        {
-          "title": "Methods",
-          "kind": 2048,
-          "children": [
-            29,
-            19,
-            24
-          ]
-        }
-      ]
-    },
-    {
-      "id": 58,
+      "id": 42,
       "name": "TemplatingRouteLoader",
       "kind": 128,
       "kindString": "Class",
@@ -694,7 +509,7 @@
       },
       "children": [
         {
-          "id": 59,
+          "id": 43,
           "name": "constructor",
           "kind": 512,
           "kindString": "Constructor",
@@ -703,14 +518,14 @@
           },
           "signatures": [
             {
-              "id": 60,
+              "id": 44,
               "name": "new TemplatingRouteLoader",
               "kind": 16384,
               "kindString": "Constructor signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 61,
+                  "id": 45,
                   "name": "compositionEngine",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -724,14 +539,14 @@
               "type": {
                 "type": "reference",
                 "name": "TemplatingRouteLoader",
-                "id": 58,
+                "id": 42,
                 "moduleName": "\"aurelia-templating-router\""
               }
             }
           ]
         },
         {
-          "id": 62,
+          "id": 46,
           "name": "loadRoute",
           "kind": 2048,
           "kindString": "Method",
@@ -740,14 +555,14 @@
           },
           "signatures": [
             {
-              "id": 63,
+              "id": 47,
               "name": "loadRoute",
               "kind": 4096,
               "kindString": "Call signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 64,
+                  "id": 48,
                   "name": "router",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -758,7 +573,7 @@
                   }
                 },
                 {
-                  "id": 65,
+                  "id": 49,
                   "name": "config",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -776,14 +591,14 @@
               "overwrites": {
                 "type": "reference",
                 "name": "RouteLoader.loadRoute",
-                "id": 1922
+                "id": 1323
               }
             }
           ],
           "overwrites": {
             "type": "reference",
             "name": "RouteLoader.loadRoute",
-            "id": 1922
+            "id": 1323
           }
         }
       ],
@@ -792,14 +607,14 @@
           "title": "Constructors",
           "kind": 512,
           "children": [
-            59
+            43
           ]
         },
         {
           "title": "Methods",
           "kind": 2048,
           "children": [
-            62
+            46
           ]
         }
       ],
@@ -807,7 +622,7 @@
         {
           "type": "reference",
           "name": "RouteLoader",
-          "id": 1921
+          "id": 1322
         }
       ]
     }
@@ -818,9 +633,8 @@
       "kind": 128,
       "children": [
         3,
-        34,
         18,
-        58
+        42
       ]
     }
   ]

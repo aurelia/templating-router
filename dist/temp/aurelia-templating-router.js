@@ -1,16 +1,11 @@
 'use strict';
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.TemplatingRouteLoader = exports.RouterView = exports.RouteHref = undefined;
 
-var _createDecoratedClass = (function () { function defineProperties(target, descriptors, initializers) { for (var i = 0; i < descriptors.length; i++) { var descriptor = descriptors[i]; var decorators = descriptor.decorators; var key = descriptor.key; delete descriptor.key; delete descriptor.decorators; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor || descriptor.initializer) descriptor.writable = true; if (decorators) { for (var f = 0; f < decorators.length; f++) { var decorator = decorators[f]; if (typeof decorator === 'function') { descriptor = decorator(target, key, descriptor) || descriptor; } else { throw new TypeError('The decorator for method ' + descriptor.key + ' is of the invalid type ' + typeof decorator); } } if (descriptor.initializer !== undefined) { initializers[key] = descriptor; continue; } } Object.defineProperty(target, key, descriptor); } } return function (Constructor, protoProps, staticProps, protoInitializers, staticInitializers) { if (protoProps) defineProperties(Constructor.prototype, protoProps, protoInitializers); if (staticProps) defineProperties(Constructor, staticProps, staticInitializers); return Constructor; }; })();
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-function _defineDecoratedPropertyDescriptor(target, key, descriptors) { var _descriptor = descriptors[key]; if (!_descriptor) return; var descriptor = {}; for (var _key in _descriptor) descriptor[_key] = _descriptor[_key]; descriptor.value = descriptor.initializer ? descriptor.initializer.call(target) : undefined; Object.defineProperty(target, key, descriptor); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+var _dec, _dec2, _dec3, _dec4, _dec5, _class, _dec6, _dec7, _class2, _desc, _value, _class3, _descriptor, _dec8, _class5;
 
 var _aureliaLogging = require('aurelia-logging');
 
@@ -28,11 +23,62 @@ var _aureliaMetadata = require('aurelia-metadata');
 
 var _aureliaPath = require('aurelia-path');
 
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _initDefineProp(target, property, descriptor, context) {
+  if (!descriptor) return;
+  Object.defineProperty(target, property, {
+    enumerable: descriptor.enumerable,
+    configurable: descriptor.configurable,
+    writable: descriptor.writable,
+    value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
+  });
+}
+
+function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+  var desc = {};
+  Object['ke' + 'ys'](descriptor).forEach(function (key) {
+    desc[key] = descriptor[key];
+  });
+  desc.enumerable = !!desc.enumerable;
+  desc.configurable = !!desc.configurable;
+
+  if ('value' in desc || desc.initializer) {
+    desc.writable = true;
+  }
+
+  desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+    return decorator(target, property, desc) || desc;
+  }, desc);
+
+  if (context && desc.initializer !== void 0) {
+    desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+    desc.initializer = undefined;
+  }
+
+  if (desc.initializer === void 0) {
+    Object['define' + 'Property'](target, property, desc);
+    desc = null;
+  }
+
+  return desc;
+}
+
+function _initializerWarningHelper(descriptor, context) {
+  throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
+}
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var logger = LogManager.getLogger('route-href');
 
-var RouteHref = (function () {
+var RouteHref = exports.RouteHref = (_dec = (0, _aureliaTemplating.customAttribute)('route-href'), _dec2 = (0, _aureliaTemplating.bindable)({ name: 'route', changeHandler: 'processChange' }), _dec3 = (0, _aureliaTemplating.bindable)({ name: 'params', changeHandler: 'processChange' }), _dec4 = (0, _aureliaTemplating.bindable)({ name: 'attribute', defaultValue: 'href' }), _dec5 = (0, _aureliaDependencyInjection.inject)(_aureliaRouter.Router, _aureliaPal.DOM.Element), _dec(_class = _dec2(_class = _dec3(_class = _dec4(_class = _dec5(_class = function () {
   function RouteHref(router, element) {
-    _classCallCheck(this, _RouteHref);
+    _classCallCheck(this, RouteHref);
 
     this.router = router;
     this.element = element;
@@ -65,23 +111,15 @@ var RouteHref = (function () {
 
       var href = _this.router.generate(_this.route, _this.params);
       _this.element.setAttribute(_this.attribute, href);
-    })['catch'](function (reason) {
+    }).catch(function (reason) {
       logger.error(reason);
     });
   };
 
-  var _RouteHref = RouteHref;
-  RouteHref = _aureliaDependencyInjection.inject(_aureliaRouter.Router, _aureliaPal.DOM.Element)(RouteHref) || RouteHref;
-  RouteHref = _aureliaTemplating.bindable({ name: 'attribute', defaultValue: 'href' })(RouteHref) || RouteHref;
-  RouteHref = _aureliaTemplating.bindable({ name: 'params', changeHandler: 'processChange' })(RouteHref) || RouteHref;
-  RouteHref = _aureliaTemplating.bindable({ name: 'route', changeHandler: 'processChange' })(RouteHref) || RouteHref;
-  RouteHref = _aureliaTemplating.customAttribute('route-href')(RouteHref) || RouteHref;
   return RouteHref;
-})();
+}()) || _class) || _class) || _class) || _class) || _class);
 
-exports.RouteHref = RouteHref;
-
-var SwapStrategies = (function () {
+var SwapStrategies = function () {
   function SwapStrategies() {
     _classCallCheck(this, SwapStrategies);
   }
@@ -98,7 +136,7 @@ var SwapStrategies = (function () {
     return promise;
   };
 
-  SwapStrategies.prototype['with'] = function _with(viewSlot, previousView, callback) {
+  SwapStrategies.prototype.with = function _with(viewSlot, previousView, callback) {
     var promise = Promise.resolve(callback());
 
     if (previousView !== undefined) {
@@ -113,24 +151,15 @@ var SwapStrategies = (function () {
   };
 
   return SwapStrategies;
-})();
+}();
 
 var swapStrategies = new SwapStrategies();
 
-var RouterView = (function () {
-  var _instanceInitializers = {};
-
-  _createDecoratedClass(RouterView, [{
-    key: 'swapOrder',
-    decorators: [_aureliaTemplating.bindable],
-    initializer: null,
-    enumerable: true
-  }], null, _instanceInitializers);
-
+var RouterView = exports.RouterView = (_dec6 = (0, _aureliaTemplating.customElement)('router-view'), _dec7 = (0, _aureliaDependencyInjection.inject)(_aureliaPal.DOM.Element, _aureliaDependencyInjection.Container, _aureliaTemplating.ViewSlot, _aureliaRouter.Router, _aureliaTemplating.ViewLocator, _aureliaTemplating.CompositionTransaction), _dec6(_class2 = (0, _aureliaTemplating.noView)(_class2 = _dec7(_class2 = (_class3 = function () {
   function RouterView(element, container, viewSlot, router, viewLocator, compositionTransaction) {
-    _classCallCheck(this, _RouterView);
+    _classCallCheck(this, RouterView);
 
-    _defineDecoratedPropertyDescriptor(this, 'swapOrder', _instanceInitializers);
+    _initDefineProp(this, 'swapOrder', _descriptor, this);
 
     this.element = element;
     this.container = container;
@@ -190,7 +219,7 @@ var RouterView = (function () {
     var work = function work() {
       var previousView = _this3.view;
       var viewSlot = _this3.viewSlot;
-      var swapStrategy = undefined;
+      var swapStrategy = void 0;
 
       swapStrategy = _this3.swapOrder in swapStrategies ? swapStrategies[_this3.swapOrder] : swapStrategies.after;
 
@@ -218,36 +247,34 @@ var RouterView = (function () {
     work();
   };
 
-  var _RouterView = RouterView;
-  RouterView = _aureliaDependencyInjection.inject(_aureliaPal.DOM.Element, _aureliaDependencyInjection.Container, _aureliaTemplating.ViewSlot, _aureliaRouter.Router, _aureliaTemplating.ViewLocator, _aureliaTemplating.CompositionTransaction)(RouterView) || RouterView;
-  RouterView = _aureliaTemplating.noView(RouterView) || RouterView;
-  RouterView = _aureliaTemplating.customElement('router-view')(RouterView) || RouterView;
   return RouterView;
-})();
-
-exports.RouterView = RouterView;
-
-var TemplatingRouteLoader = (function (_RouteLoader) {
+}(), (_descriptor = _applyDecoratedDescriptor(_class3.prototype, 'swapOrder', [_aureliaTemplating.bindable], {
+  enumerable: true,
+  initializer: null
+})), _class3)) || _class2) || _class2) || _class2);
+var TemplatingRouteLoader = exports.TemplatingRouteLoader = (_dec8 = (0, _aureliaDependencyInjection.inject)(_aureliaTemplating.CompositionEngine), _dec8(_class5 = function (_RouteLoader) {
   _inherits(TemplatingRouteLoader, _RouteLoader);
 
   function TemplatingRouteLoader(compositionEngine) {
-    _classCallCheck(this, _TemplatingRouteLoader);
+    _classCallCheck(this, TemplatingRouteLoader);
 
-    _RouteLoader.call(this);
-    this.compositionEngine = compositionEngine;
+    var _this4 = _possibleConstructorReturn(this, _RouteLoader.call(this));
+
+    _this4.compositionEngine = compositionEngine;
+    return _this4;
   }
 
   TemplatingRouteLoader.prototype.loadRoute = function loadRoute(router, config) {
     var childContainer = router.container.createChild();
     var instruction = {
-      viewModel: _aureliaPath.relativeToFile(config.moduleId, _aureliaMetadata.Origin.get(router.container.viewModel.constructor).moduleId),
+      viewModel: (0, _aureliaPath.relativeToFile)(config.moduleId, _aureliaMetadata.Origin.get(router.container.viewModel.constructor).moduleId),
       childContainer: childContainer,
       view: config.view || config.viewStrategy,
       router: router
     };
 
     childContainer.getChildRouter = function () {
-      var childRouter = undefined;
+      var childRouter = void 0;
 
       childContainer.registerHandler(_aureliaRouter.Router, function (c) {
         return childRouter || (childRouter = router.createChild(childContainer));
@@ -259,20 +286,5 @@ var TemplatingRouteLoader = (function (_RouteLoader) {
     return this.compositionEngine.ensureViewModel(instruction);
   };
 
-  var _TemplatingRouteLoader = TemplatingRouteLoader;
-  TemplatingRouteLoader = _aureliaDependencyInjection.inject(_aureliaTemplating.CompositionEngine)(TemplatingRouteLoader) || TemplatingRouteLoader;
   return TemplatingRouteLoader;
-})(_aureliaRouter.RouteLoader);
-
-exports.TemplatingRouteLoader = TemplatingRouteLoader;
-
-function configure(config) {
-  config.singleton(_aureliaRouter.RouteLoader, TemplatingRouteLoader).singleton(_aureliaRouter.Router, _aureliaRouter.AppRouter).globalResources('./router-view', './route-href');
-
-  config.container.registerAlias(_aureliaRouter.Router, _aureliaRouter.AppRouter);
-}
-
-exports.TemplatingRouteLoader = TemplatingRouteLoader;
-exports.RouterView = RouterView;
-exports.RouteHref = RouteHref;
-exports.configure = configure;
+}(_aureliaRouter.RouteLoader)) || _class5);

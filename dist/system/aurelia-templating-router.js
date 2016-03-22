@@ -1,7 +1,8 @@
-System.register(['aurelia-router', './route-loader', './router-view', './route-href'], function (_export) {
-  'use strict';
+'use strict';
 
+System.register(['aurelia-router', './route-loader', './router-view', './route-href'], function (_export, _context) {
   var Router, AppRouter, RouteLoader, TemplatingRouteLoader, RouterView, RouteHref;
+
 
   function configure(config) {
     config.singleton(RouteLoader, TemplatingRouteLoader).singleton(Router, AppRouter).globalResources('./router-view', './route-href');

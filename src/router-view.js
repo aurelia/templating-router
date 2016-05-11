@@ -1,8 +1,9 @@
 import {Container, inject} from 'aurelia-dependency-injection';
-import {ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction} from 'aurelia-templating';
+import {ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine} from 'aurelia-templating';
 import {Router} from 'aurelia-router';
 import {Origin} from 'aurelia-metadata';
 import {DOM} from 'aurelia-pal';
+import {_ContentSelector} from 'aurelia-templating';
 
 class SwapStrategies {
   // animate the next view in before removing the current view;
@@ -37,17 +38,21 @@ const swapStrategies = new SwapStrategies();
 
 @customElement('router-view')
 @noView
-@inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction)
+@inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine)
 export class RouterView {
   @bindable swapOrder;
+  @bindable layoutView;
+  @bindable layoutViewModel;
+  @bindable layoutModel;
 
-  constructor(element, container, viewSlot, router, viewLocator, compositionTransaction) {
+  constructor(element, container, viewSlot, router, viewLocator, compositionTransaction, compositionEngine) {
     this.element = element;
     this.container = container;
     this.viewSlot = viewSlot;
     this.router = router;
     this.viewLocator = viewLocator;
     this.compositionTransaction = compositionTransaction;
+    this.compositionEngine = compositionEngine;
     this.router.registerViewPort(this, this.element.getAttribute('name'));
 
     if (!('initialComposition' in compositionTransaction)) {
@@ -71,54 +76,61 @@ export class RouterView {
     let viewModel = component.viewModel;
     let viewModelResource = component.viewModelResource;
     let metadata = viewModelResource.metadata;
+    let config = component.router.currentInstruction.config;
 
-    let viewStrategy = this.viewLocator.getViewStrategy(component.view || viewModel);
-    if (viewStrategy) {
-      viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
-    }
+    // layoutInstruction is our layout viewModel
+    let layoutInstruction = {
+      viewModel: config.layoutViewModel || this.layoutViewModel,
+      view: config.layoutView || this.layoutView,
+      model: config.layoutModel || this.layoutModel,
+      router: viewPortInstruction.component.router,
+      childContainer: childContainer,
+      viewSlot: this.viewSlot
+    };
 
-    return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true).then(viewFactory => {
-      if (!this.compositionTransactionNotifier) {
-        this.compositionTransactionOwnershipToken = this.compositionTransaction.tryCapture();
+    return Promise.resolve(this.composeLayout(layoutInstruction))
+    .then(layoutView => {
+      let viewStrategy = this.viewLocator.getViewStrategy(component.view || viewModel);
+
+      if (viewStrategy) {
+        viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
       }
 
-      viewPortInstruction.controller = metadata.create(childContainer,
-        BehaviorInstruction.dynamic(
-          this.element,
-          viewModel,
-          viewFactory
-        )
-      );
+      return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true)
+      .then(viewFactory => {
+        if (!this.compositionTransactionNotifier) {
+          this.compositionTransactionOwnershipToken = this.compositionTransaction.tryCapture();
+        }
 
-      if (waitToSwap) {
-        return;
-      }
+        viewPortInstruction.layout = layoutView ? layoutView.view || layoutView : undefined;
 
-      this.swap(viewPortInstruction);
+        viewPortInstruction.controller = metadata.create(childContainer,
+          BehaviorInstruction.dynamic(
+            this.element,
+            viewModel,
+            viewFactory
+          )
+        );
+
+        if (waitToSwap) {
+          return;
+        }
+
+        this.swap(viewPortInstruction);
+      });
     });
   }
 
+  composeLayout(instruction) {
+    if (instruction.viewModel || instruction.view) {
+      return this.compositionEngine.compose(instruction);
+    }
+  }
+
   swap(viewPortInstruction) {
-    let work = () => {
-      let previousView = this.view;
-      let viewSlot = this.viewSlot;
-      let swapStrategy;
-
-      swapStrategy = this.swapOrder in swapStrategies
-                  ? swapStrategies[this.swapOrder]
-                  : swapStrategies.after;
-
-      swapStrategy(viewSlot, previousView, () => {
-        return Promise.resolve(viewSlot.add(viewPortInstruction.controller.view)).then(() => {
-          if (this.compositionTransactionNotifier) {
-            this.compositionTransactionNotifier.done();
-            this.compositionTransactionNotifier = null;
-          }
-        });
-      });
-
-      this.view = viewPortInstruction.controller.view;
-    };
+    let work = viewPortInstruction.layout ?
+      () => { return this.swapWithLayout(viewPortInstruction); } :
+      () => { return this.swapWithoutLayout(viewPortInstruction); };
 
     viewPortInstruction.controller.automate(this.overrideContext, this.owningView);
 
@@ -130,5 +142,61 @@ export class RouterView {
     }
 
     work();
+  }
+
+  swapWithoutLayout(viewPortInstruction) {
+    let previousView = this.view;
+    let swapStrategy;
+    let viewSlot = this.viewSlot;
+
+    swapStrategy = this.swapOrder in swapStrategies
+                 ? swapStrategies[this.swapOrder]
+                 : swapStrategies.after;
+
+    swapStrategy(viewSlot, previousView, () => {
+      return Promise.resolve(viewSlot.add(viewPortInstruction.controller.view))
+      .then(() => {
+        if (this.compositionTransactionNotifier) {
+          this.compositionTransactionNotifier.done();
+          this.compositionTransactionNotifier = null;
+        }
+      });
+    });
+
+    this.view = viewPortInstruction.controller.view;
+  }
+
+  swapWithLayout(viewPortInstruction) {
+    let previousView = this.view;
+    let swapStrategy;
+    let layout = viewPortInstruction.layout;
+
+    if (layout.contentSelectors.length === 0) throw new Error('No content selector present in layout ' + layout.resources.viewUrl);
+
+    let viewSlot = new ViewSlot(layout.contentSelectors[0].anchor, false);
+    viewSlot.attached();
+
+    // Apply content selectors
+    _ContentSelector.applySelectors(
+      viewPortInstruction.controller.view,
+      layout.contentSelectors,
+      (contentSelector, group) => contentSelector.add(group)
+    );
+
+    swapStrategy = this.swapOrder in swapStrategies
+                   ? swapStrategies[this.swapOrder]
+                   : swapStrategies.after;
+
+    swapStrategy(viewSlot, previousView, () => {
+      return Promise.resolve(viewSlot.add(viewPortInstruction.controller.view))
+      .then(() => {
+        if (this.compositionTransactionNotifier) {
+          this.compositionTransactionNotifier.done();
+          this.compositionTransactionNotifier = null;
+        }
+      });
+    });
+
+    this.view = viewPortInstruction.controller.view;
   }
 }

@@ -1,9 +1,8 @@
 import {Container, inject} from 'aurelia-dependency-injection';
-import {ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine} from 'aurelia-templating';
+import {ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM} from 'aurelia-templating';
 import {Router} from 'aurelia-router';
 import {Origin} from 'aurelia-metadata';
 import {DOM} from 'aurelia-pal';
-import {_ContentSelector} from 'aurelia-templating';
 
 class SwapStrategies {
   // animate the next view in before removing the current view;
@@ -77,11 +76,12 @@ export class RouterView {
     let viewModelResource = component.viewModelResource;
     let metadata = viewModelResource.metadata;
     let config = component.router.currentInstruction.config;
+    let viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {};
 
     // layoutInstruction is our layout viewModel
     let layoutInstruction = {
-      viewModel: config.layoutViewModel || this.layoutViewModel,
-      view: config.layoutView || this.layoutView,
+      viewModel: viewPort.layoutViewModel || config.layoutViewModel || this.layoutViewModel,
+      view: viewPort.layoutView || config.layoutView || this.layoutView,
       model: config.layoutModel || this.layoutModel,
       router: viewPortInstruction.component.router,
       childContainer: childContainer,
@@ -171,30 +171,20 @@ export class RouterView {
     let swapStrategy;
     let layout = viewPortInstruction.layout;
 
-    if (layout.contentSelectors.length === 0) throw new Error('No content selector present in layout ' + layout.resources.viewUrl);
-
-    let viewSlot = new ViewSlot(layout.contentSelectors[0].anchor, false);
+    let viewSlot = new ViewSlot(layout.firstChild, false);
     viewSlot.attached();
-
-    // Apply content selectors
-    _ContentSelector.applySelectors(
-      viewPortInstruction.controller.view,
-      layout.contentSelectors,
-      (contentSelector, group) => contentSelector.add(group)
-    );
 
     swapStrategy = this.swapOrder in swapStrategies
                    ? swapStrategies[this.swapOrder]
                    : swapStrategies.after;
 
     swapStrategy(viewSlot, previousView, () => {
-      return Promise.resolve(viewSlot.add(viewPortInstruction.controller.view))
-      .then(() => {
-        if (this.compositionTransactionNotifier) {
-          this.compositionTransactionNotifier.done();
-          this.compositionTransactionNotifier = null;
-        }
-      });
+      ShadowDOM.distributeView(viewPortInstruction.controller.view, layout.slots, viewSlot);
+
+      if (this.compositionTransactionNotifier) {
+        this.compositionTransactionNotifier.done();
+        this.compositionTransactionNotifier = null;
+      }
     });
 
     this.view = viewPortInstruction.controller.view;

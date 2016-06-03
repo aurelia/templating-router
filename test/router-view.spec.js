@@ -1,48 +1,24 @@
 import {StageComponent} from 'aurelia-testing';
 import {RouteLoader, AppRouter, Router} from 'aurelia-router';
 import {TemplatingRouteLoader} from 'src/route-loader';
+import {testConstants} from 'test/test-constants';
 
 describe('router-view', () => {
   let component;
 
-  beforeEach(() => {
-    component = StageComponent
-        .withResources('src/router-view')
-        .inView('<router-view></router-view>');
-
-    component.bootstrap(aurelia => {
-      aurelia.use.defaultBindingLanguage()
-                .defaultResources()
-                .history();
-
-      aurelia.use.singleton(RouteLoader, TemplatingRouteLoader)
-                 .singleton(Router, AppRouter)
-                 .globalResources('src/router-view', 'src/route-href');
-
-      aurelia.use.container.registerAlias(Router, AppRouter);
-
-      aurelia.use.container.viewModel = {
-        configureRouter: (config, router) => {
-          config.map([
-            { route: '', name: 'base-route',    moduleId: 'test/default', title: 'Default route' },
-            { route: 'nolayout', name: 'nolayout',    moduleId: 'test/page1', title: 'No layout' },
-            { route: 'layout1',  name: 'testlayout1', moduleId: 'test/page2', title: 'Test Layout 1', layoutView: 'test/test-layout.html' },
-            { route: 'layout2',  name: 'testlayout2', moduleId: 'test/page3', title: 'Test Layout 2', layoutViewModel: 'test/test-layout' }
-          ]);
-        }
-      };
-    });
+  beforeEach(done => {
+    done();
   });
 
   afterEach(done => {
-    Promise.resolve(component.viewModel.router.navigate(''))
-    .then(() => {
+    component.viewModel.router.navigate('default').then(() => {
       component.dispose();
       done();
     });
   });
 
   it('has a router instance', done => {
+    component = withDefaultViewport({ moduleId: 'test/module-default-slot' });
     component.create()
     .then(() => {
       expect(component.viewModel.router).not.toBe(undefined);
@@ -51,35 +27,148 @@ describe('router-view', () => {
   });
 
   it('loads a non-layout based view', done => {
+    component = withDefaultViewport({ moduleId: 'test/module-default-slot' });
     component.create()
     .then(() => {
-      return component.viewModel.router.navigate('nolayout');
+      return component.viewModel.router.navigate('route');
     })
     .then(() => {
-      expect(component.viewModel.element.innerText).toBe('This is page 1');
+      expect(component.viewModel.element.innerText).toContain(testConstants.content);
     })
     .then(done);
   });
 
   it('loads a view-only layout', done => {
+    component = withDefaultViewport({ moduleId: 'test/module-default-slot', layoutView: 'test/layout-default-slot.html' });
     component.create()
     .then(() => {
-      return component.viewModel.router.navigate('layout1');
+      return component.viewModel.router.navigate('route');
     })
     .then(() => {
-      expect(component.viewModel.element.innerText).toBe('test layout\n\nThis is page 2');
+      expect(component.viewModel.element.innerText).toContain(testConstants.content);
+      expect(component.viewModel.element.innerText).toContain(testConstants.defaultLayout);
     })
     .then(done);
   });
 
   it('loads a module based layout', done => {
+    component = withDefaultViewport({ moduleId: 'test/module-default-slot', layoutViewModel: 'test/layout-default-slot' });
     component.create()
     .then(() => {
-      return component.viewModel.router.navigate('layout2');
+      return component.viewModel.router.navigate('route');
     })
     .then(() => {
-      expect(component.viewModel.element.innerText).toBe('test layout\n\nThis is page 3');
+      expect(component.viewModel.element.innerText).toContain(testConstants.content);
+      expect(component.viewModel.element.innerText).toContain(testConstants.defaultLayout);
+      expect(component.viewModel.viewSlot.children[0].controller.viewModel).not.toBe(undefined);
+    })
+    .then(done);
+  });
+
+  it('loads a module based layout with a specific view', done => {
+    component = withDefaultViewport({ moduleId: 'test/module-default-slot', layoutView: 'test/layout-default-slot-alt.html', layoutViewModel: 'test/layout-default-slot' });
+    component.create()
+    .then(() => {
+      return component.viewModel.router.navigate('route');
+    })
+    .then(() => {
+      expect(component.viewModel.element.innerText).toContain(testConstants.content);
+      expect(component.viewModel.element.innerText).toContain(testConstants.altLayout);
+      expect(component.viewModel.viewSlot.children[0].controller.viewModel).not.toBe(undefined);
+    })
+    .then(done);
+  });
+
+  it('loads a layout with multiple slots', done => {
+    component = withDefaultViewport({ moduleId: 'test/module-named-slots', layoutView: 'test/layout-named-slots.html' });
+    component.create()
+    .then(() => {
+      return component.viewModel.router.navigate('route');
+    })
+    .then(() => {
+      expect(component.viewModel.element.innerText).toContain(testConstants.content + '\n' + testConstants.content);
+      expect(component.viewModel.element.innerText).toContain(testConstants.namedSlotsLayout);
+    })
+    .then(done);
+  });
+
+  it('loads layouts for a named viewport', done => {
+    component = withNamedViewport({
+      viewPorts: {
+        viewport1: { moduleId: 'test/module-default-slot', layoutView: 'test/layout-default-slot.html' }
+      }
+    });
+    component.create()
+    .then(() => {
+      return component.viewModel.router.navigate('route');
+    })
+    .then(() => {
+      expect(component.viewModel.element.innerText).toContain(testConstants.content);
+      expect(component.viewModel.element.innerText).toContain(testConstants.defaultLayout);
+    })
+    .then(done);
+  });
+
+  it('activates the layout viewmodel with a model value', done => {
+    component = withDefaultViewport({ moduleId: 'test/module-default-slot', layoutViewModel: 'test/layout-default-slot', layoutModel: 1 });
+    component.create()
+    .then(() => {
+      return component.viewModel.router.navigate('route');
+    })
+    .then(() => {
+      expect(component.viewModel.viewSlot.children[0].controller.viewModel.value).toBe(1);
     })
     .then(done);
   });
 });
+
+function withDefaultViewport(routeConfig) {
+  let component = StageComponent
+      .withResources('src/router-view')
+      .inView('<router-view></router-view>');
+  bootstrap(component, { route: ['', 'default'], moduleId: 'test/module-default-slot', activationStrategy: 'replace'}, routeConfig);
+  return component;
+}
+
+function withNamedViewport(routeConfig) {
+  let component = StageComponent
+      .withResources('src/router-view')
+      .inView('<router-view name="viewport1"></router-view>');
+  bootstrap(component,
+    {
+      route: ['', 'default'],
+      viewPorts: {
+        viewport1: { moduleId: 'test/module-default-slot' }
+      },
+      activationStrategy: 'replace'
+    },
+    routeConfig);
+  return component;
+}
+
+function bootstrap(component, defaultRoute, routeConfig) {
+  component.bootstrap(aurelia => {
+    aurelia.use.defaultBindingLanguage()
+              .defaultResources()
+              .history();
+//              .developmentLogging();
+
+    aurelia.use.singleton(RouteLoader, TemplatingRouteLoader)
+               .singleton(Router, AppRouter)
+               .globalResources('src/router-view', 'src/route-href');
+
+    if (routeConfig) {
+      routeConfig.activationStrategy = 'replace';
+      routeConfig.route = 'route';
+      routeConfig = [defaultRoute, routeConfig];
+    } else {
+      routeConfig = [defaultRoute];
+    }
+
+    aurelia.use.container.viewModel = {
+      configureRouter: (config, router) => {
+        config.map(routeConfig);
+      }
+    };
+  });
+}

@@ -82,7 +82,7 @@ export class RouterView {
     let layoutInstruction = {
       viewModel: viewPort.layoutViewModel || config.layoutViewModel || this.layoutViewModel,
       view: viewPort.layoutView || config.layoutView || this.layoutView,
-      model: config.layoutModel || this.layoutModel,
+      model: viewPort.layoutModel || config.layoutModel || this.layoutModel,
       router: viewPortInstruction.component.router,
       childContainer: childContainer,
       viewSlot: this.viewSlot
@@ -128,9 +128,31 @@ export class RouterView {
   }
 
   swap(viewPortInstruction) {
-    let work = viewPortInstruction.layout ?
-      () => { return this.swapWithLayout(viewPortInstruction); } :
-      () => { return this.swapWithoutLayout(viewPortInstruction); };
+    let work = () => {
+      let previousView = this.view;
+      let swapStrategy;
+      let layout = viewPortInstruction.layout;
+      let viewSlot = layout ? new ViewSlot(layout.firstChild, false) : this.viewSlot;
+
+      if (layout) {
+        viewSlot.attached();
+      }
+
+      swapStrategy = this.swapOrder in swapStrategies
+                  ? swapStrategies[this.swapOrder]
+                  : swapStrategies.after;
+
+      swapStrategy(viewSlot, previousView, () => {
+        if (layout) {
+          ShadowDOM.distributeView(viewPortInstruction.controller.view, layout.slots, viewSlot);
+          this._notify();
+        } else {
+          return Promise.resolve(viewSlot.add(viewPortInstruction.controller.view)).then(() => { this._notify(); });
+        }
+
+        this.view = viewPortInstruction.controller.view;
+      });
+    };
 
     viewPortInstruction.controller.automate(this.overrideContext, this.owningView);
 
@@ -144,49 +166,10 @@ export class RouterView {
     work();
   }
 
-  swapWithoutLayout(viewPortInstruction) {
-    let previousView = this.view;
-    let swapStrategy;
-    let viewSlot = this.viewSlot;
-
-    swapStrategy = this.swapOrder in swapStrategies
-                 ? swapStrategies[this.swapOrder]
-                 : swapStrategies.after;
-
-    swapStrategy(viewSlot, previousView, () => {
-      return Promise.resolve(viewSlot.add(viewPortInstruction.controller.view))
-      .then(() => {
-        if (this.compositionTransactionNotifier) {
-          this.compositionTransactionNotifier.done();
-          this.compositionTransactionNotifier = null;
-        }
-      });
-    });
-
-    this.view = viewPortInstruction.controller.view;
-  }
-
-  swapWithLayout(viewPortInstruction) {
-    let previousView = this.view;
-    let swapStrategy;
-    let layout = viewPortInstruction.layout;
-
-    let viewSlot = new ViewSlot(layout.firstChild, false);
-    viewSlot.attached();
-
-    swapStrategy = this.swapOrder in swapStrategies
-                   ? swapStrategies[this.swapOrder]
-                   : swapStrategies.after;
-
-    swapStrategy(viewSlot, previousView, () => {
-      ShadowDOM.distributeView(viewPortInstruction.controller.view, layout.slots, viewSlot);
-
-      if (this.compositionTransactionNotifier) {
-        this.compositionTransactionNotifier.done();
-        this.compositionTransactionNotifier = null;
-      }
-    });
-
-    this.view = viewPortInstruction.controller.view;
+  _notify() {
+    if (this.compositionTransactionNotifier) {
+      this.compositionTransactionNotifier.done();
+      this.compositionTransactionNotifier = null;
+    }
   }
 }

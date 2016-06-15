@@ -112,6 +112,12 @@
   "aurelia": {
     "documentation": {
       "articles": []
+    },
+    "build": {
+      "resources": [
+        "aurelia-templating-router/router-view",
+        "aurelia-templating-router/route-href"
+      ]
     }
   }
 }

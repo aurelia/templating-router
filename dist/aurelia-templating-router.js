@@ -1,5 +1,5 @@
 import * as LogManager from 'aurelia-logging';
-import {customAttribute,bindable,ViewSlot,ViewLocator,customElement,noView,BehaviorInstruction,CompositionTransaction,CompositionEngine} from 'aurelia-templating';
+import {customAttribute,bindable,ViewSlot,ViewLocator,customElement,noView,BehaviorInstruction,CompositionTransaction,CompositionEngine,ShadowDOM} from 'aurelia-templating';
 import {inject,Container} from 'aurelia-dependency-injection';
 import {Router,RouteLoader} from 'aurelia-router';
 import {DOM} from 'aurelia-pal';
@@ -85,17 +85,21 @@ const swapStrategies = new SwapStrategies();
 
 @customElement('router-view')
 @noView
-@inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction)
+@inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine)
 export class RouterView {
   @bindable swapOrder;
+  @bindable layoutView;
+  @bindable layoutViewModel;
+  @bindable layoutModel;
 
-  constructor(element, container, viewSlot, router, viewLocator, compositionTransaction) {
+  constructor(element, container, viewSlot, router, viewLocator, compositionTransaction, compositionEngine) {
     this.element = element;
     this.container = container;
     this.viewSlot = viewSlot;
     this.router = router;
     this.viewLocator = viewLocator;
     this.compositionTransaction = compositionTransaction;
+    this.compositionEngine = compositionEngine;
     this.router.registerViewPort(this, this.element.getAttribute('name'));
 
     if (!('initialComposition' in compositionTransaction)) {
@@ -119,53 +123,86 @@ export class RouterView {
     let viewModel = component.viewModel;
     let viewModelResource = component.viewModelResource;
     let metadata = viewModelResource.metadata;
+    let config = component.router.currentInstruction.config;
+    let viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {};
 
-    let viewStrategy = this.viewLocator.getViewStrategy(component.view || viewModel);
-    if (viewStrategy) {
-      viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
+    // layoutInstruction is our layout viewModel
+    let layoutInstruction = {
+      viewModel: viewPort.layoutViewModel || config.layoutViewModel || this.layoutViewModel,
+      view: viewPort.layoutView || config.layoutView || this.layoutView,
+      model: viewPort.layoutModel || config.layoutModel || this.layoutModel,
+      router: viewPortInstruction.component.router,
+      childContainer: childContainer,
+      viewSlot: this.viewSlot
+    };
+
+    return Promise.resolve(this.composeLayout(layoutInstruction))
+    .then(layoutView => {
+      let viewStrategy = this.viewLocator.getViewStrategy(component.view || viewModel);
+
+      if (viewStrategy) {
+        viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
+      }
+
+      return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true)
+      .then(viewFactory => {
+        if (!this.compositionTransactionNotifier) {
+          this.compositionTransactionOwnershipToken = this.compositionTransaction.tryCapture();
+        }
+
+        viewPortInstruction.layout = layoutView ? layoutView.view || layoutView : undefined;
+
+        viewPortInstruction.controller = metadata.create(childContainer,
+          BehaviorInstruction.dynamic(
+            this.element,
+            viewModel,
+            viewFactory
+          )
+        );
+
+        if (waitToSwap) {
+          return;
+        }
+
+        this.swap(viewPortInstruction);
+      });
+    });
+  }
+
+  composeLayout(instruction) {
+    if (instruction.viewModel || instruction.view) {
+      return this.compositionEngine.compose(instruction);
     }
 
-    return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true).then(viewFactory => {
-      if (!this.compositionTransactionNotifier) {
-        this.compositionTransactionOwnershipToken = this.compositionTransaction.tryCapture();
-      }
-
-      viewPortInstruction.controller = metadata.create(childContainer,
-        BehaviorInstruction.dynamic(
-          this.element,
-          viewModel,
-          viewFactory
-        )
-      );
-
-      if (waitToSwap) {
-        return;
-      }
-
-      this.swap(viewPortInstruction);
-    });
+    return undefined;
   }
 
   swap(viewPortInstruction) {
     let work = () => {
       let previousView = this.view;
-      let viewSlot = this.viewSlot;
       let swapStrategy;
+      let layout = viewPortInstruction.layout;
+      let viewSlot = layout ? new ViewSlot(layout.firstChild, false) : this.viewSlot;
+
+      if (layout) {
+        viewSlot.attached();
+      }
 
       swapStrategy = this.swapOrder in swapStrategies
                   ? swapStrategies[this.swapOrder]
                   : swapStrategies.after;
 
       swapStrategy(viewSlot, previousView, () => {
-        return Promise.resolve(viewSlot.add(viewPortInstruction.controller.view)).then(() => {
-          if (this.compositionTransactionNotifier) {
-            this.compositionTransactionNotifier.done();
-            this.compositionTransactionNotifier = null;
-          }
-        });
-      });
+        if (layout) {
+          ShadowDOM.distributeView(viewPortInstruction.controller.view, layout.slots, viewSlot);
+          this._notify();
+        } else {
+          return Promise.resolve(viewSlot.add(viewPortInstruction.controller.view)).then(() => { this._notify(); });
+        }
 
-      this.view = viewPortInstruction.controller.view;
+        this.view = viewPortInstruction.controller.view;
+        return Promise.resolve();
+      });
     };
 
     viewPortInstruction.controller.automate(this.overrideContext, this.owningView);
@@ -173,11 +210,18 @@ export class RouterView {
     if (this.compositionTransactionOwnershipToken) {
       return this.compositionTransactionOwnershipToken.waitForCompositionComplete().then(() => {
         this.compositionTransactionOwnershipToken = null;
-        work();
+        return work();
       });
     }
 
-    work();
+    return work();
+  }
+
+  _notify() {
+    if (this.compositionTransactionNotifier) {
+      this.compositionTransactionNotifier.done();
+      this.compositionTransactionNotifier = null;
+    }
   }
 }
 

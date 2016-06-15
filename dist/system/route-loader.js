@@ -1,13 +1,11 @@
 'use strict';
 
 System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-router', 'aurelia-path', 'aurelia-metadata'], function (_export, _context) {
+  "use strict";
+
   var inject, CompositionEngine, RouteLoader, Router, relativeToFile, Origin, _dec, _class, TemplatingRouteLoader;
 
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
+  
 
   function _possibleConstructorReturn(self, call) {
     if (!self) {
@@ -51,7 +49,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
         _inherits(TemplatingRouteLoader, _RouteLoader);
 
         function TemplatingRouteLoader(compositionEngine) {
-          _classCallCheck(this, TemplatingRouteLoader);
+          
 
           var _this = _possibleConstructorReturn(this, _RouteLoader.call(this));
 

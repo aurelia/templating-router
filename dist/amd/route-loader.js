@@ -6,11 +6,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
   });
   exports.TemplatingRouteLoader = undefined;
 
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
+  
 
   function _possibleConstructorReturn(self, call) {
     if (!self) {
@@ -42,7 +38,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
     _inherits(TemplatingRouteLoader, _RouteLoader);
 
     function TemplatingRouteLoader(compositionEngine) {
-      _classCallCheck(this, TemplatingRouteLoader);
+      
 
       var _this = _possibleConstructorReturn(this, _RouteLoader.call(this));
 

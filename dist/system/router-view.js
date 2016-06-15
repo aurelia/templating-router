@@ -1,7 +1,9 @@
 'use strict';
 
 System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-router', 'aurelia-metadata', 'aurelia-pal'], function (_export, _context) {
-  var Container, inject, ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, Router, Origin, DOM, _dec, _dec2, _class, _desc, _value, _class2, _descriptor, SwapStrategies, swapStrategies, RouterView;
+  "use strict";
+
+  var Container, inject, ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM, Router, Origin, DOM, _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, SwapStrategies, swapStrategies, RouterView;
 
   function _initDefineProp(target, property, descriptor, context) {
     if (!descriptor) return;
@@ -46,11 +48,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
     throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
   }
 
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
+  
 
   return {
     setters: [function (_aureliaDependencyInjection) {
@@ -64,6 +62,8 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
       BehaviorInstruction = _aureliaTemplating.BehaviorInstruction;
       bindable = _aureliaTemplating.bindable;
       CompositionTransaction = _aureliaTemplating.CompositionTransaction;
+      CompositionEngine = _aureliaTemplating.CompositionEngine;
+      ShadowDOM = _aureliaTemplating.ShadowDOM;
     }, function (_aureliaRouter) {
       Router = _aureliaRouter.Router;
     }, function (_aureliaMetadata) {
@@ -74,7 +74,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
     execute: function () {
       SwapStrategies = function () {
         function SwapStrategies() {
-          _classCallCheck(this, SwapStrategies);
+          
         }
 
         SwapStrategies.prototype.before = function before(viewSlot, previousView, callback) {
@@ -108,11 +108,17 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
 
       swapStrategies = new SwapStrategies();
 
-      _export('RouterView', RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction), _dec(_class = noView(_class = _dec2(_class = (_class2 = function () {
-        function RouterView(element, container, viewSlot, router, viewLocator, compositionTransaction) {
-          _classCallCheck(this, RouterView);
+      _export('RouterView', RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine), _dec(_class = noView(_class = _dec2(_class = (_class2 = function () {
+        function RouterView(element, container, viewSlot, router, viewLocator, compositionTransaction, compositionEngine) {
+          
 
           _initDefineProp(this, 'swapOrder', _descriptor, this);
+
+          _initDefineProp(this, 'layoutView', _descriptor2, this);
+
+          _initDefineProp(this, 'layoutViewModel', _descriptor3, this);
+
+          _initDefineProp(this, 'layoutModel', _descriptor4, this);
 
           this.element = element;
           this.container = container;
@@ -120,6 +126,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
           this.router = router;
           this.viewLocator = viewLocator;
           this.compositionTransaction = compositionTransaction;
+          this.compositionEngine = compositionEngine;
           this.router.registerViewPort(this, this.element.getAttribute('name'));
 
           if (!('initialComposition' in compositionTransaction)) {
@@ -145,25 +152,49 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
           var viewModel = component.viewModel;
           var viewModelResource = component.viewModelResource;
           var metadata = viewModelResource.metadata;
+          var config = component.router.currentInstruction.config;
+          var viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {};
 
-          var viewStrategy = this.viewLocator.getViewStrategy(component.view || viewModel);
-          if (viewStrategy) {
-            viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
+          var layoutInstruction = {
+            viewModel: viewPort.layoutViewModel || config.layoutViewModel || this.layoutViewModel,
+            view: viewPort.layoutView || config.layoutView || this.layoutView,
+            model: viewPort.layoutModel || config.layoutModel || this.layoutModel,
+            router: viewPortInstruction.component.router,
+            childContainer: childContainer,
+            viewSlot: this.viewSlot
+          };
+
+          return Promise.resolve(this.composeLayout(layoutInstruction)).then(function (layoutView) {
+            var viewStrategy = _this.viewLocator.getViewStrategy(component.view || viewModel);
+
+            if (viewStrategy) {
+              viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
+            }
+
+            return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true).then(function (viewFactory) {
+              if (!_this.compositionTransactionNotifier) {
+                _this.compositionTransactionOwnershipToken = _this.compositionTransaction.tryCapture();
+              }
+
+              viewPortInstruction.layout = layoutView ? layoutView.view || layoutView : undefined;
+
+              viewPortInstruction.controller = metadata.create(childContainer, BehaviorInstruction.dynamic(_this.element, viewModel, viewFactory));
+
+              if (waitToSwap) {
+                return;
+              }
+
+              _this.swap(viewPortInstruction);
+            });
+          });
+        };
+
+        RouterView.prototype.composeLayout = function composeLayout(instruction) {
+          if (instruction.viewModel || instruction.view) {
+            return this.compositionEngine.compose(instruction);
           }
 
-          return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true).then(function (viewFactory) {
-            if (!_this.compositionTransactionNotifier) {
-              _this.compositionTransactionOwnershipToken = _this.compositionTransaction.tryCapture();
-            }
-
-            viewPortInstruction.controller = metadata.create(childContainer, BehaviorInstruction.dynamic(_this.element, viewModel, viewFactory));
-
-            if (waitToSwap) {
-              return;
-            }
-
-            _this.swap(viewPortInstruction);
-          });
+          return undefined;
         };
 
         RouterView.prototype.swap = function swap(viewPortInstruction) {
@@ -171,21 +202,29 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
 
           var work = function work() {
             var previousView = _this2.view;
-            var viewSlot = _this2.viewSlot;
             var swapStrategy = void 0;
+            var layout = viewPortInstruction.layout;
+            var viewSlot = layout ? new ViewSlot(layout.firstChild, false) : _this2.viewSlot;
+
+            if (layout) {
+              viewSlot.attached();
+            }
 
             swapStrategy = _this2.swapOrder in swapStrategies ? swapStrategies[_this2.swapOrder] : swapStrategies.after;
 
             swapStrategy(viewSlot, previousView, function () {
-              return Promise.resolve(viewSlot.add(viewPortInstruction.controller.view)).then(function () {
-                if (_this2.compositionTransactionNotifier) {
-                  _this2.compositionTransactionNotifier.done();
-                  _this2.compositionTransactionNotifier = null;
-                }
-              });
-            });
+              if (layout) {
+                ShadowDOM.distributeView(viewPortInstruction.controller.view, layout.slots, viewSlot);
+                _this2._notify();
+              } else {
+                return Promise.resolve(viewSlot.add(viewPortInstruction.controller.view)).then(function () {
+                  _this2._notify();
+                });
+              }
 
-            _this2.view = viewPortInstruction.controller.view;
+              _this2.view = viewPortInstruction.controller.view;
+              return Promise.resolve();
+            });
           };
 
           viewPortInstruction.controller.automate(this.overrideContext, this.owningView);
@@ -193,15 +232,31 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
           if (this.compositionTransactionOwnershipToken) {
             return this.compositionTransactionOwnershipToken.waitForCompositionComplete().then(function () {
               _this2.compositionTransactionOwnershipToken = null;
-              work();
+              return work();
             });
           }
 
-          work();
+          return work();
+        };
+
+        RouterView.prototype._notify = function _notify() {
+          if (this.compositionTransactionNotifier) {
+            this.compositionTransactionNotifier.done();
+            this.compositionTransactionNotifier = null;
+          }
         };
 
         return RouterView;
       }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'swapOrder', [bindable], {
+        enumerable: true,
+        initializer: null
+      }), _descriptor2 = _applyDecoratedDescriptor(_class2.prototype, 'layoutView', [bindable], {
+        enumerable: true,
+        initializer: null
+      }), _descriptor3 = _applyDecoratedDescriptor(_class2.prototype, 'layoutViewModel', [bindable], {
+        enumerable: true,
+        initializer: null
+      }), _descriptor4 = _applyDecoratedDescriptor(_class2.prototype, 'layoutModel', [bindable], {
         enumerable: true,
         initializer: null
       })), _class2)) || _class) || _class) || _class));

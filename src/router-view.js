@@ -125,6 +125,8 @@ export class RouterView {
     if (instruction.viewModel || instruction.view) {
       return this.compositionEngine.compose(instruction);
     }
+
+    return undefined;
   }
 
   swap(viewPortInstruction) {
@@ -151,6 +153,7 @@ export class RouterView {
         }
 
         this.view = viewPortInstruction.controller.view;
+        return Promise.resolve();
       });
     };
 
@@ -159,11 +162,11 @@ export class RouterView {
     if (this.compositionTransactionOwnershipToken) {
       return this.compositionTransactionOwnershipToken.waitForCompositionComplete().then(() => {
         this.compositionTransactionOwnershipToken = null;
-        work();
+        return work();
       });
     }
 
-    work();
+    return work();
   }
 
   _notify() {

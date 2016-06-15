@@ -43,44 +43,54 @@ function _initializerWarningHelper(descriptor, context) {
   throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
 }
 
+
+
 import { Container, inject } from 'aurelia-dependency-injection';
 import { ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM } from 'aurelia-templating';
 import { Router } from 'aurelia-router';
 import { Origin } from 'aurelia-metadata';
 import { DOM } from 'aurelia-pal';
 
-let SwapStrategies = class SwapStrategies {
-  before(viewSlot, previousView, callback) {
-    let promise = Promise.resolve(callback());
+var SwapStrategies = function () {
+  function SwapStrategies() {
+    
+  }
+
+  SwapStrategies.prototype.before = function before(viewSlot, previousView, callback) {
+    var promise = Promise.resolve(callback());
 
     if (previousView !== undefined) {
-      return promise.then(() => viewSlot.remove(previousView, true));
+      return promise.then(function () {
+        return viewSlot.remove(previousView, true);
+      });
     }
 
     return promise;
-  }
+  };
 
-  with(viewSlot, previousView, callback) {
-    let promise = Promise.resolve(callback());
+  SwapStrategies.prototype.with = function _with(viewSlot, previousView, callback) {
+    var promise = Promise.resolve(callback());
 
     if (previousView !== undefined) {
       return Promise.all([viewSlot.remove(previousView, true), promise]);
     }
 
     return promise;
-  }
+  };
 
-  after(viewSlot, previousView, callback) {
+  SwapStrategies.prototype.after = function after(viewSlot, previousView, callback) {
     return Promise.resolve(viewSlot.removeAll(true)).then(callback);
-  }
-};
+  };
 
+  return SwapStrategies;
+}();
 
-const swapStrategies = new SwapStrategies();
+var swapStrategies = new SwapStrategies();
 
-export let RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine), _dec(_class = noView(_class = _dec2(_class = (_class2 = class RouterView {
+export var RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine), _dec(_class = noView(_class = _dec2(_class = (_class2 = function () {
+  function RouterView(element, container, viewSlot, router, viewLocator, compositionTransaction, compositionEngine) {
+    
 
-  constructor(element, container, viewSlot, router, viewLocator, compositionTransaction, compositionEngine) {
     _initDefineProp(this, 'swapOrder', _descriptor, this);
 
     _initDefineProp(this, 'layoutView', _descriptor2, this);
@@ -104,25 +114,27 @@ export let RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM
     }
   }
 
-  created(owningView) {
+  RouterView.prototype.created = function created(owningView) {
     this.owningView = owningView;
-  }
+  };
 
-  bind(bindingContext, overrideContext) {
+  RouterView.prototype.bind = function bind(bindingContext, overrideContext) {
     this.container.viewModel = bindingContext;
     this.overrideContext = overrideContext;
-  }
+  };
 
-  process(viewPortInstruction, waitToSwap) {
-    let component = viewPortInstruction.component;
-    let childContainer = component.childContainer;
-    let viewModel = component.viewModel;
-    let viewModelResource = component.viewModelResource;
-    let metadata = viewModelResource.metadata;
-    let config = component.router.currentInstruction.config;
-    let viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {};
+  RouterView.prototype.process = function process(viewPortInstruction, waitToSwap) {
+    var _this = this;
 
-    let layoutInstruction = {
+    var component = viewPortInstruction.component;
+    var childContainer = component.childContainer;
+    var viewModel = component.viewModel;
+    var viewModelResource = component.viewModelResource;
+    var metadata = viewModelResource.metadata;
+    var config = component.router.currentInstruction.config;
+    var viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {};
+
+    var layoutInstruction = {
       viewModel: viewPort.layoutViewModel || config.layoutViewModel || this.layoutViewModel,
       view: viewPort.layoutView || config.layoutView || this.layoutView,
       model: viewPort.layoutModel || config.layoutModel || this.layoutModel,
@@ -131,63 +143,65 @@ export let RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM
       viewSlot: this.viewSlot
     };
 
-    return Promise.resolve(this.composeLayout(layoutInstruction)).then(layoutView => {
-      let viewStrategy = this.viewLocator.getViewStrategy(component.view || viewModel);
+    return Promise.resolve(this.composeLayout(layoutInstruction)).then(function (layoutView) {
+      var viewStrategy = _this.viewLocator.getViewStrategy(component.view || viewModel);
 
       if (viewStrategy) {
         viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
       }
 
-      return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true).then(viewFactory => {
-        if (!this.compositionTransactionNotifier) {
-          this.compositionTransactionOwnershipToken = this.compositionTransaction.tryCapture();
+      return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true).then(function (viewFactory) {
+        if (!_this.compositionTransactionNotifier) {
+          _this.compositionTransactionOwnershipToken = _this.compositionTransaction.tryCapture();
         }
 
         viewPortInstruction.layout = layoutView ? layoutView.view || layoutView : undefined;
 
-        viewPortInstruction.controller = metadata.create(childContainer, BehaviorInstruction.dynamic(this.element, viewModel, viewFactory));
+        viewPortInstruction.controller = metadata.create(childContainer, BehaviorInstruction.dynamic(_this.element, viewModel, viewFactory));
 
         if (waitToSwap) {
           return;
         }
 
-        this.swap(viewPortInstruction);
+        _this.swap(viewPortInstruction);
       });
     });
-  }
+  };
 
-  composeLayout(instruction) {
+  RouterView.prototype.composeLayout = function composeLayout(instruction) {
     if (instruction.viewModel || instruction.view) {
       return this.compositionEngine.compose(instruction);
     }
 
     return undefined;
-  }
+  };
 
-  swap(viewPortInstruction) {
-    let work = () => {
-      let previousView = this.view;
-      let swapStrategy;
-      let layout = viewPortInstruction.layout;
-      let viewSlot = layout ? new ViewSlot(layout.firstChild, false) : this.viewSlot;
+  RouterView.prototype.swap = function swap(viewPortInstruction) {
+    var _this2 = this;
+
+    var work = function work() {
+      var previousView = _this2.view;
+      var swapStrategy = void 0;
+      var layout = viewPortInstruction.layout;
+      var viewSlot = layout ? new ViewSlot(layout.firstChild, false) : _this2.viewSlot;
 
       if (layout) {
         viewSlot.attached();
       }
 
-      swapStrategy = this.swapOrder in swapStrategies ? swapStrategies[this.swapOrder] : swapStrategies.after;
+      swapStrategy = _this2.swapOrder in swapStrategies ? swapStrategies[_this2.swapOrder] : swapStrategies.after;
 
-      swapStrategy(viewSlot, previousView, () => {
+      swapStrategy(viewSlot, previousView, function () {
         if (layout) {
           ShadowDOM.distributeView(viewPortInstruction.controller.view, layout.slots, viewSlot);
-          this._notify();
+          _this2._notify();
         } else {
-          return Promise.resolve(viewSlot.add(viewPortInstruction.controller.view)).then(() => {
-            this._notify();
+          return Promise.resolve(viewSlot.add(viewPortInstruction.controller.view)).then(function () {
+            _this2._notify();
           });
         }
 
-        this.view = viewPortInstruction.controller.view;
+        _this2.view = viewPortInstruction.controller.view;
         return Promise.resolve();
       });
     };
@@ -195,22 +209,24 @@ export let RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM
     viewPortInstruction.controller.automate(this.overrideContext, this.owningView);
 
     if (this.compositionTransactionOwnershipToken) {
-      return this.compositionTransactionOwnershipToken.waitForCompositionComplete().then(() => {
-        this.compositionTransactionOwnershipToken = null;
+      return this.compositionTransactionOwnershipToken.waitForCompositionComplete().then(function () {
+        _this2.compositionTransactionOwnershipToken = null;
         return work();
       });
     }
 
     return work();
-  }
+  };
 
-  _notify() {
+  RouterView.prototype._notify = function _notify() {
     if (this.compositionTransactionNotifier) {
       this.compositionTransactionNotifier.done();
       this.compositionTransactionNotifier = null;
     }
-  }
-}, (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'swapOrder', [bindable], {
+  };
+
+  return RouterView;
+}(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'swapOrder', [bindable], {
   enumerable: true,
   initializer: null
 }), _descriptor2 = _applyDecoratedDescriptor(_class2.prototype, 'layoutView', [bindable], {

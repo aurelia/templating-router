@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.TemplatingRouteLoader = exports.RouterView = exports.RouteHref = undefined;
 
-var _dec, _dec2, _dec3, _dec4, _dec5, _class, _dec6, _dec7, _class2, _desc, _value, _class3, _descriptor, _dec8, _class5;
+var _dec, _dec2, _dec3, _dec4, _dec5, _class, _dec6, _dec7, _class2, _desc, _value, _class3, _descriptor, _descriptor2, _descriptor3, _descriptor4, _dec8, _class5;
 
 var _aureliaLogging = require('aurelia-logging');
 
@@ -155,11 +155,17 @@ var SwapStrategies = function () {
 
 var swapStrategies = new SwapStrategies();
 
-var RouterView = exports.RouterView = (_dec6 = (0, _aureliaTemplating.customElement)('router-view'), _dec7 = (0, _aureliaDependencyInjection.inject)(_aureliaPal.DOM.Element, _aureliaDependencyInjection.Container, _aureliaTemplating.ViewSlot, _aureliaRouter.Router, _aureliaTemplating.ViewLocator, _aureliaTemplating.CompositionTransaction), _dec6(_class2 = (0, _aureliaTemplating.noView)(_class2 = _dec7(_class2 = (_class3 = function () {
-  function RouterView(element, container, viewSlot, router, viewLocator, compositionTransaction) {
+var RouterView = exports.RouterView = (_dec6 = (0, _aureliaTemplating.customElement)('router-view'), _dec7 = (0, _aureliaDependencyInjection.inject)(_aureliaPal.DOM.Element, _aureliaDependencyInjection.Container, _aureliaTemplating.ViewSlot, _aureliaRouter.Router, _aureliaTemplating.ViewLocator, _aureliaTemplating.CompositionTransaction, _aureliaTemplating.CompositionEngine), _dec6(_class2 = (0, _aureliaTemplating.noView)(_class2 = _dec7(_class2 = (_class3 = function () {
+  function RouterView(element, container, viewSlot, router, viewLocator, compositionTransaction, compositionEngine) {
     _classCallCheck(this, RouterView);
 
     _initDefineProp(this, 'swapOrder', _descriptor, this);
+
+    _initDefineProp(this, 'layoutView', _descriptor2, this);
+
+    _initDefineProp(this, 'layoutViewModel', _descriptor3, this);
+
+    _initDefineProp(this, 'layoutModel', _descriptor4, this);
 
     this.element = element;
     this.container = container;
@@ -167,6 +173,7 @@ var RouterView = exports.RouterView = (_dec6 = (0, _aureliaTemplating.customElem
     this.router = router;
     this.viewLocator = viewLocator;
     this.compositionTransaction = compositionTransaction;
+    this.compositionEngine = compositionEngine;
     this.router.registerViewPort(this, this.element.getAttribute('name'));
 
     if (!('initialComposition' in compositionTransaction)) {
@@ -192,25 +199,49 @@ var RouterView = exports.RouterView = (_dec6 = (0, _aureliaTemplating.customElem
     var viewModel = component.viewModel;
     var viewModelResource = component.viewModelResource;
     var metadata = viewModelResource.metadata;
+    var config = component.router.currentInstruction.config;
+    var viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {};
 
-    var viewStrategy = this.viewLocator.getViewStrategy(component.view || viewModel);
-    if (viewStrategy) {
-      viewStrategy.makeRelativeTo(_aureliaMetadata.Origin.get(component.router.container.viewModel.constructor).moduleId);
+    var layoutInstruction = {
+      viewModel: viewPort.layoutViewModel || config.layoutViewModel || this.layoutViewModel,
+      view: viewPort.layoutView || config.layoutView || this.layoutView,
+      model: viewPort.layoutModel || config.layoutModel || this.layoutModel,
+      router: viewPortInstruction.component.router,
+      childContainer: childContainer,
+      viewSlot: this.viewSlot
+    };
+
+    return Promise.resolve(this.composeLayout(layoutInstruction)).then(function (layoutView) {
+      var viewStrategy = _this2.viewLocator.getViewStrategy(component.view || viewModel);
+
+      if (viewStrategy) {
+        viewStrategy.makeRelativeTo(_aureliaMetadata.Origin.get(component.router.container.viewModel.constructor).moduleId);
+      }
+
+      return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true).then(function (viewFactory) {
+        if (!_this2.compositionTransactionNotifier) {
+          _this2.compositionTransactionOwnershipToken = _this2.compositionTransaction.tryCapture();
+        }
+
+        viewPortInstruction.layout = layoutView ? layoutView.view || layoutView : undefined;
+
+        viewPortInstruction.controller = metadata.create(childContainer, _aureliaTemplating.BehaviorInstruction.dynamic(_this2.element, viewModel, viewFactory));
+
+        if (waitToSwap) {
+          return;
+        }
+
+        _this2.swap(viewPortInstruction);
+      });
+    });
+  };
+
+  RouterView.prototype.composeLayout = function composeLayout(instruction) {
+    if (instruction.viewModel || instruction.view) {
+      return this.compositionEngine.compose(instruction);
     }
 
-    return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true).then(function (viewFactory) {
-      if (!_this2.compositionTransactionNotifier) {
-        _this2.compositionTransactionOwnershipToken = _this2.compositionTransaction.tryCapture();
-      }
-
-      viewPortInstruction.controller = metadata.create(childContainer, _aureliaTemplating.BehaviorInstruction.dynamic(_this2.element, viewModel, viewFactory));
-
-      if (waitToSwap) {
-        return;
-      }
-
-      _this2.swap(viewPortInstruction);
-    });
+    return undefined;
   };
 
   RouterView.prototype.swap = function swap(viewPortInstruction) {
@@ -218,21 +249,29 @@ var RouterView = exports.RouterView = (_dec6 = (0, _aureliaTemplating.customElem
 
     var work = function work() {
       var previousView = _this3.view;
-      var viewSlot = _this3.viewSlot;
       var swapStrategy = void 0;
+      var layout = viewPortInstruction.layout;
+      var viewSlot = layout ? new _aureliaTemplating.ViewSlot(layout.firstChild, false) : _this3.viewSlot;
+
+      if (layout) {
+        viewSlot.attached();
+      }
 
       swapStrategy = _this3.swapOrder in swapStrategies ? swapStrategies[_this3.swapOrder] : swapStrategies.after;
 
       swapStrategy(viewSlot, previousView, function () {
-        return Promise.resolve(viewSlot.add(viewPortInstruction.controller.view)).then(function () {
-          if (_this3.compositionTransactionNotifier) {
-            _this3.compositionTransactionNotifier.done();
-            _this3.compositionTransactionNotifier = null;
-          }
-        });
-      });
+        if (layout) {
+          _aureliaTemplating.ShadowDOM.distributeView(viewPortInstruction.controller.view, layout.slots, viewSlot);
+          _this3._notify();
+        } else {
+          return Promise.resolve(viewSlot.add(viewPortInstruction.controller.view)).then(function () {
+            _this3._notify();
+          });
+        }
 
-      _this3.view = viewPortInstruction.controller.view;
+        _this3.view = viewPortInstruction.controller.view;
+        return Promise.resolve();
+      });
     };
 
     viewPortInstruction.controller.automate(this.overrideContext, this.owningView);
@@ -240,15 +279,31 @@ var RouterView = exports.RouterView = (_dec6 = (0, _aureliaTemplating.customElem
     if (this.compositionTransactionOwnershipToken) {
       return this.compositionTransactionOwnershipToken.waitForCompositionComplete().then(function () {
         _this3.compositionTransactionOwnershipToken = null;
-        work();
+        return work();
       });
     }
 
-    work();
+    return work();
+  };
+
+  RouterView.prototype._notify = function _notify() {
+    if (this.compositionTransactionNotifier) {
+      this.compositionTransactionNotifier.done();
+      this.compositionTransactionNotifier = null;
+    }
   };
 
   return RouterView;
 }(), (_descriptor = _applyDecoratedDescriptor(_class3.prototype, 'swapOrder', [_aureliaTemplating.bindable], {
+  enumerable: true,
+  initializer: null
+}), _descriptor2 = _applyDecoratedDescriptor(_class3.prototype, 'layoutView', [_aureliaTemplating.bindable], {
+  enumerable: true,
+  initializer: null
+}), _descriptor3 = _applyDecoratedDescriptor(_class3.prototype, 'layoutViewModel', [_aureliaTemplating.bindable], {
+  enumerable: true,
+  initializer: null
+}), _descriptor4 = _applyDecoratedDescriptor(_class3.prototype, 'layoutModel', [_aureliaTemplating.bindable], {
   enumerable: true,
   initializer: null
 })), _class3)) || _class2) || _class2) || _class2);

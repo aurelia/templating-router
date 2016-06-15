@@ -1,13 +1,11 @@
 'use strict';
 
 System.register(['aurelia-templating', 'aurelia-dependency-injection', 'aurelia-router', 'aurelia-pal', 'aurelia-logging'], function (_export, _context) {
+  "use strict";
+
   var customAttribute, bindable, inject, Router, DOM, LogManager, _dec, _dec2, _dec3, _dec4, _dec5, _class, logger, RouteHref;
 
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
+  
 
   return {
     setters: [function (_aureliaTemplating) {
@@ -27,7 +25,7 @@ System.register(['aurelia-templating', 'aurelia-dependency-injection', 'aurelia-
 
       _export('RouteHref', RouteHref = (_dec = customAttribute('route-href'), _dec2 = bindable({ name: 'route', changeHandler: 'processChange' }), _dec3 = bindable({ name: 'params', changeHandler: 'processChange' }), _dec4 = bindable({ name: 'attribute', defaultValue: 'href' }), _dec5 = inject(Router, DOM.Element), _dec(_class = _dec2(_class = _dec3(_class = _dec4(_class = _dec5(_class = function () {
         function RouteHref(router, element) {
-          _classCallCheck(this, RouteHref);
+          
 
           this.router = router;
           this.element = element;

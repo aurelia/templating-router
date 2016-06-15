@@ -1,6 +1,8 @@
 'use strict';
 
 System.register(['aurelia-router', './route-loader', './router-view', './route-href'], function (_export, _context) {
+  "use strict";
+
   var Router, AppRouter, RouteLoader, TemplatingRouteLoader, RouterView, RouteHref;
 
 

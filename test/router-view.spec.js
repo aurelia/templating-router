@@ -30,7 +30,7 @@ describe('router-view', () => {
     component = withDefaultViewport({ moduleId: 'test/module-default-slot' });
     component.create()
     .then(() => {
-      return component.viewModel.router.navigate('route');
+      return component.viewModel.router.navigate('route').then(wait);
     })
     .then(() => {
       expect(component.viewModel.element.innerText).toContain(testConstants.content);
@@ -42,7 +42,7 @@ describe('router-view', () => {
     component = withDefaultViewport({ moduleId: 'test/module-default-slot', layoutView: 'test/layout-default-slot.html' });
     component.create()
     .then(() => {
-      return component.viewModel.router.navigate('route');
+      return component.viewModel.router.navigate('route').then(wait);
     })
     .then(() => {
       expect(component.viewModel.element.innerText).toContain(testConstants.content);
@@ -55,7 +55,7 @@ describe('router-view', () => {
     component = withDefaultViewport({ moduleId: 'test/module-default-slot', layoutViewModel: 'test/layout-default-slot' });
     component.create()
     .then(() => {
-      return component.viewModel.router.navigate('route');
+      return component.viewModel.router.navigate('route').then(wait);
     })
     .then(() => {
       expect(component.viewModel.element.innerText).toContain(testConstants.content);
@@ -69,7 +69,7 @@ describe('router-view', () => {
     component = withDefaultViewport({ moduleId: 'test/module-default-slot', layoutView: 'test/layout-default-slot-alt.html', layoutViewModel: 'test/layout-default-slot' });
     component.create()
     .then(() => {
-      return component.viewModel.router.navigate('route');
+      return component.viewModel.router.navigate('route').then(wait);
     })
     .then(() => {
       expect(component.viewModel.element.innerText).toContain(testConstants.content);
@@ -83,7 +83,7 @@ describe('router-view', () => {
     component = withDefaultViewport({ moduleId: 'test/module-named-slots', layoutView: 'test/layout-named-slots.html' });
     component.create()
     .then(() => {
-      return component.viewModel.router.navigate('route');
+      return component.viewModel.router.navigate('route').then(wait);
     })
     .then(() => {
       expect(component.viewModel.element.innerText).toContain(testConstants.content + '\n' + testConstants.content);
@@ -100,7 +100,7 @@ describe('router-view', () => {
     });
     component.create()
     .then(() => {
-      return component.viewModel.router.navigate('route');
+      return component.viewModel.router.navigate('route').then(wait);
     })
     .then(() => {
       expect(component.viewModel.element.innerText).toContain(testConstants.content);
@@ -113,7 +113,7 @@ describe('router-view', () => {
     component = withDefaultViewport({ moduleId: 'test/module-default-slot', layoutViewModel: 'test/layout-default-slot', layoutModel: 1 });
     component.create()
     .then(() => {
-      return component.viewModel.router.navigate('route');
+      return component.viewModel.router.navigate('route').then(wait);
     })
     .then(() => {
       expect(component.viewModel.viewSlot.children[0].controller.viewModel.value).toBe(1);
@@ -121,6 +121,14 @@ describe('router-view', () => {
     .then(done);
   });
 });
+
+function wait() {
+  return new Promise((res) => {
+    setTimeout(() => {
+      res();
+    }, 250);
+  });
+}
 
 function withDefaultViewport(routeConfig) {
   let component = StageComponent

@@ -44,7 +44,6 @@ export declare class RouterView {
   created(owningView?: any): any;
   bind(bindingContext?: any, overrideContext?: any): any;
   process(viewPortInstruction?: any, waitToSwap?: any): any;
-  composeLayout(instruction?: any): any;
   swap(viewPortInstruction?: any): any;
   _notify(): any;
 }

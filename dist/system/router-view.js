@@ -164,37 +164,28 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
             viewSlot: this.viewSlot
           };
 
-          return Promise.resolve(this.composeLayout(layoutInstruction)).then(function (layoutView) {
-            var viewStrategy = _this.viewLocator.getViewStrategy(component.view || viewModel);
-
-            if (viewStrategy) {
-              viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
-            }
-
-            return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true).then(function (viewFactory) {
-              if (!_this.compositionTransactionNotifier) {
-                _this.compositionTransactionOwnershipToken = _this.compositionTransaction.tryCapture();
-              }
-
-              viewPortInstruction.layout = layoutView ? layoutView.view || layoutView : undefined;
-
-              viewPortInstruction.controller = metadata.create(childContainer, BehaviorInstruction.dynamic(_this.element, viewModel, viewFactory));
-
-              if (waitToSwap) {
-                return;
-              }
-
-              _this.swap(viewPortInstruction);
-            });
-          });
-        };
-
-        RouterView.prototype.composeLayout = function composeLayout(instruction) {
-          if (instruction.viewModel || instruction.view) {
-            return this.compositionEngine.compose(instruction);
+          var viewStrategy = this.viewLocator.getViewStrategy(component.view || viewModel);
+          if (viewStrategy) {
+            viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
           }
 
-          return undefined;
+          return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true).then(function (viewFactory) {
+            if (!_this.compositionTransactionNotifier) {
+              _this.compositionTransactionOwnershipToken = _this.compositionTransaction.tryCapture();
+            }
+
+            if (layoutInstruction.viewModel || layoutInstruction.view) {
+              viewPortInstruction.layoutInstruction = layoutInstruction;
+            }
+
+            viewPortInstruction.controller = metadata.create(childContainer, BehaviorInstruction.dynamic(_this.element, viewModel, viewFactory));
+
+            if (waitToSwap) {
+              return;
+            }
+
+            _this.swap(viewPortInstruction);
+          });
         };
 
         RouterView.prototype.swap = function swap(viewPortInstruction) {
@@ -203,27 +194,33 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
           var work = function work() {
             var previousView = _this2.view;
             var swapStrategy = void 0;
-            var layout = viewPortInstruction.layout;
-            var viewSlot = layout ? new ViewSlot(layout.firstChild, false) : _this2.viewSlot;
-
-            if (layout) {
-              viewSlot.attached();
-            }
+            var viewSlot = _this2.viewSlot;
+            var layoutInstruction = viewPortInstruction.layoutInstruction;
 
             swapStrategy = _this2.swapOrder in swapStrategies ? swapStrategies[_this2.swapOrder] : swapStrategies.after;
 
             swapStrategy(viewSlot, previousView, function () {
-              if (layout) {
-                ShadowDOM.distributeView(viewPortInstruction.controller.view, layout.slots, viewSlot);
-                _this2._notify();
-              } else {
-                return Promise.resolve(viewSlot.add(viewPortInstruction.controller.view)).then(function () {
-                  _this2._notify();
+              var waitForView = void 0;
+
+              if (layoutInstruction) {
+                if (!layoutInstruction.viewModel) {
+                  layoutInstruction.viewModel = {};
+                }
+
+                waitForView = _this2.compositionEngine.createController(layoutInstruction).then(function (layout) {
+                  ShadowDOM.distributeView(viewPortInstruction.controller.view, layout.slots || layout.view.slots);
+                  return layout.view || layout;
                 });
+              } else {
+                waitForView = Promise.resolve(viewPortInstruction.controller.view);
               }
 
-              _this2.view = viewPortInstruction.controller.view;
-              return Promise.resolve();
+              return waitForView.then(function (newView) {
+                _this2.view = newView;
+                return viewSlot.add(newView);
+              }).then(function () {
+                _this2._notify();
+              });
             });
           };
 

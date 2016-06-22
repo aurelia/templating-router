@@ -2,6 +2,7 @@ import {StageComponent} from 'aurelia-testing';
 import {RouteLoader, AppRouter, Router} from 'aurelia-router';
 import {TemplatingRouteLoader} from 'src/route-loader';
 import {testConstants} from 'test/test-constants';
+import {bootstrap} from 'aurelia-bootstrapper';
 
 describe('router-view', () => {
   let component;
@@ -19,7 +20,7 @@ describe('router-view', () => {
 
   it('has a router instance', done => {
     component = withDefaultViewport({ moduleId: 'test/module-default-slot' });
-    component.create()
+    component.create(bootstrap)
     .then(() => {
       expect(component.viewModel.router).not.toBe(undefined);
     })
@@ -28,7 +29,7 @@ describe('router-view', () => {
 
   it('loads a non-layout based view', done => {
     component = withDefaultViewport({ moduleId: 'test/module-default-slot' });
-    component.create()
+    component.create(bootstrap)
     .then(() => {
       return component.viewModel.router.navigate('route').then(wait);
     })
@@ -40,7 +41,7 @@ describe('router-view', () => {
 
   it('loads a view-only layout', done => {
     component = withDefaultViewport({ moduleId: 'test/module-default-slot', layoutView: 'test/layout-default-slot.html' });
-    component.create()
+    component.create(bootstrap)
     .then(() => {
       return component.viewModel.router.navigate('route').then(wait);
     })
@@ -53,7 +54,7 @@ describe('router-view', () => {
 
   it('loads a module based layout', done => {
     component = withDefaultViewport({ moduleId: 'test/module-default-slot', layoutViewModel: 'test/layout-default-slot' });
-    component.create()
+    component.create(bootstrap)
     .then(() => {
       return component.viewModel.router.navigate('route').then(wait);
     })
@@ -67,7 +68,7 @@ describe('router-view', () => {
 
   it('loads a module based layout with a specific view', done => {
     component = withDefaultViewport({ moduleId: 'test/module-default-slot', layoutView: 'test/layout-default-slot-alt.html', layoutViewModel: 'test/layout-default-slot' });
-    component.create()
+    component.create(bootstrap)
     .then(() => {
       return component.viewModel.router.navigate('route').then(wait);
     })
@@ -81,7 +82,7 @@ describe('router-view', () => {
 
   it('loads a layout with multiple slots', done => {
     component = withDefaultViewport({ moduleId: 'test/module-named-slots', layoutView: 'test/layout-named-slots.html' });
-    component.create()
+    component.create(bootstrap)
     .then(() => {
       return component.viewModel.router.navigate('route').then(wait);
     })
@@ -98,7 +99,7 @@ describe('router-view', () => {
         viewport1: { moduleId: 'test/module-default-slot', layoutView: 'test/layout-default-slot.html' }
       }
     });
-    component.create()
+    component.create(bootstrap)
     .then(() => {
       return component.viewModel.router.navigate('route').then(wait);
     })
@@ -111,7 +112,7 @@ describe('router-view', () => {
 
   it('activates the layout viewmodel with a model value', done => {
     component = withDefaultViewport({ moduleId: 'test/module-default-slot', layoutViewModel: 'test/layout-default-slot', layoutModel: 1 });
-    component.create()
+    component.create(bootstrap)
     .then(() => {
       return component.viewModel.router.navigate('route').then(wait);
     })
@@ -134,7 +135,7 @@ function withDefaultViewport(routeConfig) {
   let component = StageComponent
       .withResources('src/router-view')
       .inView('<router-view></router-view>');
-  bootstrap(component, { route: ['', 'default'], moduleId: 'test/module-default-slot', activationStrategy: 'replace'}, routeConfig);
+  configure(component, { route: ['', 'default'], moduleId: 'test/module-default-slot', activationStrategy: 'replace'}, routeConfig);
   return component;
 }
 
@@ -142,7 +143,7 @@ function withNamedViewport(routeConfig) {
   let component = StageComponent
       .withResources('src/router-view')
       .inView('<router-view name="viewport1"></router-view>');
-  bootstrap(component,
+  configure(component,
     {
       route: ['', 'default'],
       viewPorts: {
@@ -154,7 +155,7 @@ function withNamedViewport(routeConfig) {
   return component;
 }
 
-function bootstrap(component, defaultRoute, routeConfig) {
+function configure(component, defaultRoute, routeConfig) {
   component.bootstrap(aurelia => {
     aurelia.use.defaultBindingLanguage()
               .defaultResources()

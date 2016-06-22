@@ -45,7 +45,6 @@ export declare class RouterView {
   bind(bindingContext?: any, overrideContext?: any): any;
   process(viewPortInstruction?: any, waitToSwap?: any): any;
   swap(viewPortInstruction?: any): any;
-  _notify(): any;
 }
 export declare class TemplatingRouteLoader extends RouteLoader {
   constructor(compositionEngine?: any);

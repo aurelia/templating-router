@@ -106,11 +106,12 @@ var RouteHref = exports.RouteHref = (_dec = (0, _aureliaTemplating.customAttribu
 
     return this.router.ensureConfigured().then(function () {
       if (!_this.isActive) {
-        return;
+        return null;
       }
 
       var href = _this.router.generate(_this.route, _this.params);
       _this.element.setAttribute(_this.attribute, href);
+      return null;
     }).catch(function (reason) {
       logger.error(reason);
     });
@@ -212,7 +213,7 @@ var RouterView = exports.RouterView = (_dec6 = (0, _aureliaTemplating.customElem
     };
 
     var viewStrategy = this.viewLocator.getViewStrategy(component.view || viewModel);
-    if (viewStrategy) {
+    if (viewStrategy && component.view) {
       viewStrategy.makeRelativeTo(_aureliaMetadata.Origin.get(component.router.container.viewModel.constructor).moduleId);
     }
 

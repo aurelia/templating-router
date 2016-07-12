@@ -132,7 +132,7 @@ export let RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM
     };
 
     let viewStrategy = this.viewLocator.getViewStrategy(component.view || viewModel);
-    if (viewStrategy) {
+    if (viewStrategy && component.view) {
       viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
     }
 

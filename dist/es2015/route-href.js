@@ -34,11 +34,12 @@ export let RouteHref = (_dec = customAttribute('route-href'), _dec2 = bindable({
   processChange() {
     return this.router.ensureConfigured().then(() => {
       if (!this.isActive) {
-        return;
+        return null;
       }
 
       let href = this.router.generate(this.route, this.params);
       this.element.setAttribute(this.attribute, href);
+      return null;
     }).catch(reason => {
       logger.error(reason);
     });

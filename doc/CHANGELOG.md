@@ -1,3 +1,14 @@
+<a name="1.0.0-rc.1.0.1"></a>
+# [1.0.0-rc.1.0.1](https://github.com/aurelia/templating-router/compare/1.0.0-rc.1.0.0...v1.0.0-rc.1.0.1) (2016-07-12)
+
+
+### Bug Fixes
+
+* **route-href:** return null from promises ([fd1b2fc](https://github.com/aurelia/templating-router/commit/fd1b2fc)), closes [#31](https://github.com/aurelia/templating-router/issues/31)
+* **router-view:** correct relative view strategies ([3f92470](https://github.com/aurelia/templating-router/commit/3f92470))
+
+
+
 <a name="1.0.0-rc.1.0.0"></a>
 # [1.0.0-rc.1.0.0](https://github.com/aurelia/templating-router/compare/1.0.0-beta.2.0.3...v1.0.0-rc.1.0.0) (2016-06-22)
 

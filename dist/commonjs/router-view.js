@@ -155,7 +155,7 @@ var RouterView = exports.RouterView = (_dec = (0, _aureliaTemplating.customEleme
     };
 
     var viewStrategy = this.viewLocator.getViewStrategy(component.view || viewModel);
-    if (viewStrategy) {
+    if (viewStrategy && component.view) {
       viewStrategy.makeRelativeTo(_aureliaMetadata.Origin.get(component.router.container.viewModel.constructor).moduleId);
     }
 

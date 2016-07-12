@@ -40,13 +40,13 @@ export class RouteHref {
     return this.router.ensureConfigured()
       .then(() => {
         if (!this.isActive) {
-          return;
+          return null;
         }
 
         let href = this.router.generate(this.route, this.params);
         this.element.setAttribute(this.attribute, href);
-      })
-      .catch(reason => {
+        return null;
+      }).catch(reason => {
         logger.error(reason);
       });
   }
@@ -137,7 +137,7 @@ export class RouterView {
     };
 
     let viewStrategy = this.viewLocator.getViewStrategy(component.view || viewModel);
-    if (viewStrategy) {
+    if (viewStrategy && component.view) {
       viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
     }
 

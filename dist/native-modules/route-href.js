@@ -40,11 +40,12 @@ export var RouteHref = (_dec = customAttribute('route-href'), _dec2 = bindable({
 
     return this.router.ensureConfigured().then(function () {
       if (!_this.isActive) {
-        return;
+        return null;
       }
 
       var href = _this.router.generate(_this.route, _this.params);
       _this.element.setAttribute(_this.attribute, href);
+      return null;
     }).catch(function (reason) {
       logger.error(reason);
     });

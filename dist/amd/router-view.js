@@ -146,7 +146,7 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
       };
 
       var viewStrategy = this.viewLocator.getViewStrategy(component.view || viewModel);
-      if (viewStrategy) {
+      if (viewStrategy && component.view) {
         viewStrategy.makeRelativeTo(_aureliaMetadata.Origin.get(component.router.container.viewModel.constructor).moduleId);
       }
 

@@ -5,7 +5,7 @@ define(['exports', './aurelia-templating-router'], function (exports, _aureliaTe
     value: true
   });
   Object.keys(_aureliaTemplatingRouter).forEach(function (key) {
-    if (key === "default") return;
+    if (key === "default" || key === "__esModule") return;
     Object.defineProperty(exports, key, {
       enumerable: true,
       get: function () {

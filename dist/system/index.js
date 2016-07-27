@@ -8,7 +8,7 @@ System.register(['./aurelia-templating-router'], function (_export, _context) {
       var _exportObj = {};
 
       for (var _key in _aureliaTemplatingRouter) {
-        if (_key !== "default") _exportObj[_key] = _aureliaTemplatingRouter[_key];
+        if (_key !== "default" && key !== "__esModule") _exportObj[_key] = _aureliaTemplatingRouter[_key];
       }
 
       _export(_exportObj);

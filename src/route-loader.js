@@ -11,10 +11,14 @@ export class TemplatingRouteLoader extends RouteLoader {
     this.compositionEngine = compositionEngine;
   }
 
+  viewModelLocation(router, config) {
+    return relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
+  }
+
   loadRoute(router, config) {
     let childContainer = router.container.createChild();
     let instruction = {
-      viewModel: relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId),
+      viewModel: this.viewModelLocation(router, config),
       childContainer: childContainer,
       view: config.view || config.viewStrategy,
       router: router

@@ -10,6 +10,7 @@ const logger = LogManager.getLogger('route-href');
 @bindable({name: 'route', changeHandler: 'processChange'})
 @bindable({name: 'params', changeHandler: 'processChange'})
 @bindable({name: 'attribute', defaultValue: 'href'})
+@bindable({name: 'async', defaultValue: false})
 @inject(Router, DOM.Element)
 export class RouteHref {
   constructor(router, element) {
@@ -19,6 +20,14 @@ export class RouteHref {
 
   bind() {
     this.isActive = true;
+
+    if (!!this.async) {
+      let values = Object.keys(this.params).map(key => this.params[key]);
+      if (values.includes(undefined)) {
+        return;
+      }
+    }
+
     this.processChange();
   }
 

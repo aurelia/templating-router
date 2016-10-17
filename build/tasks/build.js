@@ -15,7 +15,7 @@ var gutil = require('gulp-util');
 var gulpIgnore = require('gulp-ignore');
 var merge = require('merge2');
 var jsName = paths.packageName + '.js';
-var compileToModules = ['es2015', 'commonjs', 'amd', 'system', 'native-modules'];
+var compileToModules = ['amd'];
 
 function cleanGeneratedCode() {
   return through2.obj(function(file, enc, callback) {
@@ -121,6 +121,13 @@ gulp.task('build-dts', function() {
     .pipe(gulp.dest(paths.output));
 });
 
+gulp.task('ship-to-skelly', function() {
+  gulp.src('dist/amd/*')
+    .pipe(
+      gulp.dest('../skeleton-navigation/skeleton-esnext/jspm_packages/npm/aurelia-templating-router@1.0.0/')
+    );
+});
+
 gulp.task('build', function(callback) {
   return runSequence(
     'clean',
@@ -129,6 +136,7 @@ gulp.task('build', function(callback) {
     compileToModules
       .map(function(moduleType) { return 'build-babel-' + moduleType })
       .concat(paths.useTypeScriptForDTS ? ['build-dts'] : []),
+    'ship-to-skelly',
     callback
   );
 });

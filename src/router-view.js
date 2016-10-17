@@ -6,30 +6,30 @@ import {DOM} from 'aurelia-pal';
 
 class SwapStrategies {
   // animate the next view in before removing the current view;
-  before(viewSlot, previousView, callback) {
+  before(viewSlot, previousView, returnToCache, callback) {
     let promise = Promise.resolve(callback());
 
     if (previousView !== undefined) {
-      return promise.then(() => viewSlot.remove(previousView, true));
+      return promise.then(() => viewSlot.remove(previousView, returnToCache));
     }
 
     return promise;
   }
 
   // animate the next view at the same time the current view is removed
-  with(viewSlot, previousView, callback) {
+  with(viewSlot, previousView, returnToCache, callback) {
     let promise = Promise.resolve(callback());
 
     if (previousView !== undefined) {
-      return Promise.all([viewSlot.remove(previousView, true), promise]);
+      return Promise.all([viewSlot.remove(previousView, returnToCache), promise]);
     }
 
     return promise;
   }
 
   // animate the next view in after the current view has been removed
-  after(viewSlot, previousView, callback) {
-    return Promise.resolve(viewSlot.removeAll(true)).then(callback);
+  after(viewSlot, previousView, returnToCache, callback) {
+    return Promise.resolve(viewSlot.removeAll(returnToCache)).then(callback);
   }
 }
 
@@ -87,7 +87,9 @@ export class RouterView {
       viewSlot: this.viewSlot
     };
 
-    const doSwap = () => {
+    const doSwap = cached => {
+      this.previousViewCached = this.currentViewCached;
+      this.currentViewCached = cached;
       if (!this.compositionTransactionNotifier) {
         this.compositionTransactionOwnershipToken = this.compositionTransaction.tryCapture();
       }
@@ -110,7 +112,7 @@ export class RouterView {
     const controller = this.cache.get(viewPortName, viewPortConfig, navigationInstruction);
     if (controller) {
       viewPortInstruction.controller = controller;
-      doSwap();
+      doSwap(true);
       return Promise.resolve();
     }
 
@@ -131,13 +133,13 @@ export class RouterView {
           )
         );
 
-        this.cache.set(
+        const cached = this.cache.set(
           viewPortName,
           viewPortConfig,
           navigationInstruction,
           viewPortInstruction.controller);
 
-        doSwap();
+        doSwap(cached);
       });
   }
 
@@ -152,7 +154,8 @@ export class RouterView {
                   ? swapStrategies[this.swapOrder]
                   : swapStrategies.after;
 
-      swapStrategy(viewSlot, previousView, () => {
+      const returnToCache = !this.previousViewCached;
+      swapStrategy(viewSlot, previousView, returnToCache, () => {
         let waitForView;
 
         if (layoutInstruction) {

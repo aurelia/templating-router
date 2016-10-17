@@ -1,6 +1,6 @@
 import {Container, inject} from 'aurelia-dependency-injection';
 import {ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM} from 'aurelia-templating';
-import {Router} from 'aurelia-router';
+import {Router, ViewPortCache} from 'aurelia-router';
 import {Origin} from 'aurelia-metadata';
 import {DOM} from 'aurelia-pal';
 
@@ -37,14 +37,14 @@ const swapStrategies = new SwapStrategies();
 
 @customElement('router-view')
 @noView
-@inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine)
+@inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine, ViewPortCache)
 export class RouterView {
   @bindable swapOrder;
   @bindable layoutView;
   @bindable layoutViewModel;
   @bindable layoutModel;
 
-  constructor(element, container, viewSlot, router, viewLocator, compositionTransaction, compositionEngine) {
+  constructor(element, container, viewSlot, router, viewLocator, compositionTransaction, compositionEngine, cache) {
     this.element = element;
     this.container = container;
     this.viewSlot = viewSlot;
@@ -52,6 +52,7 @@ export class RouterView {
     this.viewLocator = viewLocator;
     this.compositionTransaction = compositionTransaction;
     this.compositionEngine = compositionEngine;
+    this.cache = cache;
     this.router.registerViewPort(this, this.element.getAttribute('name'));
 
     if (!('initialComposition' in compositionTransaction)) {
@@ -73,8 +74,6 @@ export class RouterView {
     let component = viewPortInstruction.component;
     let childContainer = component.childContainer;
     let viewModel = component.viewModel;
-    let viewModelResource = component.viewModelResource;
-    let metadata = viewModelResource.metadata;
     let config = component.router.currentInstruction.config;
     let viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {};
 
@@ -88,13 +87,7 @@ export class RouterView {
       viewSlot: this.viewSlot
     };
 
-    let viewStrategy = this.viewLocator.getViewStrategy(component.view || viewModel);
-    if (viewStrategy && component.view) {
-      viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
-    }
-
-    return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true)
-    .then(viewFactory => {
+    const doSwap = () => {
       if (!this.compositionTransactionNotifier) {
         this.compositionTransactionOwnershipToken = this.compositionTransaction.tryCapture();
       }
@@ -103,20 +96,49 @@ export class RouterView {
         viewPortInstruction.layoutInstruction = layoutInstruction;
       }
 
-      viewPortInstruction.controller = metadata.create(childContainer,
-        BehaviorInstruction.dynamic(
-          this.element,
-          viewModel,
-          viewFactory
-        )
-      );
-
       if (waitToSwap) {
         return;
       }
 
       this.swap(viewPortInstruction);
-    });
+    }
+
+    const viewPortName = viewPortInstruction.name;
+    const viewPortConfig = viewPortInstruction.lifecycleArgs[1].viewPorts[viewPortName];
+    const navigationInstruction = viewPortInstruction.lifecycleArgs[2];
+
+    const controller = this.cache.get(viewPortName, viewPortConfig, navigationInstruction);
+    if (controller) {
+      viewPortInstruction.controller = controller;
+      doSwap();
+      return Promise.resolve();
+    }
+
+    let viewStrategy = this.viewLocator.getViewStrategy(component.view || viewModel);
+    if (viewStrategy && component.view) {
+      viewStrategy.makeRelativeTo(Origin.get(component.router.container.viewModel.constructor).moduleId);
+    }
+
+    let viewModelResource = component.viewModelResource;
+    let metadata = viewModelResource.metadata;
+    return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true)
+      .then(viewFactory => {
+        viewPortInstruction.controller = metadata.create(childContainer,
+          BehaviorInstruction.dynamic(
+            this.element,
+            viewModel,
+            viewFactory
+          )
+        );
+
+        this.cache.set(
+          viewPortName,
+          viewPortConfig,
+          navigationInstruction,
+          viewPortInstruction.controller);
+
+        doSwap();
+      });
   }
 
   swap(viewPortInstruction) {

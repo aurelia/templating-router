@@ -70,6 +70,10 @@ export class RouterView {
     this.overrideContext = overrideContext;
   }
 
+  unbind() {
+    this.cache.clear();
+  }
+
   process(viewPortInstruction, waitToSwap) {
     let component = viewPortInstruction.component;
     let childContainer = component.childContainer;

@@ -36,7 +36,8 @@ class SwapStrategies {
 
 const swapStrategies = new SwapStrategies();
 
-@customElement('router-view')
+@customElement('
+router-view')
 @noView
 @inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine)
 export class RouterView {
@@ -157,6 +158,7 @@ export class RouterView {
       return this.compositionEngine.createController(layoutInstruction).then(controller => {
         ShadowDOM.distributeView(viewPortInstruction.controller.view, controller.slots || controller.view.slots);
         controller.automate(createOverrideContext(layoutInstruction.viewModel), this.owningView);
+        controller.view.children.push(viewPortInstruction.controller.view);
         return controller.view || controller;
       }).then((newView)=> {
         this.view = newView;

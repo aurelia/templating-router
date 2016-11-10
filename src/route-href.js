@@ -44,7 +44,7 @@ export class RouteHref {
         let href = this.router.generate(this.route, this.params);
 
         if (this.element.au.controller) { 
-          this.element.au.controller.viewModel.href = href;
+          this.element.au.controller.viewModel[this.attribute] = href;
         } else {
           this.element.setAttribute(this.attribute, href);
         }

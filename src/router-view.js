@@ -36,8 +36,7 @@ class SwapStrategies {
 
 const swapStrategies = new SwapStrategies();
 
-@customElement('
-router-view')
+@customElement('router-view')
 @noView
 @inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine)
 export class RouterView {
@@ -142,7 +141,7 @@ export class RouterView {
       });
     };
 
-    let ready = (owningView)=> {
+    let ready = owningView => {
       viewPortInstruction.controller.automate(this.overrideContext, owningView);
       if (this.compositionTransactionOwnershipToken) {
         return this.compositionTransactionOwnershipToken.waitForCompositionComplete().then(() => {
@@ -154,13 +153,19 @@ export class RouterView {
       return work();
     };
 
-    if (layoutInstruction && layoutInstruction.viewModel) {
+    if (layoutInstruction) {
+      if (!layoutInstruction.viewModel) {
+        // createController chokes if there's no viewmodel, so create a dummy one
+        // should we use something else for the view model here?
+        layoutInstruction.viewModel = {};
+      }
+
       return this.compositionEngine.createController(layoutInstruction).then(controller => {
         ShadowDOM.distributeView(viewPortInstruction.controller.view, controller.slots || controller.view.slots);
         controller.automate(createOverrideContext(layoutInstruction.viewModel), this.owningView);
         controller.view.children.push(viewPortInstruction.controller.view);
         return controller.view || controller;
-      }).then((newView)=> {
+      }).then(newView => {
         this.view = newView;
         return ready(newView);
       });

@@ -1,3 +1,13 @@
+<a name="1.0.1"></a>
+## [1.0.1](https://github.com/aurelia/templating-router/compare/1.0.0...v1.0.1) (2016-12-03)
+
+
+### Bug Fixes
+
+* **router-view:** deco typo, lint and missing conditional ([7de1854](https://github.com/aurelia/templating-router/commit/7de1854))
+
+
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/aurelia/templating-router/compare/1.0.0-rc.1.0.1...v1.0.0) (2016-07-27)
 

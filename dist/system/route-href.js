@@ -57,7 +57,13 @@ System.register(['aurelia-templating', 'aurelia-dependency-injection', 'aurelia-
             }
 
             var href = _this.router.generate(_this.route, _this.params);
-            _this.element.setAttribute(_this.attribute, href);
+
+            if (_this.element.au.controller) {
+              _this.element.au.controller.viewModel[_this.attribute] = href;
+            } else {
+              _this.element.setAttribute(_this.attribute, href);
+            }
+
             return null;
           }).catch(function (reason) {
             logger.error(reason);

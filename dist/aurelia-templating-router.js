@@ -3,6 +3,7 @@ import {customAttribute,bindable,ViewSlot,ViewLocator,customElement,noView,Behav
 import {inject,Container} from 'aurelia-dependency-injection';
 import {Router,RouteLoader} from 'aurelia-router';
 import {DOM} from 'aurelia-pal';
+import {createOverrideContext} from 'aurelia-binding';
 import {Origin} from 'aurelia-metadata';
 import {relativeToFile} from 'aurelia-path';
 
@@ -44,7 +45,13 @@ export class RouteHref {
         }
 
         let href = this.router.generate(this.route, this.params);
-        this.element.setAttribute(this.attribute, href);
+
+        if (this.element.au.controller) {
+          this.element.au.controller.viewModel[this.attribute] = href;
+        } else {
+          this.element.setAttribute(this.attribute, href);
+        }
+
         return null;
       }).catch(reason => {
         logger.error(reason);
@@ -168,53 +175,59 @@ export class RouterView {
   }
 
   swap(viewPortInstruction) {
+    let layoutInstruction = viewPortInstruction.layoutInstruction;
+
     let work = () => {
       let previousView = this.view;
       let swapStrategy;
       let viewSlot = this.viewSlot;
-      let layoutInstruction = viewPortInstruction.layoutInstruction;
 
       swapStrategy = this.swapOrder in swapStrategies
                   ? swapStrategies[this.swapOrder]
                   : swapStrategies.after;
 
       swapStrategy(viewSlot, previousView, () => {
-        let waitForView;
-
-        if (layoutInstruction) {
-          if (!layoutInstruction.viewModel) {
-            // createController chokes if there's no viewmodel, so create a dummy one
-            // could possibly check if there was no VM and don't use compose, just create a viewfactory -> view?
-            layoutInstruction.viewModel = {};
-          }
-
-          waitForView = this.compositionEngine.createController(layoutInstruction).then(layout => {
-            ShadowDOM.distributeView(viewPortInstruction.controller.view, layout.slots || layout.view.slots);
-            return layout.view || layout;
-          });
-        } else {
-          waitForView = Promise.resolve(viewPortInstruction.controller.view);
-        }
-
-        return waitForView.then(newView => {
-          this.view = newView;
-          return viewSlot.add(newView);
+        return Promise.resolve().then(() => {
+          return viewSlot.add(this.view);
         }).then(() => {
           this._notify();
         });
       });
     };
 
-    viewPortInstruction.controller.automate(this.overrideContext, this.owningView);
+    let ready = owningView => {
+      viewPortInstruction.controller.automate(this.overrideContext, owningView);
+      if (this.compositionTransactionOwnershipToken) {
+        return this.compositionTransactionOwnershipToken.waitForCompositionComplete().then(() => {
+          this.compositionTransactionOwnershipToken = null;
+          return work();
+        });
+      }
 
-    if (this.compositionTransactionOwnershipToken) {
-      return this.compositionTransactionOwnershipToken.waitForCompositionComplete().then(() => {
-        this.compositionTransactionOwnershipToken = null;
-        return work();
+      return work();
+    };
+
+    if (layoutInstruction) {
+      if (!layoutInstruction.viewModel) {
+        // createController chokes if there's no viewmodel, so create a dummy one
+        // should we use something else for the view model here?
+        layoutInstruction.viewModel = {};
+      }
+
+      return this.compositionEngine.createController(layoutInstruction).then(controller => {
+        ShadowDOM.distributeView(viewPortInstruction.controller.view, controller.slots || controller.view.slots);
+        controller.automate(createOverrideContext(layoutInstruction.viewModel), this.owningView);
+        controller.view.children.push(viewPortInstruction.controller.view);
+        return controller.view || controller;
+      }).then(newView => {
+        this.view = newView;
+        return ready(newView);
       });
     }
 
-    return work();
+    this.view = viewPortInstruction.controller.view;
+
+    return ready(this.owningView);
   }
 
   _notify() {

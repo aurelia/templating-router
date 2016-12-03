@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-router', 'aurelia-metadata', 'aurelia-pal'], function (_export, _context) {
+System.register(['aurelia-dependency-injection', 'aurelia-binding', 'aurelia-templating', 'aurelia-router', 'aurelia-metadata', 'aurelia-pal'], function (_export, _context) {
   "use strict";
 
-  var Container, inject, ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM, Router, Origin, DOM, _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, SwapStrategies, swapStrategies, RouterView;
+  var Container, inject, createOverrideContext, ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM, Router, Origin, DOM, _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, SwapStrategies, swapStrategies, RouterView;
 
   function _initDefineProp(target, property, descriptor, context) {
     if (!descriptor) return;
@@ -54,6 +54,8 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
     setters: [function (_aureliaDependencyInjection) {
       Container = _aureliaDependencyInjection.Container;
       inject = _aureliaDependencyInjection.inject;
+    }, function (_aureliaBinding) {
+      createOverrideContext = _aureliaBinding.createOverrideContext;
     }, function (_aureliaTemplating) {
       ViewSlot = _aureliaTemplating.ViewSlot;
       ViewLocator = _aureliaTemplating.ViewLocator;
@@ -191,49 +193,55 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
         RouterView.prototype.swap = function swap(viewPortInstruction) {
           var _this2 = this;
 
+          var layoutInstruction = viewPortInstruction.layoutInstruction;
+
           var work = function work() {
             var previousView = _this2.view;
             var swapStrategy = void 0;
             var viewSlot = _this2.viewSlot;
-            var layoutInstruction = viewPortInstruction.layoutInstruction;
 
             swapStrategy = _this2.swapOrder in swapStrategies ? swapStrategies[_this2.swapOrder] : swapStrategies.after;
 
             swapStrategy(viewSlot, previousView, function () {
-              var waitForView = void 0;
-
-              if (layoutInstruction) {
-                if (!layoutInstruction.viewModel) {
-                  layoutInstruction.viewModel = {};
-                }
-
-                waitForView = _this2.compositionEngine.createController(layoutInstruction).then(function (layout) {
-                  ShadowDOM.distributeView(viewPortInstruction.controller.view, layout.slots || layout.view.slots);
-                  return layout.view || layout;
-                });
-              } else {
-                waitForView = Promise.resolve(viewPortInstruction.controller.view);
-              }
-
-              return waitForView.then(function (newView) {
-                _this2.view = newView;
-                return viewSlot.add(newView);
+              return Promise.resolve().then(function () {
+                return viewSlot.add(_this2.view);
               }).then(function () {
                 _this2._notify();
               });
             });
           };
 
-          viewPortInstruction.controller.automate(this.overrideContext, this.owningView);
+          var ready = function ready(owningView) {
+            viewPortInstruction.controller.automate(_this2.overrideContext, owningView);
+            if (_this2.compositionTransactionOwnershipToken) {
+              return _this2.compositionTransactionOwnershipToken.waitForCompositionComplete().then(function () {
+                _this2.compositionTransactionOwnershipToken = null;
+                return work();
+              });
+            }
 
-          if (this.compositionTransactionOwnershipToken) {
-            return this.compositionTransactionOwnershipToken.waitForCompositionComplete().then(function () {
-              _this2.compositionTransactionOwnershipToken = null;
-              return work();
+            return work();
+          };
+
+          if (layoutInstruction) {
+            if (!layoutInstruction.viewModel) {
+              layoutInstruction.viewModel = {};
+            }
+
+            return this.compositionEngine.createController(layoutInstruction).then(function (controller) {
+              ShadowDOM.distributeView(viewPortInstruction.controller.view, controller.slots || controller.view.slots);
+              controller.automate(createOverrideContext(layoutInstruction.viewModel), _this2.owningView);
+              controller.view.children.push(viewPortInstruction.controller.view);
+              return controller.view || controller;
+            }).then(function (newView) {
+              _this2.view = newView;
+              return ready(newView);
             });
           }
 
-          return work();
+          this.view = viewPortInstruction.controller.view;
+
+          return ready(this.owningView);
         };
 
         RouterView.prototype._notify = function _notify() {

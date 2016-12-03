@@ -19,6 +19,8 @@ var _aureliaRouter = require('aurelia-router');
 
 var _aureliaPal = require('aurelia-pal');
 
+var _aureliaBinding = require('aurelia-binding');
+
 var _aureliaMetadata = require('aurelia-metadata');
 
 var _aureliaPath = require('aurelia-path');
@@ -110,7 +112,13 @@ var RouteHref = exports.RouteHref = (_dec = (0, _aureliaTemplating.customAttribu
       }
 
       var href = _this.router.generate(_this.route, _this.params);
-      _this.element.setAttribute(_this.attribute, href);
+
+      if (_this.element.au.controller) {
+        _this.element.au.controller.viewModel[_this.attribute] = href;
+      } else {
+        _this.element.setAttribute(_this.attribute, href);
+      }
+
       return null;
     }).catch(function (reason) {
       logger.error(reason);
@@ -239,49 +247,55 @@ var RouterView = exports.RouterView = (_dec6 = (0, _aureliaTemplating.customElem
   RouterView.prototype.swap = function swap(viewPortInstruction) {
     var _this3 = this;
 
+    var layoutInstruction = viewPortInstruction.layoutInstruction;
+
     var work = function work() {
       var previousView = _this3.view;
       var swapStrategy = void 0;
       var viewSlot = _this3.viewSlot;
-      var layoutInstruction = viewPortInstruction.layoutInstruction;
 
       swapStrategy = _this3.swapOrder in swapStrategies ? swapStrategies[_this3.swapOrder] : swapStrategies.after;
 
       swapStrategy(viewSlot, previousView, function () {
-        var waitForView = void 0;
-
-        if (layoutInstruction) {
-          if (!layoutInstruction.viewModel) {
-            layoutInstruction.viewModel = {};
-          }
-
-          waitForView = _this3.compositionEngine.createController(layoutInstruction).then(function (layout) {
-            _aureliaTemplating.ShadowDOM.distributeView(viewPortInstruction.controller.view, layout.slots || layout.view.slots);
-            return layout.view || layout;
-          });
-        } else {
-          waitForView = Promise.resolve(viewPortInstruction.controller.view);
-        }
-
-        return waitForView.then(function (newView) {
-          _this3.view = newView;
-          return viewSlot.add(newView);
+        return Promise.resolve().then(function () {
+          return viewSlot.add(_this3.view);
         }).then(function () {
           _this3._notify();
         });
       });
     };
 
-    viewPortInstruction.controller.automate(this.overrideContext, this.owningView);
+    var ready = function ready(owningView) {
+      viewPortInstruction.controller.automate(_this3.overrideContext, owningView);
+      if (_this3.compositionTransactionOwnershipToken) {
+        return _this3.compositionTransactionOwnershipToken.waitForCompositionComplete().then(function () {
+          _this3.compositionTransactionOwnershipToken = null;
+          return work();
+        });
+      }
 
-    if (this.compositionTransactionOwnershipToken) {
-      return this.compositionTransactionOwnershipToken.waitForCompositionComplete().then(function () {
-        _this3.compositionTransactionOwnershipToken = null;
-        return work();
+      return work();
+    };
+
+    if (layoutInstruction) {
+      if (!layoutInstruction.viewModel) {
+        layoutInstruction.viewModel = {};
+      }
+
+      return this.compositionEngine.createController(layoutInstruction).then(function (controller) {
+        _aureliaTemplating.ShadowDOM.distributeView(viewPortInstruction.controller.view, controller.slots || controller.view.slots);
+        controller.automate((0, _aureliaBinding.createOverrideContext)(layoutInstruction.viewModel), _this3.owningView);
+        controller.view.children.push(viewPortInstruction.controller.view);
+        return controller.view || controller;
+      }).then(function (newView) {
+        _this3.view = newView;
+        return ready(newView);
       });
     }
 
-    return work();
+    this.view = viewPortInstruction.controller.view;
+
+    return ready(this.owningView);
   };
 
   RouterView.prototype._notify = function _notify() {

@@ -38,7 +38,13 @@ export let RouteHref = (_dec = customAttribute('route-href'), _dec2 = bindable({
       }
 
       let href = this.router.generate(this.route, this.params);
-      this.element.setAttribute(this.attribute, href);
+
+      if (this.element.au.controller) {
+        this.element.au.controller.viewModel[this.attribute] = href;
+      } else {
+        this.element.setAttribute(this.attribute, href);
+      }
+
       return null;
     }).catch(reason => {
       logger.error(reason);

@@ -11,10 +11,20 @@ export class TemplatingRouteLoader extends RouteLoader {
     this.compositionEngine = compositionEngine;
   }
 
+  // enable router to define strategy for resolving View Model location
+  findViewModelLocation(router, config) {
+    // allow router to override general strategy for locating view model
+    if (router.findViewModelLocation) {
+      return router.findViewModelLocation(config);
+    }
+    let parentModuleId = Origin.get(router.container.viewModel.constructor).moduleId;
+    return relativeToFile(config.moduleId, parentModuleId);
+  }
+
   loadRoute(router, config) {
     let childContainer = router.container.createChild();
     let instruction = {
-      viewModel: relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId),
+      viewModel: this.findViewModelLocation(router, config),
       childContainer: childContainer,
       view: config.view || config.viewStrategy,
       router: router

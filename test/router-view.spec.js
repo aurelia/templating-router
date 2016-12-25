@@ -51,7 +51,17 @@ describe('router-view', () => {
     })
     .then(done);
   });
-
+  it('loads a view-only module', done =>{
+    component = withDefaultViewport({ moduleId: 'test/module-view-only.html' });
+    component.create(bootstrap)
+    .then(() => {
+      return component.viewModel.router.navigate('route').then(wait);
+    })
+    .then(() => {
+      expect(component.viewModel.element.innerText).toContain('view-only content');
+    })
+    .then(done);
+  });
   it('loads a module based layout', done => {
     component = withDefaultViewport({ moduleId: 'test/module-default-slot', layoutViewModel: 'test/layout-default-slot' });
     component.create(bootstrap)

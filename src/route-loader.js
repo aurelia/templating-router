@@ -3,6 +3,7 @@ import {CompositionEngine} from 'aurelia-templating';
 import {RouteLoader, Router} from 'aurelia-router';
 import {relativeToFile} from 'aurelia-path';
 import {Origin} from 'aurelia-metadata';
+import {RouterViewLocator} from './router-view';
 
 @inject(CompositionEngine)
 export class TemplatingRouteLoader extends RouteLoader {
@@ -19,6 +20,8 @@ export class TemplatingRouteLoader extends RouteLoader {
       view: config.view || config.viewStrategy,
       router: router
     };
+
+    childContainer.registerSingleton(RouterViewLocator);
 
     childContainer.getChildRouter = function() {
       let childRouter;

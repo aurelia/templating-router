@@ -121,6 +121,18 @@ describe('router-view', () => {
     })
     .then(done);
   });
+
+  it('locates the view port before activating', done => {
+    component = withDefaultViewport({ moduleId: 'test/module-default-slot', layoutViewModel: 'test/layout-default-slot' });
+    component.create(bootstrap)
+    .then(() => {
+      return component.viewModel.router.navigate('route').then(wait);
+    })
+    .then(() => {
+      expect(component.viewModel.viewSlot.children[0].controller.viewModel.routerViewLocated).toBe(true);
+    })
+    .then(done);
+  });
 });
 
 function wait() {

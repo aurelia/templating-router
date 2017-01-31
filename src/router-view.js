@@ -44,6 +44,7 @@ export class RouterView {
   @bindable layoutView;
   @bindable layoutViewModel;
   @bindable layoutModel;
+  element;
 
   constructor(element, container, viewSlot, router, viewLocator, compositionTransaction, compositionEngine) {
     this.element = element;
@@ -78,6 +79,8 @@ export class RouterView {
     let metadata = viewModelResource.metadata;
     let config = component.router.currentInstruction.config;
     let viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {};
+
+    childContainer.get(RouterViewLocator)._notify(this);
 
     // layoutInstruction is our layout viewModel
     let layoutInstruction = {
@@ -181,5 +184,30 @@ export class RouterView {
       this.compositionTransactionNotifier.done();
       this.compositionTransactionNotifier = null;
     }
+  }
+}
+
+/**
+* Locator which finds the nearest RouterView, relative to the current dependency injection container.
+*/
+export class RouterViewLocator {
+  
+  /**
+  * Creates an instance of the RouterViewLocator class.
+  */
+  constructor() {
+    this.promise = new Promise((resolve) => this.resolve = resolve);
+  }
+
+  /**
+  * Finds the nearest RouterView instance.
+  * @returns A promise that will be resolved with the located RouterView instance.
+  */
+  findNearest(): Promise<RouterView> {
+      return this.promise;
+  }
+
+  _notify(routerView: RouterView): void {
+      this.resolve(routerView);
   }
 }

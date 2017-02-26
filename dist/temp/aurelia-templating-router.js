@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.TemplatingRouteLoader = exports.RouterView = exports.RouteHref = undefined;
+exports.TemplatingRouteLoader = exports.RouterViewLocator = exports.RouterView = exports.RouteHref = undefined;
 
 var _dec, _dec2, _dec3, _dec4, _dec5, _class, _dec6, _dec7, _class2, _desc, _value, _class3, _descriptor, _descriptor2, _descriptor3, _descriptor4, _dec8, _class5;
 
@@ -127,43 +127,6 @@ var RouteHref = exports.RouteHref = (_dec = (0, _aureliaTemplating.customAttribu
 
   return RouteHref;
 }()) || _class) || _class) || _class) || _class) || _class);
-
-var SwapStrategies = function () {
-  function SwapStrategies() {
-    _classCallCheck(this, SwapStrategies);
-  }
-
-  SwapStrategies.prototype.before = function before(viewSlot, previousView, callback) {
-    var promise = Promise.resolve(callback());
-
-    if (previousView !== undefined) {
-      return promise.then(function () {
-        return viewSlot.remove(previousView, true);
-      });
-    }
-
-    return promise;
-  };
-
-  SwapStrategies.prototype.with = function _with(viewSlot, previousView, callback) {
-    var promise = Promise.resolve(callback());
-
-    if (previousView !== undefined) {
-      return Promise.all([viewSlot.remove(previousView, true), promise]);
-    }
-
-    return promise;
-  };
-
-  SwapStrategies.prototype.after = function after(viewSlot, previousView, callback) {
-    return Promise.resolve(viewSlot.removeAll(true)).then(callback);
-  };
-
-  return SwapStrategies;
-}();
-
-var swapStrategies = new SwapStrategies();
-
 var RouterView = exports.RouterView = (_dec6 = (0, _aureliaTemplating.customElement)('router-view'), _dec7 = (0, _aureliaDependencyInjection.inject)(_aureliaPal.DOM.Element, _aureliaDependencyInjection.Container, _aureliaTemplating.ViewSlot, _aureliaRouter.Router, _aureliaTemplating.ViewLocator, _aureliaTemplating.CompositionTransaction, _aureliaTemplating.CompositionEngine), _dec6(_class2 = (0, _aureliaTemplating.noView)(_class2 = _dec7(_class2 = (_class3 = function () {
   function RouterView(element, container, viewSlot, router, viewLocator, compositionTransaction, compositionEngine) {
     _classCallCheck(this, RouterView);
@@ -211,6 +174,8 @@ var RouterView = exports.RouterView = (_dec6 = (0, _aureliaTemplating.customElem
     var config = component.router.currentInstruction.config;
     var viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {};
 
+    childContainer.get(RouterViewLocator)._notify(this);
+
     var layoutInstruction = {
       viewModel: viewPort.layoutViewModel || config.layoutViewModel || this.layoutViewModel,
       view: viewPort.layoutView || config.layoutView || this.layoutView,
@@ -248,20 +213,16 @@ var RouterView = exports.RouterView = (_dec6 = (0, _aureliaTemplating.customElem
     var _this3 = this;
 
     var layoutInstruction = viewPortInstruction.layoutInstruction;
+    var previousView = this.view;
 
     var work = function work() {
-      var previousView = _this3.view;
-      var swapStrategy = void 0;
+      var swapStrategy = _aureliaTemplating.SwapStrategies[_this3.swapOrder] || _aureliaTemplating.SwapStrategies.after;
       var viewSlot = _this3.viewSlot;
 
-      swapStrategy = _this3.swapOrder in swapStrategies ? swapStrategies[_this3.swapOrder] : swapStrategies.after;
-
       swapStrategy(viewSlot, previousView, function () {
-        return Promise.resolve().then(function () {
-          return viewSlot.add(_this3.view);
-        }).then(function () {
-          _this3._notify();
-        });
+        return Promise.resolve(viewSlot.add(_this3.view));
+      }).then(function () {
+        _this3._notify();
       });
     };
 
@@ -319,26 +280,54 @@ var RouterView = exports.RouterView = (_dec6 = (0, _aureliaTemplating.customElem
   enumerable: true,
   initializer: null
 })), _class3)) || _class2) || _class2) || _class2);
+
+var RouterViewLocator = exports.RouterViewLocator = function () {
+  function RouterViewLocator() {
+    var _this4 = this;
+
+    _classCallCheck(this, RouterViewLocator);
+
+    this.promise = new Promise(function (resolve) {
+      return _this4.resolve = resolve;
+    });
+  }
+
+  RouterViewLocator.prototype.findNearest = function findNearest() {
+    return this.promise;
+  };
+
+  RouterViewLocator.prototype._notify = function _notify(routerView) {
+    this.resolve(routerView);
+  };
+
+  return RouterViewLocator;
+}();
+
 var TemplatingRouteLoader = exports.TemplatingRouteLoader = (_dec8 = (0, _aureliaDependencyInjection.inject)(_aureliaTemplating.CompositionEngine), _dec8(_class5 = function (_RouteLoader) {
   _inherits(TemplatingRouteLoader, _RouteLoader);
 
   function TemplatingRouteLoader(compositionEngine) {
     _classCallCheck(this, TemplatingRouteLoader);
 
-    var _this4 = _possibleConstructorReturn(this, _RouteLoader.call(this));
+    var _this5 = _possibleConstructorReturn(this, _RouteLoader.call(this));
 
-    _this4.compositionEngine = compositionEngine;
-    return _this4;
+    _this5.compositionEngine = compositionEngine;
+    return _this5;
   }
 
   TemplatingRouteLoader.prototype.loadRoute = function loadRoute(router, config) {
     var childContainer = router.container.createChild();
+
+    var viewModel = /\.html/.test(config.moduleId) ? createDynamicClass(config.moduleId) : (0, _aureliaPath.relativeToFile)(config.moduleId, _aureliaMetadata.Origin.get(router.container.viewModel.constructor).moduleId);
+
     var instruction = {
-      viewModel: (0, _aureliaPath.relativeToFile)(config.moduleId, _aureliaMetadata.Origin.get(router.container.viewModel.constructor).moduleId),
+      viewModel: viewModel,
       childContainer: childContainer,
       view: config.view || config.viewStrategy,
       router: router
     };
+
+    childContainer.registerSingleton(RouterViewLocator);
 
     childContainer.getChildRouter = function () {
       var childRouter = void 0;
@@ -355,3 +344,25 @@ var TemplatingRouteLoader = exports.TemplatingRouteLoader = (_dec8 = (0, _aureli
 
   return TemplatingRouteLoader;
 }(_aureliaRouter.RouteLoader)) || _class5);
+
+
+function createDynamicClass(moduleId) {
+  var _dec9, _dec10, _class6;
+
+  var name = /([^\/^\?]+)\.html/i.exec(moduleId)[1];
+
+  var DynamicClass = (_dec9 = (0, _aureliaTemplating.customElement)(name), _dec10 = (0, _aureliaTemplating.useView)(moduleId), _dec9(_class6 = _dec10(_class6 = function () {
+    function DynamicClass() {
+      _classCallCheck(this, DynamicClass);
+    }
+
+    DynamicClass.prototype.bind = function bind(bindingContext) {
+      this.$parent = bindingContext;
+    };
+
+    return DynamicClass;
+  }()) || _class6) || _class6);
+
+
+  return DynamicClass;
+}

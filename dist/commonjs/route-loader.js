@@ -17,6 +17,8 @@ var _aureliaPath = require('aurelia-path');
 
 var _aureliaMetadata = require('aurelia-metadata');
 
+var _routerView = require('./router-view');
+
 
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -37,12 +39,17 @@ var TemplatingRouteLoader = exports.TemplatingRouteLoader = (_dec = (0, _aurelia
 
   TemplatingRouteLoader.prototype.loadRoute = function loadRoute(router, config) {
     var childContainer = router.container.createChild();
+
+    var viewModel = /\.html/.test(config.moduleId) ? createDynamicClass(config.moduleId) : (0, _aureliaPath.relativeToFile)(config.moduleId, _aureliaMetadata.Origin.get(router.container.viewModel.constructor).moduleId);
+
     var instruction = {
-      viewModel: (0, _aureliaPath.relativeToFile)(config.moduleId, _aureliaMetadata.Origin.get(router.container.viewModel.constructor).moduleId),
+      viewModel: viewModel,
       childContainer: childContainer,
       view: config.view || config.viewStrategy,
       router: router
     };
+
+    childContainer.registerSingleton(_routerView.RouterViewLocator);
 
     childContainer.getChildRouter = function () {
       var childRouter = void 0;
@@ -59,3 +66,25 @@ var TemplatingRouteLoader = exports.TemplatingRouteLoader = (_dec = (0, _aurelia
 
   return TemplatingRouteLoader;
 }(_aureliaRouter.RouteLoader)) || _class);
+
+
+function createDynamicClass(moduleId) {
+  var _dec2, _dec3, _class2;
+
+  var name = /([^\/^\?]+)\.html/i.exec(moduleId)[1];
+
+  var DynamicClass = (_dec2 = (0, _aureliaTemplating.customElement)(name), _dec3 = (0, _aureliaTemplating.useView)(moduleId), _dec2(_class2 = _dec3(_class2 = function () {
+    function DynamicClass() {
+      
+    }
+
+    DynamicClass.prototype.bind = function bind(bindingContext) {
+      this.$parent = bindingContext;
+    };
+
+    return DynamicClass;
+  }()) || _class2) || _class2);
+
+
+  return DynamicClass;
+}

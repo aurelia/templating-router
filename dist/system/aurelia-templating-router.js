@@ -1,19 +1,21 @@
 'use strict';
 
-System.register(['aurelia-router', './route-loader', './router-view', './route-href'], function (_export, _context) {
+System.register(['aurelia-pal', 'aurelia-router', './route-loader', './router-view', './route-href'], function (_export, _context) {
   "use strict";
 
-  var Router, AppRouter, RouteLoader, TemplatingRouteLoader, RouterView, RouteHref;
+  var PLATFORM, Router, AppRouter, RouteLoader, TemplatingRouteLoader, RouterView, RouteHref;
 
 
   function configure(config) {
-    config.singleton(RouteLoader, TemplatingRouteLoader).singleton(Router, AppRouter).globalResources('./router-view', './route-href');
+    config.singleton(RouteLoader, TemplatingRouteLoader).singleton(Router, AppRouter).globalResources(PLATFORM.moduleName('./router-view'), PLATFORM.moduleName('./route-href'));
 
     config.container.registerAlias(Router, AppRouter);
   }
 
   return {
-    setters: [function (_aureliaRouter) {
+    setters: [function (_aureliaPal) {
+      PLATFORM = _aureliaPal.PLATFORM;
+    }, function (_aureliaRouter) {
       Router = _aureliaRouter.Router;
       AppRouter = _aureliaRouter.AppRouter;
       RouteLoader = _aureliaRouter.RouteLoader;

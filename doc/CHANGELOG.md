@@ -1,3 +1,13 @@
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/aurelia/templating-router/compare/1.0.1...v1.1.0) (2017-02-26)
+
+
+### Features
+
+* **route:** load html only component ([112dd29](https://github.com/aurelia/templating-router/commit/112dd29))
+* Update to use shared SwapStrategies from templating.
+
+
 <a name="1.0.1"></a>
 ## [1.0.1](https://github.com/aurelia/templating-router/compare/1.0.0...v1.0.1) (2016-12-03)
 

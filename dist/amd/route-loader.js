@@ -1,4 +1,4 @@
-define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aurelia-router', 'aurelia-path', 'aurelia-metadata'], function (exports, _aureliaDependencyInjection, _aureliaTemplating, _aureliaRouter, _aureliaPath, _aureliaMetadata) {
+define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aurelia-router', 'aurelia-path', 'aurelia-metadata', './router-view'], function (exports, _aureliaDependencyInjection, _aureliaTemplating, _aureliaRouter, _aureliaPath, _aureliaMetadata, _routerView) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -48,12 +48,17 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
 
     TemplatingRouteLoader.prototype.loadRoute = function loadRoute(router, config) {
       var childContainer = router.container.createChild();
+
+      var viewModel = /\.html/.test(config.moduleId) ? createDynamicClass(config.moduleId) : (0, _aureliaPath.relativeToFile)(config.moduleId, _aureliaMetadata.Origin.get(router.container.viewModel.constructor).moduleId);
+
       var instruction = {
-        viewModel: (0, _aureliaPath.relativeToFile)(config.moduleId, _aureliaMetadata.Origin.get(router.container.viewModel.constructor).moduleId),
+        viewModel: viewModel,
         childContainer: childContainer,
         view: config.view || config.viewStrategy,
         router: router
       };
+
+      childContainer.registerSingleton(_routerView.RouterViewLocator);
 
       childContainer.getChildRouter = function () {
         var childRouter = void 0;
@@ -70,4 +75,26 @@ define(['exports', 'aurelia-dependency-injection', 'aurelia-templating', 'aureli
 
     return TemplatingRouteLoader;
   }(_aureliaRouter.RouteLoader)) || _class);
+
+
+  function createDynamicClass(moduleId) {
+    var _dec2, _dec3, _class2;
+
+    var name = /([^\/^\?]+)\.html/i.exec(moduleId)[1];
+
+    var DynamicClass = (_dec2 = (0, _aureliaTemplating.customElement)(name), _dec3 = (0, _aureliaTemplating.useView)(moduleId), _dec2(_class2 = _dec3(_class2 = function () {
+      function DynamicClass() {
+        
+      }
+
+      DynamicClass.prototype.bind = function bind(bindingContext) {
+        this.$parent = bindingContext;
+      };
+
+      return DynamicClass;
+    }()) || _class2) || _class2);
+
+
+    return DynamicClass;
+  }
 });

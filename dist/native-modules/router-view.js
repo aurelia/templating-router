@@ -10,6 +10,8 @@ function _initDefineProp(target, property, descriptor, context) {
   });
 }
 
+
+
 function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
   var desc = {};
   Object['ke' + 'ys'](descriptor).forEach(function (key) {
@@ -43,50 +45,12 @@ function _initializerWarningHelper(descriptor, context) {
   throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
 }
 
-
-
 import { Container, inject } from 'aurelia-dependency-injection';
 import { createOverrideContext } from 'aurelia-binding';
-import { ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM } from 'aurelia-templating';
+import { ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM, SwapStrategies } from 'aurelia-templating';
 import { Router } from 'aurelia-router';
 import { Origin } from 'aurelia-metadata';
 import { DOM } from 'aurelia-pal';
-
-var SwapStrategies = function () {
-  function SwapStrategies() {
-    
-  }
-
-  SwapStrategies.prototype.before = function before(viewSlot, previousView, callback) {
-    var promise = Promise.resolve(callback());
-
-    if (previousView !== undefined) {
-      return promise.then(function () {
-        return viewSlot.remove(previousView, true);
-      });
-    }
-
-    return promise;
-  };
-
-  SwapStrategies.prototype.with = function _with(viewSlot, previousView, callback) {
-    var promise = Promise.resolve(callback());
-
-    if (previousView !== undefined) {
-      return Promise.all([viewSlot.remove(previousView, true), promise]);
-    }
-
-    return promise;
-  };
-
-  SwapStrategies.prototype.after = function after(viewSlot, previousView, callback) {
-    return Promise.resolve(viewSlot.removeAll(true)).then(callback);
-  };
-
-  return SwapStrategies;
-}();
-
-var swapStrategies = new SwapStrategies();
 
 export var RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine), _dec(_class = noView(_class = _dec2(_class = (_class2 = function () {
   function RouterView(element, container, viewSlot, router, viewLocator, compositionTransaction, compositionEngine) {
@@ -135,6 +99,8 @@ export var RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM
     var config = component.router.currentInstruction.config;
     var viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {};
 
+    childContainer.get(RouterViewLocator)._notify(this);
+
     var layoutInstruction = {
       viewModel: viewPort.layoutViewModel || config.layoutViewModel || this.layoutViewModel,
       view: viewPort.layoutView || config.layoutView || this.layoutView,
@@ -172,20 +138,16 @@ export var RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM
     var _this2 = this;
 
     var layoutInstruction = viewPortInstruction.layoutInstruction;
+    var previousView = this.view;
 
     var work = function work() {
-      var previousView = _this2.view;
-      var swapStrategy = void 0;
+      var swapStrategy = SwapStrategies[_this2.swapOrder] || SwapStrategies.after;
       var viewSlot = _this2.viewSlot;
 
-      swapStrategy = _this2.swapOrder in swapStrategies ? swapStrategies[_this2.swapOrder] : swapStrategies.after;
-
       swapStrategy(viewSlot, previousView, function () {
-        return Promise.resolve().then(function () {
-          return viewSlot.add(_this2.view);
-        }).then(function () {
-          _this2._notify();
-        });
+        return Promise.resolve(viewSlot.add(_this2.view));
+      }).then(function () {
+        _this2._notify();
       });
     };
 
@@ -243,3 +205,25 @@ export var RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM
   enumerable: true,
   initializer: null
 })), _class2)) || _class) || _class) || _class);
+
+export var RouterViewLocator = function () {
+  function RouterViewLocator() {
+    var _this3 = this;
+
+    
+
+    this.promise = new Promise(function (resolve) {
+      return _this3.resolve = resolve;
+    });
+  }
+
+  RouterViewLocator.prototype.findNearest = function findNearest() {
+    return this.promise;
+  };
+
+  RouterViewLocator.prototype._notify = function _notify(routerView) {
+    this.resolve(routerView);
+  };
+
+  return RouterViewLocator;
+}();

@@ -3,7 +3,7 @@
 System.register(['aurelia-dependency-injection', 'aurelia-binding', 'aurelia-templating', 'aurelia-router', 'aurelia-metadata', 'aurelia-pal'], function (_export, _context) {
   "use strict";
 
-  var Container, inject, createOverrideContext, ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM, Router, Origin, DOM, _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, SwapStrategies, swapStrategies, RouterView;
+  var Container, inject, createOverrideContext, ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM, SwapStrategies, Router, Origin, DOM, _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, RouterView, RouterViewLocator;
 
   function _initDefineProp(target, property, descriptor, context) {
     if (!descriptor) return;
@@ -14,6 +14,8 @@ System.register(['aurelia-dependency-injection', 'aurelia-binding', 'aurelia-tem
       value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
     });
   }
+
+  
 
   function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
     var desc = {};
@@ -48,8 +50,6 @@ System.register(['aurelia-dependency-injection', 'aurelia-binding', 'aurelia-tem
     throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
   }
 
-  
-
   return {
     setters: [function (_aureliaDependencyInjection) {
       Container = _aureliaDependencyInjection.Container;
@@ -66,6 +66,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-binding', 'aurelia-tem
       CompositionTransaction = _aureliaTemplating.CompositionTransaction;
       CompositionEngine = _aureliaTemplating.CompositionEngine;
       ShadowDOM = _aureliaTemplating.ShadowDOM;
+      SwapStrategies = _aureliaTemplating.SwapStrategies;
     }, function (_aureliaRouter) {
       Router = _aureliaRouter.Router;
     }, function (_aureliaMetadata) {
@@ -74,42 +75,6 @@ System.register(['aurelia-dependency-injection', 'aurelia-binding', 'aurelia-tem
       DOM = _aureliaPal.DOM;
     }],
     execute: function () {
-      SwapStrategies = function () {
-        function SwapStrategies() {
-          
-        }
-
-        SwapStrategies.prototype.before = function before(viewSlot, previousView, callback) {
-          var promise = Promise.resolve(callback());
-
-          if (previousView !== undefined) {
-            return promise.then(function () {
-              return viewSlot.remove(previousView, true);
-            });
-          }
-
-          return promise;
-        };
-
-        SwapStrategies.prototype.with = function _with(viewSlot, previousView, callback) {
-          var promise = Promise.resolve(callback());
-
-          if (previousView !== undefined) {
-            return Promise.all([viewSlot.remove(previousView, true), promise]);
-          }
-
-          return promise;
-        };
-
-        SwapStrategies.prototype.after = function after(viewSlot, previousView, callback) {
-          return Promise.resolve(viewSlot.removeAll(true)).then(callback);
-        };
-
-        return SwapStrategies;
-      }();
-
-      swapStrategies = new SwapStrategies();
-
       _export('RouterView', RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine), _dec(_class = noView(_class = _dec2(_class = (_class2 = function () {
         function RouterView(element, container, viewSlot, router, viewLocator, compositionTransaction, compositionEngine) {
           
@@ -157,6 +122,8 @@ System.register(['aurelia-dependency-injection', 'aurelia-binding', 'aurelia-tem
           var config = component.router.currentInstruction.config;
           var viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {};
 
+          childContainer.get(RouterViewLocator)._notify(this);
+
           var layoutInstruction = {
             viewModel: viewPort.layoutViewModel || config.layoutViewModel || this.layoutViewModel,
             view: viewPort.layoutView || config.layoutView || this.layoutView,
@@ -194,20 +161,16 @@ System.register(['aurelia-dependency-injection', 'aurelia-binding', 'aurelia-tem
           var _this2 = this;
 
           var layoutInstruction = viewPortInstruction.layoutInstruction;
+          var previousView = this.view;
 
           var work = function work() {
-            var previousView = _this2.view;
-            var swapStrategy = void 0;
+            var swapStrategy = SwapStrategies[_this2.swapOrder] || SwapStrategies.after;
             var viewSlot = _this2.viewSlot;
 
-            swapStrategy = _this2.swapOrder in swapStrategies ? swapStrategies[_this2.swapOrder] : swapStrategies.after;
-
             swapStrategy(viewSlot, previousView, function () {
-              return Promise.resolve().then(function () {
-                return viewSlot.add(_this2.view);
-              }).then(function () {
-                _this2._notify();
-              });
+              return Promise.resolve(viewSlot.add(_this2.view));
+            }).then(function () {
+              _this2._notify();
             });
           };
 
@@ -267,6 +230,30 @@ System.register(['aurelia-dependency-injection', 'aurelia-binding', 'aurelia-tem
       })), _class2)) || _class) || _class) || _class));
 
       _export('RouterView', RouterView);
+
+      _export('RouterViewLocator', RouterViewLocator = function () {
+        function RouterViewLocator() {
+          var _this3 = this;
+
+          
+
+          this.promise = new Promise(function (resolve) {
+            return _this3.resolve = resolve;
+          });
+        }
+
+        RouterViewLocator.prototype.findNearest = function findNearest() {
+          return this.promise;
+        };
+
+        RouterViewLocator.prototype._notify = function _notify(routerView) {
+          this.resolve(routerView);
+        };
+
+        return RouterViewLocator;
+      }());
+
+      _export('RouterViewLocator', RouterViewLocator);
     }
   };
 });

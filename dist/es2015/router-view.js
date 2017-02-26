@@ -45,39 +45,10 @@ function _initializerWarningHelper(descriptor, context) {
 
 import { Container, inject } from 'aurelia-dependency-injection';
 import { createOverrideContext } from 'aurelia-binding';
-import { ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM } from 'aurelia-templating';
+import { ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM, SwapStrategies } from 'aurelia-templating';
 import { Router } from 'aurelia-router';
 import { Origin } from 'aurelia-metadata';
 import { DOM } from 'aurelia-pal';
-
-let SwapStrategies = class SwapStrategies {
-  before(viewSlot, previousView, callback) {
-    let promise = Promise.resolve(callback());
-
-    if (previousView !== undefined) {
-      return promise.then(() => viewSlot.remove(previousView, true));
-    }
-
-    return promise;
-  }
-
-  with(viewSlot, previousView, callback) {
-    let promise = Promise.resolve(callback());
-
-    if (previousView !== undefined) {
-      return Promise.all([viewSlot.remove(previousView, true), promise]);
-    }
-
-    return promise;
-  }
-
-  after(viewSlot, previousView, callback) {
-    return Promise.resolve(viewSlot.removeAll(true)).then(callback);
-  }
-};
-
-
-const swapStrategies = new SwapStrategies();
 
 export let RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine), _dec(_class = noView(_class = _dec2(_class = (_class2 = class RouterView {
 
@@ -123,6 +94,8 @@ export let RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM
     let config = component.router.currentInstruction.config;
     let viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {};
 
+    childContainer.get(RouterViewLocator)._notify(this);
+
     let layoutInstruction = {
       viewModel: viewPort.layoutViewModel || config.layoutViewModel || this.layoutViewModel,
       view: viewPort.layoutView || config.layoutView || this.layoutView,
@@ -158,20 +131,16 @@ export let RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM
 
   swap(viewPortInstruction) {
     let layoutInstruction = viewPortInstruction.layoutInstruction;
+    let previousView = this.view;
 
     let work = () => {
-      let previousView = this.view;
-      let swapStrategy;
+      let swapStrategy = SwapStrategies[this.swapOrder] || SwapStrategies.after;
       let viewSlot = this.viewSlot;
 
-      swapStrategy = this.swapOrder in swapStrategies ? swapStrategies[this.swapOrder] : swapStrategies.after;
-
       swapStrategy(viewSlot, previousView, () => {
-        return Promise.resolve().then(() => {
-          return viewSlot.add(this.view);
-        }).then(() => {
-          this._notify();
-        });
+        return Promise.resolve(viewSlot.add(this.view));
+      }).then(() => {
+        this._notify();
       });
     };
 
@@ -227,3 +196,17 @@ export let RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM
   enumerable: true,
   initializer: null
 })), _class2)) || _class) || _class) || _class);
+
+export let RouterViewLocator = class RouterViewLocator {
+  constructor() {
+    this.promise = new Promise(resolve => this.resolve = resolve);
+  }
+
+  findNearest() {
+    return this.promise;
+  }
+
+  _notify(routerView) {
+    this.resolve(routerView);
+  }
+};

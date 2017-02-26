@@ -1,5 +1,5 @@
 import * as LogManager from 'aurelia-logging';
-import {customAttribute,bindable,ViewSlot,ViewLocator,customElement,noView,BehaviorInstruction,CompositionTransaction,CompositionEngine,ShadowDOM} from 'aurelia-templating';
+import {customAttribute,bindable,ViewSlot,ViewLocator,customElement,noView,BehaviorInstruction,CompositionTransaction,CompositionEngine,ShadowDOM,SwapStrategies,useView} from 'aurelia-templating';
 import {inject,Container} from 'aurelia-dependency-injection';
 import {Router,RouteLoader} from 'aurelia-router';
 import {DOM} from 'aurelia-pal';
@@ -59,37 +59,6 @@ export class RouteHref {
   }
 }
 
-class SwapStrategies {
-  // animate the next view in before removing the current view;
-  before(viewSlot, previousView, callback) {
-    let promise = Promise.resolve(callback());
-
-    if (previousView !== undefined) {
-      return promise.then(() => viewSlot.remove(previousView, true));
-    }
-
-    return promise;
-  }
-
-  // animate the next view at the same time the current view is removed
-  with(viewSlot, previousView, callback) {
-    let promise = Promise.resolve(callback());
-
-    if (previousView !== undefined) {
-      return Promise.all([viewSlot.remove(previousView, true), promise]);
-    }
-
-    return promise;
-  }
-
-  // animate the next view in after the current view has been removed
-  after(viewSlot, previousView, callback) {
-    return Promise.resolve(viewSlot.removeAll(true)).then(callback);
-  }
-}
-
-const swapStrategies = new SwapStrategies();
-
 @customElement('router-view')
 @noView
 @inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine)
@@ -98,6 +67,7 @@ export class RouterView {
   @bindable layoutView;
   @bindable layoutViewModel;
   @bindable layoutModel;
+  element;
 
   constructor(element, container, viewSlot, router, viewLocator, compositionTransaction, compositionEngine) {
     this.element = element;
@@ -132,6 +102,8 @@ export class RouterView {
     let metadata = viewModelResource.metadata;
     let config = component.router.currentInstruction.config;
     let viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {};
+
+    childContainer.get(RouterViewLocator)._notify(this);
 
     // layoutInstruction is our layout viewModel
     let layoutInstruction = {
@@ -176,22 +148,16 @@ export class RouterView {
 
   swap(viewPortInstruction) {
     let layoutInstruction = viewPortInstruction.layoutInstruction;
+    let previousView = this.view;
 
     let work = () => {
-      let previousView = this.view;
-      let swapStrategy;
+      let swapStrategy = SwapStrategies[this.swapOrder] || SwapStrategies.after;
       let viewSlot = this.viewSlot;
 
-      swapStrategy = this.swapOrder in swapStrategies
-                  ? swapStrategies[this.swapOrder]
-                  : swapStrategies.after;
-
       swapStrategy(viewSlot, previousView, () => {
-        return Promise.resolve().then(() => {
-          return viewSlot.add(this.view);
-        }).then(() => {
-          this._notify();
-        });
+        return Promise.resolve(viewSlot.add(this.view));
+      }).then(() => {
+        this._notify();
       });
     };
 
@@ -238,6 +204,30 @@ export class RouterView {
   }
 }
 
+/**
+* Locator which finds the nearest RouterView, relative to the current dependency injection container.
+*/
+export class RouterViewLocator {
+  /**
+  * Creates an instance of the RouterViewLocator class.
+  */
+  constructor() {
+    this.promise = new Promise((resolve) => this.resolve = resolve);
+  }
+
+  /**
+  * Finds the nearest RouterView instance.
+  * @returns A promise that will be resolved with the located RouterView instance.
+  */
+  findNearest(): Promise<RouterView> {
+    return this.promise;
+  }
+
+  _notify(routerView: RouterView): void {
+    this.resolve(routerView);
+  }
+}
+
 @inject(CompositionEngine)
 export class TemplatingRouteLoader extends RouteLoader {
   constructor(compositionEngine) {
@@ -247,12 +237,19 @@ export class TemplatingRouteLoader extends RouteLoader {
 
   loadRoute(router, config) {
     let childContainer = router.container.createChild();
+
+    let viewModel = /\.html/.test(config.moduleId)
+      ? createDynamicClass(config.moduleId)
+      : relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
+
     let instruction = {
-      viewModel: relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId),
+      viewModel: viewModel,
       childContainer: childContainer,
       view: config.view || config.viewStrategy,
       router: router
     };
+
+    childContainer.registerSingleton(RouterViewLocator);
 
     childContainer.getChildRouter = function() {
       let childRouter;
@@ -266,4 +263,18 @@ export class TemplatingRouteLoader extends RouteLoader {
 
     return this.compositionEngine.ensureViewModel(instruction);
   }
+}
+
+function createDynamicClass(moduleId) {
+  let name = /([^\/^\?]+)\.html/i.exec(moduleId)[1];
+
+  @customElement(name)
+  @useView(moduleId)
+  class DynamicClass {
+    bind(bindingContext) {
+      this.$parent = bindingContext;
+    }
+  }
+
+  return DynamicClass;
 }

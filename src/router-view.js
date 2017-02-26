@@ -154,7 +154,6 @@ export class RouterView {
 * Locator which finds the nearest RouterView, relative to the current dependency injection container.
 */
 export class RouterViewLocator {
-  
   /**
   * Creates an instance of the RouterViewLocator class.
   */
@@ -167,10 +166,10 @@ export class RouterViewLocator {
   * @returns A promise that will be resolved with the located RouterView instance.
   */
   findNearest(): Promise<RouterView> {
-      return this.promise;
+    return this.promise;
   }
 
   _notify(routerView: RouterView): void {
-      this.resolve(routerView);
+    this.resolve(routerView);
   }
 }

@@ -14,11 +14,10 @@ export class TemplatingRouteLoader extends RouteLoader {
 
   loadRoute(router, config) {
     let childContainer = router.container.createChild();
-    
-    let viewModel = /\.html/.test(config.moduleId) ?
-      createDynamicClass(config.moduleId)      
-      : relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId)
 
+    let viewModel = /\.html/.test(config.moduleId)
+      ? createDynamicClass(config.moduleId)
+      : relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
 
     let instruction = {
       viewModel: viewModel,
@@ -43,9 +42,9 @@ export class TemplatingRouteLoader extends RouteLoader {
   }
 }
 
-function createDynamicClass(moduleId){
+function createDynamicClass(moduleId) {
   let name = /([^\/^\?]+)\.html/i.exec(moduleId)[1];
-  
+
   @customElement(name)
   @useView(moduleId)
   class DynamicClass {
@@ -53,6 +52,6 @@ function createDynamicClass(moduleId){
       this.$parent = bindingContext;
     }
   }
-  return DynamicClass
-}
 
+  return DynamicClass;
+}

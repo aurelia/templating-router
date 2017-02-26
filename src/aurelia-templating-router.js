@@ -9,8 +9,9 @@ function configure(config) {
     .singleton(RouteLoader, TemplatingRouteLoader)
     .singleton(Router, AppRouter)
     .globalResources(
-      PLATFORM.moduleName('./router-view'),      
-      PLATFORM.moduleName('./route-href'));
+      PLATFORM.moduleName('./router-view'),
+      PLATFORM.moduleName('./route-href')
+    );
 
   config.container.registerAlias(Router, AppRouter);
 }

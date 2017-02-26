@@ -1,6 +1,6 @@
 import {Container, inject} from 'aurelia-dependency-injection';
 import {createOverrideContext} from 'aurelia-binding';
-import {ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM,  swapStrategies} from 'aurelia-templating';
+import {ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM,  SwapStrategies} from 'aurelia-templating';
 import {Router} from 'aurelia-router';
 import {Origin} from 'aurelia-metadata';
 import {DOM} from 'aurelia-pal';
@@ -97,7 +97,7 @@ export class RouterView {
     let previousView = this.view;
 
     let work = () => {
-      let swapStrategy = swapStrategies[this.swapOrder] || swapStrategies.after;
+      let swapStrategy = SwapStrategies[this.swapOrder] || SwapStrategies.after;
       let viewSlot = this.viewSlot;
 
       swapStrategy(viewSlot, previousView, () => {

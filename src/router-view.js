@@ -1,40 +1,9 @@
 import {Container, inject} from 'aurelia-dependency-injection';
 import {createOverrideContext} from 'aurelia-binding';
-import {ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM} from 'aurelia-templating';
+import {ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM,  swapStrategies} from 'aurelia-templating';
 import {Router} from 'aurelia-router';
 import {Origin} from 'aurelia-metadata';
 import {DOM} from 'aurelia-pal';
-
-class SwapStrategies {
-  // animate the next view in before removing the current view;
-  before(viewSlot, previousView, callback) {
-    let promise = Promise.resolve(callback());
-
-    if (previousView !== undefined) {
-      return promise.then(() => viewSlot.remove(previousView, true));
-    }
-
-    return promise;
-  }
-
-  // animate the next view at the same time the current view is removed
-  with(viewSlot, previousView, callback) {
-    let promise = Promise.resolve(callback());
-
-    if (previousView !== undefined) {
-      return Promise.all([viewSlot.remove(previousView, true), promise]);
-    }
-
-    return promise;
-  }
-
-  // animate the next view in after the current view has been removed
-  after(viewSlot, previousView, callback) {
-    return Promise.resolve(viewSlot.removeAll(true)).then(callback);
-  }
-}
-
-const swapStrategies = new SwapStrategies();
 
 @customElement('router-view')
 @noView
@@ -125,22 +94,16 @@ export class RouterView {
 
   swap(viewPortInstruction) {
     let layoutInstruction = viewPortInstruction.layoutInstruction;
+    let previousView = this.view;
 
     let work = () => {
-      let previousView = this.view;
-      let swapStrategy;
+      let swapStrategy = swapStrategies[this.swapOrder] || swapStrategies.after;
       let viewSlot = this.viewSlot;
 
-      swapStrategy = this.swapOrder in swapStrategies
-                  ? swapStrategies[this.swapOrder]
-                  : swapStrategies.after;
-
       swapStrategy(viewSlot, previousView, () => {
-        return Promise.resolve().then(() => {
-          return viewSlot.add(this.view);
-        }).then(() => {
-          this._notify();
-        });
+        return Promise.resolve(viewSlot.add(this.view));
+      }).then(() => {
+        this._notify();
       });
     };
 

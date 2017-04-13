@@ -7,7 +7,7 @@ import * as LogManager from 'aurelia-logging';
 const logger = LogManager.getLogger('route-href');
 
 @customAttribute('route-href')
-@bindable({name: 'route', changeHandler: 'processChange'})
+@bindable({name: 'route', changeHandler: 'processChange', primaryProperty: true})
 @bindable({name: 'params', changeHandler: 'processChange'})
 @bindable({name: 'attribute', defaultValue: 'href'})
 @inject(Router, DOM.Element)

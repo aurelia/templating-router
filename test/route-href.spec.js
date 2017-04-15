@@ -15,7 +15,7 @@ describe('route-href', () => {
         done();
         component.dispose();
       }).catch(e => {
-        console.log(e.toString());
+        fail(e);
         component.dispose();
       });
   });

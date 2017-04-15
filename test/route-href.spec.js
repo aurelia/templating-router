@@ -10,7 +10,7 @@ describe('route-href', () => {
     
     component
       .create(bootstrap)
-      .then((aurelia) => {
+      .then(() => {
         expect(component.viewModel.route).toBe('home');
         done();
         component.dispose();

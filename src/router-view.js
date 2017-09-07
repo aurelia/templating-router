@@ -85,7 +85,7 @@ export class RouterView {
       );
 
       if (waitToSwap) {
-        return;
+        return null;
       }
 
       this.swap(viewPortInstruction);

@@ -10,7 +10,7 @@ import {relativeToFile} from 'aurelia-path';
 const logger = LogManager.getLogger('route-href');
 
 @customAttribute('route-href')
-@bindable({name: 'route', changeHandler: 'processChange'})
+@bindable({name: 'route', changeHandler: 'processChange', primaryProperty: true})
 @bindable({name: 'params', changeHandler: 'processChange'})
 @bindable({name: 'attribute', defaultValue: 'href'})
 @inject(Router, DOM.Element)
@@ -20,7 +20,7 @@ export class RouteHref {
     this.element = element;
   }
 
-  bind() {
+  attached() {
     this.isActive = true;
     this.processChange();
   }
@@ -139,7 +139,7 @@ export class RouterView {
       );
 
       if (waitToSwap) {
-        return;
+        return null;
       }
 
       this.swap(viewPortInstruction);

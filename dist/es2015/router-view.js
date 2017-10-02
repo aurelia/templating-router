@@ -122,7 +122,7 @@ export let RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM
       viewPortInstruction.controller = metadata.create(childContainer, BehaviorInstruction.dynamic(this.element, viewModel, viewFactory));
 
       if (waitToSwap) {
-        return;
+        return null;
       }
 
       this.swap(viewPortInstruction);

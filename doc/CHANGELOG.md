@@ -1,3 +1,16 @@
+<a name="1.2.0"></a>
+# [1.2.0](https://github.com/aurelia/templating-router/compare/1.1.0...1.2.0) (2017-10-02)
+
+
+### Bug Fixes
+
+* **route-href:** delay route generation until after router's baseURL has been set ([606bf42](https://github.com/aurelia/templating-router/commit/606bf42)), closes [#46](https://github.com/aurelia/templating-router/issues/46)
+* **templating-router:** Silence Bluebirds runaway promise warning ([62ba4e2](https://github.com/aurelia/templating-router/commit/62ba4e2))
+
+### Features
+
+* Use route as default property for route-href
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/aurelia/templating-router/compare/1.0.1...v1.1.0) (2017-02-26)
 

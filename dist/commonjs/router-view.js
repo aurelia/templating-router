@@ -139,7 +139,7 @@ var RouterView = exports.RouterView = (_dec = (0, _aureliaTemplating.customEleme
       viewPortInstruction.controller = metadata.create(childContainer, _aureliaTemplating.BehaviorInstruction.dynamic(_this.element, viewModel, viewFactory));
 
       if (waitToSwap) {
-        return;
+        return null;
       }
 
       _this.swap(viewPortInstruction);

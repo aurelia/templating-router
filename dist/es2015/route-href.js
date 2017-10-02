@@ -8,13 +8,13 @@ import * as LogManager from 'aurelia-logging';
 
 const logger = LogManager.getLogger('route-href');
 
-export let RouteHref = (_dec = customAttribute('route-href'), _dec2 = bindable({ name: 'route', changeHandler: 'processChange' }), _dec3 = bindable({ name: 'params', changeHandler: 'processChange' }), _dec4 = bindable({ name: 'attribute', defaultValue: 'href' }), _dec5 = inject(Router, DOM.Element), _dec(_class = _dec2(_class = _dec3(_class = _dec4(_class = _dec5(_class = class RouteHref {
+export let RouteHref = (_dec = customAttribute('route-href'), _dec2 = bindable({ name: 'route', changeHandler: 'processChange', primaryProperty: true }), _dec3 = bindable({ name: 'params', changeHandler: 'processChange' }), _dec4 = bindable({ name: 'attribute', defaultValue: 'href' }), _dec5 = inject(Router, DOM.Element), _dec(_class = _dec2(_class = _dec3(_class = _dec4(_class = _dec5(_class = class RouteHref {
   constructor(router, element) {
     this.router = router;
     this.element = element;
   }
 
-  bind() {
+  attached() {
     this.isActive = true;
     this.processChange();
   }

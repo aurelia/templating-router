@@ -1,6 +1,6 @@
 import {Container, inject} from 'aurelia-dependency-injection';
 import {createOverrideContext} from 'aurelia-binding';
-import {ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM,  SwapStrategies} from 'aurelia-templating';
+import {ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM, SwapStrategies, SwapStrategiesStateful} from 'aurelia-templating';
 import {Router} from 'aurelia-router';
 import {Origin} from 'aurelia-metadata';
 import {DOM} from 'aurelia-pal';
@@ -18,6 +18,10 @@ export class RouterView {
   @bindable layoutViewModel;
   @bindable layoutModel;
   element;
+  name;
+  stateful;
+  nonStatefulName;
+  hidden = false;
 
   constructor(element, container, viewSlot, router, viewLocator, compositionTransaction, compositionEngine) {
     this.element = element;
@@ -27,7 +31,10 @@ export class RouterView {
     this.viewLocator = viewLocator;
     this.compositionTransaction = compositionTransaction;
     this.compositionEngine = compositionEngine;
-    this.router.registerViewPort(this, this.element.getAttribute('name'));
+    this.name = this.element.getAttribute('name') || 'default';
+    this.stateful = this.name.indexOf('.') !== -1;
+    this.nonStatefulName = this.name.split('.')[0];
+    this.router.registerViewPort(this, this.name);
 
     if (!('initialComposition' in compositionTransaction)) {
       compositionTransaction.initialComposition = true;
@@ -51,7 +58,7 @@ export class RouterView {
     let viewModelResource = component.viewModelResource;
     let metadata = viewModelResource.metadata;
     let config = component.router.currentInstruction.config;
-    let viewPort = config.viewPorts ? (config.viewPorts[viewPortInstruction.name] || {}) : {};
+    let viewPort = (config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {}) || {};
 
     childContainer.get(RouterViewLocator)._notify(this);
 
@@ -71,44 +78,72 @@ export class RouterView {
     }
 
     return metadata.load(childContainer, viewModelResource.value, null, viewStrategy, true)
-    .then(viewFactory => {
-      if (!this.compositionTransactionNotifier) {
-        this.compositionTransactionOwnershipToken = this.compositionTransaction.tryCapture();
-      }
+      .then(viewFactory => {
+        if (!this.compositionTransactionNotifier) {
+          this.compositionTransactionOwnershipToken = this.compositionTransaction.tryCapture();
+        }
 
-      if (layoutInstruction.viewModel || layoutInstruction.view) {
-        viewPortInstruction.layoutInstruction = layoutInstruction;
-      }
+        if (layoutInstruction.viewModel || layoutInstruction.view) {
+          viewPortInstruction.layoutInstruction = layoutInstruction;
+        }
 
-      viewPortInstruction.controller = metadata.create(childContainer,
-        BehaviorInstruction.dynamic(
-          this.element,
-          viewModel,
-          viewFactory
-        )
-      );
+        viewPortInstruction.controller = metadata.create(childContainer,
+          BehaviorInstruction.dynamic(
+            this.element,
+            viewModel,
+            viewFactory
+          )
+        );
 
-      if (waitToSwap) {
-        return null;
-      }
+        if (waitToSwap) {
+          return null;
+        }
 
-      this.swap(viewPortInstruction);
-    });
+        this.swap(viewPortInstruction);
+      });
   }
 
   swap(viewPortInstruction) {
     let layoutInstruction = viewPortInstruction.layoutInstruction;
     let previousView = this.view;
+    let viewPort = this.router.viewPorts[viewPortInstruction.name];
+
+    let siblingViewPorts = [];
+    for (let vpName in this.router.viewPorts) {
+      let vp = this.router.viewPorts[vpName];
+      if (vp !== viewPort && vp.nonStatefulName === viewPort.nonStatefulName) {
+        siblingViewPorts.push(vp);
+      }
+    }
 
     let work = () => {
-      let swapStrategy = SwapStrategies[this.swapOrder] || SwapStrategies.after;
-      let viewSlot = this.viewSlot;
+      if (siblingViewPorts.length > 0) {
+        let swapStrategy = SwapStrategiesStateful[this.swapOrder] || SwapStrategiesStateful.after;
+        let viewSlot = this.viewSlot;
 
-      swapStrategy(viewSlot, previousView, () => {
-        return Promise.resolve(viewSlot.add(this.view));
-      }).then(() => {
-        this._notify();
-      });
+        let previous = [];
+        if (viewPortInstruction.active) {
+          previous = siblingViewPorts;
+        }
+        if (!viewPort.stateful && viewPortInstruction.strategy === 'replace') {
+          previous.push(viewPort);
+        }
+        return swapStrategy(this, previous, () => {
+          return Promise.resolve(viewPortInstruction.strategy === 'replace' ? viewSlot.add(this.view) : undefined);
+        }).then(() => {
+          this._notify();
+        });
+      }
+      else {
+        let swapStrategy = SwapStrategies[this.swapOrder] || SwapStrategies.after;
+        let viewSlot = this.viewSlot;
+
+        swapStrategy(viewSlot, previousView, () => {
+          return Promise.resolve(viewSlot.add(this.view));
+        }).then(() => {
+          this._notify();
+        });
+      }
     };
 
     let ready = owningView => {
@@ -123,29 +158,42 @@ export class RouterView {
       return work();
     };
 
-    if (layoutInstruction) {
-      if (!layoutInstruction.viewModel) {
-        // createController chokes if there's no viewmodel, so create a dummy one
-        // should we use something else for the view model here?
-        layoutInstruction.viewModel = {};
+    if (viewPortInstruction.strategy === 'replace') {
+      if (layoutInstruction) {
+        if (!layoutInstruction.viewModel) {
+          // createController chokes if there's no viewmodel, so create a dummy one
+          // should we use something else for the view model here?
+          layoutInstruction.viewModel = {};
+        }
+
+        return this.compositionEngine.createController(layoutInstruction).then(controller => {
+          ShadowDOM.distributeView(viewPortInstruction.controller.view, controller.slots || controller.view.slots);
+          controller.automate(createOverrideContext(layoutInstruction.viewModel), this.owningView);
+          controller.view.children.push(viewPortInstruction.controller.view);
+          return controller.view || controller;
+        }).then(newView => {
+          this.view = newView;
+          return ready(newView);
+        });
       }
 
-      return this.compositionEngine.createController(layoutInstruction).then(controller => {
-        ShadowDOM.distributeView(viewPortInstruction.controller.view, controller.slots || controller.view.slots);
-        controller.automate(createOverrideContext(layoutInstruction.viewModel), this.owningView);
-        controller.view.children.push(viewPortInstruction.controller.view);
-        return controller.view || controller;
-      }).then(newView => {
-        this.view = newView;
-        return ready(newView);
-      });
+      this.view = viewPortInstruction.controller.view;
+
+      return ready(this.owningView);
     }
-
-    this.view = viewPortInstruction.controller.view;
-
-    return ready(this.owningView);
+    else {
+      return work();
+    }
   }
-
+  
+  hide(hide_: boolean) {
+    if (this.hidden !== hide_) {
+      this.hidden = hide_;
+      return this.viewSlot.hide(hide_);
+    }
+    return Promise.resolve();
+  }
+  
   _notify() {
     if (this.compositionTransactionNotifier) {
       this.compositionTransactionNotifier.done();

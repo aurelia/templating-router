@@ -1,9 +1,12 @@
 import {inject} from 'aurelia-dependency-injection';
-import {CompositionEngine, useView, customElement} from 'aurelia-templating';
+import {CompositionEngine, useView, inlineView, customElement} from 'aurelia-templating';
 import {RouteLoader, Router} from 'aurelia-router';
 import {relativeToFile} from 'aurelia-path';
 import {Origin} from 'aurelia-metadata';
 import {RouterViewLocator} from './router-view';
+
+@inlineView('<template></template>')
+class EmptyClass { }
 
 @inject(CompositionEngine)
 export class TemplatingRouteLoader extends RouteLoader {
@@ -15,9 +18,13 @@ export class TemplatingRouteLoader extends RouteLoader {
   loadRoute(router, config) {
     let childContainer = router.container.createChild();
 
-    let viewModel = /\.html/.test(config.moduleId)
-      ? createDynamicClass(config.moduleId)
-      : relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
+    let viewModel = config.moduleId === null
+      ? EmptyClass
+      : /\.html/i.test(config.moduleId)
+        ? createDynamicClass(config.moduleId)
+        : relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
+    
+    config = config || {};
 
     let instruction = {
       viewModel: viewModel,

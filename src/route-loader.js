@@ -5,6 +5,9 @@ import {relativeToFile} from 'aurelia-path';
 import {Origin} from 'aurelia-metadata';
 import {RouterViewLocator} from './router-view';
 
+@inlineView('<template></template>')
+class EmptyClass { }
+
 @inject(CompositionEngine)
 export class TemplatingRouteLoader extends RouteLoader {
   constructor(compositionEngine) {
@@ -15,9 +18,9 @@ export class TemplatingRouteLoader extends RouteLoader {
   loadRoute(router, config) {
     let childContainer = router.container.createChild();
 
-    let viewModel = config === null
-      ? createEmptyClass()
-      : /\.html/.test(config.moduleId)
+    let viewModel = config.moduleId === null
+      ? EmptyClass
+      : /\.html/i.test(config.moduleId)
         ? createDynamicClass(config.moduleId)
         : relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
     
@@ -58,11 +61,4 @@ function createDynamicClass(moduleId) {
   }
 
   return DynamicClass;
-}
-
-function createEmptyClass() {
-  @inlineView('<template></template>')
-  class EmptyClass { }
-
-  return EmptyClass;
 }

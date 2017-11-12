@@ -47,7 +47,7 @@ export class RouterView {
     let viewModelResource = component.viewModelResource;
     let metadata = viewModelResource.metadata;
     let config = component.router.currentInstruction.config;
-    let viewPort = (config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {}) || {};
+    let viewPort = config.viewPorts ? (config.viewPorts[viewPortInstruction.name] || {}) : {};
 
     childContainer.get(RouterViewLocator)._notify(this);
 

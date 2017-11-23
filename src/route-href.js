@@ -17,7 +17,7 @@ export class RouteHref {
     this.element = element;
   }
 
-  attached() {
+  bind() {
     this.isActive = true;
     this.processChange();
   }

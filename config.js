@@ -13,7 +13,7 @@ System.config({
     "aurelia-event-aggregator": "npm:aurelia-event-aggregator@1.0.1",
     "aurelia-framework": "npm:aurelia-framework@1.0.0-rc.1.0.13",
     "aurelia-history": "npm:aurelia-history@1.1.0",
-    "aurelia-history-browser": "npm:aurelia-history-browser@1.0.0",
+    "aurelia-history-browser": "npm:aurelia-history-browser@1.1.0",
     "aurelia-loader-default": "npm:aurelia-loader-default@1.0.0",
     "aurelia-logging": "npm:aurelia-logging@1.4.0",
     "aurelia-logging-console": "npm:aurelia-logging-console@1.0.0",
@@ -65,7 +65,7 @@ System.config({
       "aurelia-event-aggregator": "npm:aurelia-event-aggregator@1.0.1",
       "aurelia-framework": "npm:aurelia-framework@1.0.0-rc.1.0.13",
       "aurelia-history": "npm:aurelia-history@1.1.0",
-      "aurelia-history-browser": "npm:aurelia-history-browser@1.0.0",
+      "aurelia-history-browser": "npm:aurelia-history-browser@1.1.0",
       "aurelia-loader-default": "npm:aurelia-loader-default@1.0.0",
       "aurelia-logging-console": "npm:aurelia-logging-console@1.0.0",
       "aurelia-pal": "npm:aurelia-pal@1.4.0",
@@ -96,6 +96,10 @@ System.config({
       "aurelia-templating": "npm:aurelia-templating@1.5.0"
     },
     "npm:aurelia-history-browser@1.0.0": {
+      "aurelia-history": "npm:aurelia-history@1.1.0",
+      "aurelia-pal": "npm:aurelia-pal@1.4.0"
+    },
+    "npm:aurelia-history-browser@1.1.0": {
       "aurelia-history": "npm:aurelia-history@1.1.0",
       "aurelia-pal": "npm:aurelia-pal@1.4.0"
     },

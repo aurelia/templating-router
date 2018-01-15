@@ -18,12 +18,15 @@ export class TemplatingRouteLoader extends RouteLoader {
   loadRoute(router, config) {
     let childContainer = router.container.createChild();
 
-    let viewModel = config.moduleId === null
-      ? EmptyClass
-      : /\.html/i.test(config.moduleId)
-        ? createDynamicClass(config.moduleId)
-        : relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
-    
+    let viewModel;
+    if (config.moduleId === null) {
+      viewModel = EmptyClass;
+    } else if (/\.html/i.test(config.moduleId)) {
+      viewModel = createDynamicClass(config.moduleId);
+    } else {
+      viewModel = relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
+    }
+
     config = config || {};
 
     let instruction = {

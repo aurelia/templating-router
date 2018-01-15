@@ -18,7 +18,7 @@ export var RouteHref = (_dec = customAttribute('route-href'), _dec2 = bindable({
     this.element = element;
   }
 
-  RouteHref.prototype.attached = function attached() {
+  RouteHref.prototype.bind = function bind() {
     this.isActive = true;
     this.processChange();
   };

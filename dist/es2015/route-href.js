@@ -14,7 +14,7 @@ export let RouteHref = (_dec = customAttribute('route-href'), _dec2 = bindable({
     this.element = element;
   }
 
-  attached() {
+  bind() {
     this.isActive = true;
     this.processChange();
   }

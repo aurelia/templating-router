@@ -1,5 +1,5 @@
 import * as LogManager from 'aurelia-logging';
-import {customAttribute,bindable,ViewSlot,ViewLocator,customElement,noView,BehaviorInstruction,CompositionTransaction,CompositionEngine,ShadowDOM,SwapStrategies,useView} from 'aurelia-templating';
+import {customAttribute,bindable,ViewSlot,ViewLocator,customElement,noView,BehaviorInstruction,CompositionTransaction,CompositionEngine,ShadowDOM,SwapStrategies,useView,inlineView} from 'aurelia-templating';
 import {inject,Container} from 'aurelia-dependency-injection';
 import {Router,RouteLoader} from 'aurelia-router';
 import {DOM} from 'aurelia-pal';
@@ -20,7 +20,7 @@ export class RouteHref {
     this.element = element;
   }
 
-  attached() {
+  bind() {
     this.isActive = true;
     this.processChange();
   }
@@ -101,7 +101,7 @@ export class RouterView {
     let viewModelResource = component.viewModelResource;
     let metadata = viewModelResource.metadata;
     let config = component.router.currentInstruction.config;
-    let viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {};
+    let viewPort = config.viewPorts ? (config.viewPorts[viewPortInstruction.name] || {}) : {};
 
     childContainer.get(RouterViewLocator)._notify(this);
 
@@ -228,6 +228,9 @@ export class RouterViewLocator {
   }
 }
 
+@inlineView('<template></template>')
+class EmptyClass { }
+
 @inject(CompositionEngine)
 export class TemplatingRouteLoader extends RouteLoader {
   constructor(compositionEngine) {
@@ -238,9 +241,16 @@ export class TemplatingRouteLoader extends RouteLoader {
   loadRoute(router, config) {
     let childContainer = router.container.createChild();
 
-    let viewModel = /\.html/.test(config.moduleId)
-      ? createDynamicClass(config.moduleId)
-      : relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
+    let viewModel;
+    if (config.moduleId === null) {
+      viewModel = EmptyClass;
+    } else if (/\.html/i.test(config.moduleId)) {
+      viewModel = createDynamicClass(config.moduleId);
+    } else {
+      viewModel = relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
+    }
+
+    config = config || {};
 
     let instruction = {
       viewModel: viewModel,

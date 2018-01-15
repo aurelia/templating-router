@@ -109,7 +109,7 @@ var RouterView = exports.RouterView = (_dec = (0, _aureliaTemplating.customEleme
     var viewModelResource = component.viewModelResource;
     var metadata = viewModelResource.metadata;
     var config = component.router.currentInstruction.config;
-    var viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {};
+    var viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] || {} : {};
 
     childContainer.get(RouterViewLocator)._notify(this);
 

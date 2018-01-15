@@ -3,9 +3,7 @@
 System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-router', 'aurelia-path', 'aurelia-metadata', './router-view'], function (_export, _context) {
   "use strict";
 
-  var inject, CompositionEngine, useView, customElement, RouteLoader, Router, relativeToFile, Origin, RouterViewLocator, _dec, _class, TemplatingRouteLoader;
-
-  
+  var inject, CompositionEngine, useView, inlineView, customElement, RouteLoader, Router, relativeToFile, Origin, RouterViewLocator, _dec, _class, _dec2, _class2, EmptyClass, TemplatingRouteLoader;
 
   function _possibleConstructorReturn(self, call) {
     if (!self) {
@@ -31,12 +29,14 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
     if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
   }
 
+  
+
   function createDynamicClass(moduleId) {
-    var _dec2, _dec3, _class2;
+    var _dec3, _dec4, _class3;
 
     var name = /([^\/^\?]+)\.html/i.exec(moduleId)[1];
 
-    var DynamicClass = (_dec2 = customElement(name), _dec3 = useView(moduleId), _dec2(_class2 = _dec3(_class2 = function () {
+    var DynamicClass = (_dec3 = customElement(name), _dec4 = useView(moduleId), _dec3(_class3 = _dec4(_class3 = function () {
       function DynamicClass() {
         
       }
@@ -46,7 +46,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
       };
 
       return DynamicClass;
-    }()) || _class2) || _class2);
+    }()) || _class3) || _class3);
 
 
     return DynamicClass;
@@ -57,6 +57,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
     }, function (_aureliaTemplating) {
       CompositionEngine = _aureliaTemplating.CompositionEngine;
       useView = _aureliaTemplating.useView;
+      inlineView = _aureliaTemplating.inlineView;
       customElement = _aureliaTemplating.customElement;
     }, function (_aureliaRouter) {
       RouteLoader = _aureliaRouter.RouteLoader;
@@ -69,7 +70,11 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
       RouterViewLocator = _routerView.RouterViewLocator;
     }],
     execute: function () {
-      _export('TemplatingRouteLoader', TemplatingRouteLoader = (_dec = inject(CompositionEngine), _dec(_class = function (_RouteLoader) {
+      EmptyClass = (_dec = inlineView('<template></template>'), _dec(_class = function EmptyClass() {
+        
+      }) || _class);
+
+      _export('TemplatingRouteLoader', TemplatingRouteLoader = (_dec2 = inject(CompositionEngine), _dec2(_class2 = function (_RouteLoader) {
         _inherits(TemplatingRouteLoader, _RouteLoader);
 
         function TemplatingRouteLoader(compositionEngine) {
@@ -84,7 +89,16 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
         TemplatingRouteLoader.prototype.loadRoute = function loadRoute(router, config) {
           var childContainer = router.container.createChild();
 
-          var viewModel = /\.html/.test(config.moduleId) ? createDynamicClass(config.moduleId) : relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
+          var viewModel = void 0;
+          if (config.moduleId === null) {
+            viewModel = EmptyClass;
+          } else if (/\.html/i.test(config.moduleId)) {
+            viewModel = createDynamicClass(config.moduleId);
+          } else {
+            viewModel = relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
+          }
+
+          config = config || {};
 
           var instruction = {
             viewModel: viewModel,
@@ -109,7 +123,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
         };
 
         return TemplatingRouteLoader;
-      }(RouteLoader)) || _class));
+      }(RouteLoader)) || _class2));
 
       _export('TemplatingRouteLoader', TemplatingRouteLoader);
     }

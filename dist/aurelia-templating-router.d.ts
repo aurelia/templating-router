@@ -11,7 +11,8 @@ import {
   CompositionEngine,
   ShadowDOM,
   SwapStrategies,
-  useView
+  useView,
+  inlineView
 } from 'aurelia-templating';
 import {
   inject,
@@ -35,7 +36,7 @@ import {
 } from 'aurelia-path';
 export declare class RouteHref {
   constructor(router?: any, element?: any);
-  attached(): any;
+  bind(): any;
   unbind(): any;
   attributeChanged(value?: any, previous?: any): any;
   processChange(): any;

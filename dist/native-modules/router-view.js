@@ -97,7 +97,7 @@ export var RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM
     var viewModelResource = component.viewModelResource;
     var metadata = viewModelResource.metadata;
     var config = component.router.currentInstruction.config;
-    var viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {};
+    var viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] || {} : {};
 
     childContainer.get(RouterViewLocator)._notify(this);
 

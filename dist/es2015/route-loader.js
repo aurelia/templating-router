@@ -1,13 +1,15 @@
-var _dec, _class;
+var _dec, _class, _dec2, _class2;
 
 import { inject } from 'aurelia-dependency-injection';
-import { CompositionEngine, useView, customElement } from 'aurelia-templating';
+import { CompositionEngine, useView, inlineView, customElement } from 'aurelia-templating';
 import { RouteLoader, Router } from 'aurelia-router';
 import { relativeToFile } from 'aurelia-path';
 import { Origin } from 'aurelia-metadata';
 import { RouterViewLocator } from './router-view';
 
-export let TemplatingRouteLoader = (_dec = inject(CompositionEngine), _dec(_class = class TemplatingRouteLoader extends RouteLoader {
+let EmptyClass = (_dec = inlineView('<template></template>'), _dec(_class = class EmptyClass {}) || _class);
+
+export let TemplatingRouteLoader = (_dec2 = inject(CompositionEngine), _dec2(_class2 = class TemplatingRouteLoader extends RouteLoader {
   constructor(compositionEngine) {
     super();
     this.compositionEngine = compositionEngine;
@@ -16,7 +18,16 @@ export let TemplatingRouteLoader = (_dec = inject(CompositionEngine), _dec(_clas
   loadRoute(router, config) {
     let childContainer = router.container.createChild();
 
-    let viewModel = /\.html/.test(config.moduleId) ? createDynamicClass(config.moduleId) : relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
+    let viewModel;
+    if (config.moduleId === null) {
+      viewModel = EmptyClass;
+    } else if (/\.html/i.test(config.moduleId)) {
+      viewModel = createDynamicClass(config.moduleId);
+    } else {
+      viewModel = relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
+    }
+
+    config = config || {};
 
     let instruction = {
       viewModel: viewModel,
@@ -39,18 +50,18 @@ export let TemplatingRouteLoader = (_dec = inject(CompositionEngine), _dec(_clas
 
     return this.compositionEngine.ensureViewModel(instruction);
   }
-}) || _class);
+}) || _class2);
 
 function createDynamicClass(moduleId) {
-  var _dec2, _dec3, _class2;
+  var _dec3, _dec4, _class3;
 
   let name = /([^\/^\?]+)\.html/i.exec(moduleId)[1];
 
-  let DynamicClass = (_dec2 = customElement(name), _dec3 = useView(moduleId), _dec2(_class2 = _dec3(_class2 = class DynamicClass {
+  let DynamicClass = (_dec3 = customElement(name), _dec4 = useView(moduleId), _dec3(_class3 = _dec4(_class3 = class DynamicClass {
     bind(bindingContext) {
       this.$parent = bindingContext;
     }
-  }) || _class2) || _class2);
+  }) || _class3) || _class3);
 
 
   return DynamicClass;

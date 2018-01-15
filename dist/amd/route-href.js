@@ -39,7 +39,7 @@ define(['exports', 'aurelia-templating', 'aurelia-dependency-injection', 'aureli
       this.element = element;
     }
 
-    RouteHref.prototype.attached = function attached() {
+    RouteHref.prototype.bind = function bind() {
       this.isActive = true;
       this.processChange();
     };

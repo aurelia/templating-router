@@ -33,7 +33,7 @@ var RouteHref = exports.RouteHref = (_dec = (0, _aureliaTemplating.customAttribu
     this.element = element;
   }
 
-  RouteHref.prototype.attached = function attached() {
+  RouteHref.prototype.bind = function bind() {
     this.isActive = true;
     this.processChange();
   };

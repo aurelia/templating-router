@@ -1,3 +1,13 @@
+<a name="1.3.0"></a>
+# [1.3.0](https://github.com/aurelia/templating-router/compare/1.2.0...1.3.0) (2018-01-15)
+
+
+### Features
+
+* **templating-router:** optional viewports ([24532ff](https://github.com/aurelia/templating-router/commit/24532ff))
+
+
+
 <a name="1.2.0"></a>
 # [1.2.0](https://github.com/aurelia/templating-router/compare/1.1.0...1.2.0) (2017-10-02)
 

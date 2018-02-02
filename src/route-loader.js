@@ -27,8 +27,6 @@ export class TemplatingRouteLoader extends RouteLoader {
       viewModel = relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
     }
 
-    config = config || {};
-
     let instruction = {
       viewModel: viewModel,
       childContainer: childContainer,

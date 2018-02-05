@@ -1,4 +1,3 @@
-import {PLATFORM} from 'aurelia-pal';
 import {Router, AppRouter, RouteLoader} from 'aurelia-router';
 import {TemplatingRouteLoader} from './route-loader';
 import {RouterView} from './router-view';
@@ -9,8 +8,8 @@ function configure(config) {
     .singleton(RouteLoader, TemplatingRouteLoader)
     .singleton(Router, AppRouter)
     .globalResources(
-      PLATFORM.moduleName('./router-view'),
-      PLATFORM.moduleName('./route-href')
+      RouterView,
+      RouteHref
     );
 
   config.container.registerAlias(Router, AppRouter);

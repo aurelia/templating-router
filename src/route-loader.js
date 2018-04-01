@@ -19,13 +19,29 @@ export class TemplatingRouteLoader extends RouteLoader {
     let childContainer = router.container.createChild();
 
     let viewModel;
+    let isPromise = false;
+
     if (config.moduleId === null) {
       viewModel = EmptyClass;
-    } else if (/\.html/i.test(config.moduleId)) {
-      viewModel = createDynamicClass(config.moduleId);
     } else {
-      viewModel = relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
+      if (typeof config.moduleId === 'string') {
+        if (/\.html$/i.test(config.moduleId)) {
+          viewModel = createDynamicClass(config.moduleId);
+        } else {
+          viewModel = relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
+        }
+      } else if (typeof config.moduleId === 'function') {
+        // view model class given
+        viewModel = { constructor: config.moduleId };
+      } else if (config.moduleId instanceof Promise) {
+        // dynamic loading
+        isPromise = true;
+      } else {
+        throw new Error('Unsupported "moduleId" config');
+      }
     }
+
+    config = config || {};
 
     let instruction = {
       viewModel: viewModel,
@@ -46,12 +62,22 @@ export class TemplatingRouteLoader extends RouteLoader {
       return childContainer.get(Router);
     };
 
+    if (isPromise) {
+      return config.moduleId.then(viewModelClass => {
+        if (typeof viewModelClass !== 'function') {
+          throw new Error(`Unsupported moduleId config. Expected class / function, actual: ${typeof viewModelClass}`);
+        }
+        instruction.viewModel = { constructor: viewModelClass };
+        return this.compositionEngine.ensureViewModel(instruction);
+      });
+    }
+
     return this.compositionEngine.ensureViewModel(instruction);
   }
 }
 
 function createDynamicClass(moduleId) {
-  let name = /([^\/^\?]+)\.html/i.exec(moduleId)[1];
+  let name = /([^\/^\?]+)\.html$/i.exec(moduleId)[1];
 
   @customElement(name)
   @useView(moduleId)

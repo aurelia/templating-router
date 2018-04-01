@@ -1,10 +1,12 @@
 import {StageComponent} from 'aurelia-testing';
-import {RouteLoader, AppRouter, Router} from 'aurelia-router';
+import {RouteLoader, AppRouter, Router, RouteConfig, RouterConfiguration} from 'aurelia-router';
 import {TemplatingRouteLoader} from 'src/route-loader';
 import {testConstants} from 'test/test-constants';
 import {bootstrap} from 'aurelia-bootstrapper';
+import { inlineView } from 'aurelia-templating';
 
 describe('router-view', () => {
+  /**@type {StageComponent} */
   let component;
 
   beforeEach(done => {
@@ -155,12 +157,53 @@ describe('router-view', () => {
       })
       .then(done);
   });
+
+  fdescribe('classes as module id', () => {
+    it('uses class for route module id', (done) => {
+      @inlineView('<template><span class="route-1">This is route 1</span></template>')
+      class Route {}
+
+      component = withDefaultViewport({ moduleId: Route });
+      
+      component.create(bootstrap)
+        .then(() => {
+          return component.viewModel.router.navigate('route').then(wait);
+        })
+        .then(() => {
+          expect(document.querySelector('.route-1')).toBeDefined();
+        })
+        .then(done);
+    });
+
+    it('uses class for route module id in view port', done => {
+      @inlineView('<template><span class="route-1">This is route 1</span></template>')
+      class Route {}
+
+      component = withNamedViewport({
+        viewPorts: {
+          viewport1: { moduleId: Route, layoutView: 'test/layout-default-slot.html' }
+        }
+      });
+
+      component.create(bootstrap)
+        .then(() => {
+          return component.viewModel.router.navigate('route').then(wait);
+        })
+        .then(() => {
+          expect(document.querySelectorAll('.route-1').length).toBe(1);
+        })
+        .then(done);
+    });
+  });
 });
 
 function wait() {
   return new Promise(res => setTimeout(() => res(), 250));
 }
 
+/**
+ * @param {RouteConfig} routeConfig
+ */
 function withDefaultViewport(routeConfig) {
   let component = StageComponent
       .withResources('src/router-view')
@@ -175,6 +218,9 @@ function withDefaultViewport(routeConfig) {
   return component;
 }
 
+/**
+ * @param {RouteConfig} routeConfig
+ */
 function withNamedViewport(routeConfig) {
   let component = StageComponent
       .withResources('src/router-view')
@@ -191,6 +237,11 @@ function withNamedViewport(routeConfig) {
   return component;
 }
 
+/**
+ * @param {StageComponent} component
+ * @param {RouteConfig} defaultRoute
+ * @param {RouteConfig} routeConfig
+ */
 function configure(component, defaultRoute, routeConfig) {
   component.bootstrap(aurelia => {
     aurelia.use
@@ -212,7 +263,7 @@ function configure(component, defaultRoute, routeConfig) {
     }
 
     aurelia.use.container.viewModel = {
-      configureRouter: (config, router) => {
+      configureRouter: /** @param {RouterConfiguration} config @param {Router} router */ (config, router) => {
         config.map(routeConfig);
       }
     };

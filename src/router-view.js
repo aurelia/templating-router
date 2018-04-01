@@ -9,12 +9,22 @@ import {DOM} from 'aurelia-pal';
 @noView
 @inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine)
 export class RouterView {
+  /**@type {'before' | 'with' | 'after'} */
   @bindable swapOrder;
   @bindable layoutView;
   @bindable layoutViewModel;
   @bindable layoutModel;
   element;
 
+  /**
+   * @param {Element} element
+   * @param {Container} container
+   * @param {ViewSlot} viewSlot
+   * @param {Router} router
+   * @param {ViewLocator} viewLocator
+   * @param {CompositionTransaction} compositionTransaction
+   * @param {CompositionEngine} compositionEngine
+   */
   constructor(element, container, viewSlot, router, viewLocator, compositionTransaction, compositionEngine) {
     this.element = element;
     this.container = container;

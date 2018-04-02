@@ -158,7 +158,7 @@ describe('router-view', () => {
       .then(done);
   });
 
-  fdescribe('classes as module id', () => {
+  describe('classes as module id', () => {
     it('uses class for route module id', (done) => {
       @inlineView('<template><span class="route-1">This is route 1</span></template>')
       class Route {}

@@ -263,7 +263,7 @@ function configure(component, defaultRoute, routeConfig) {
     }
 
     aurelia.use.container.viewModel = {
-      configureRouter: /** @param {RouterConfiguration} config @param {Router} router */ (config, router) => {
+      configureRouter: (config, router) => {
         config.map(routeConfig);
       }
     };

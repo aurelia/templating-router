@@ -1,5 +1,5 @@
 import {inject} from 'aurelia-dependency-injection';
-import {CompositionEngine, useView, inlineView, customElement} from 'aurelia-templating';
+import {CompositionEngine, useView, inlineView, customElement, HtmlBehaviorResource} from 'aurelia-templating';
 import {RouteLoader, Router} from 'aurelia-router';
 import {relativeToFile} from 'aurelia-path';
 import {Origin} from 'aurelia-metadata';
@@ -32,7 +32,13 @@ export class TemplatingRouteLoader extends RouteLoader {
         }
       } else if (typeof config.moduleId === 'function') {
         // view model class given
-        viewModel = { constructor: config.moduleId };
+        childContainer.autoRegister(config.moduleId);
+
+        /**@type {HtmlBehaviorResource} */
+        let m = metadata.getOrCreateOwn(metadata.resource, HtmlBehaviorResource, config.moduleId);
+        m.elementName = m.elementName || 'dynamic-element';
+        m.initialize(childContainer, config.moduleId);
+        viewModel = childContainer.get(config.moduleId);
       } else if (config.moduleId instanceof Promise) {
         // dynamic loading
         isPromise = true;
@@ -67,7 +73,13 @@ export class TemplatingRouteLoader extends RouteLoader {
         if (typeof viewModelClass !== 'function') {
           throw new Error(`Unsupported moduleId config. Expected class / function, actual: ${typeof viewModelClass}`);
         }
-        instruction.viewModel = { constructor: viewModelClass };
+        childContainer.autoRegister(viewModelClass);
+
+        /**@type {HtmlBehaviorResource} */
+        let m = metadata.getOrCreateOwn(metadata.resource, HtmlBehaviorResource, viewModelClass);
+        m.elementName = m.elementName || 'dynamic-element';
+        m.initialize(childContainer, viewModelClass);
+        instruction.viewModel = childContainer.get(viewModelClass);
         return this.compositionEngine.ensureViewModel(instruction);
       });
     }
@@ -77,7 +89,7 @@ export class TemplatingRouteLoader extends RouteLoader {
 }
 
 function createDynamicClass(moduleId) {
-  let name = /([^\/^\?]+)\.html$/i.exec(moduleId)[1];
+  let name = /([^\/^\?]+)\.html/i.exec(moduleId)[1];
 
   @customElement(name)
   @useView(moduleId)

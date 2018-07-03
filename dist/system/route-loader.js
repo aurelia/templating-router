@@ -98,8 +98,6 @@ System.register(['aurelia-dependency-injection', 'aurelia-templating', 'aurelia-
             viewModel = relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
           }
 
-          config = config || {};
-
           var instruction = {
             viewModel: viewModel,
             childContainer: childContainer,

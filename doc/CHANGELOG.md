@@ -1,3 +1,8 @@
+<a name="1.3.2"></a>
+## [1.3.2](https://github.com/aurelia/templating-router/compare/1.3.1...1.3.2) (2018-07-03)
+
+* Update dependencies and leverate new framework configuration APIs.
+
 <a name="1.3.0"></a>
 # [1.3.0](https://github.com/aurelia/templating-router/compare/1.2.0...1.3.0) (2018-01-15)
 

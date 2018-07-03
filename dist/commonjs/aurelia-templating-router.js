@@ -5,8 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.configure = exports.RouteHref = exports.RouterView = exports.TemplatingRouteLoader = undefined;
 
-var _aureliaPal = require('aurelia-pal');
-
 var _aureliaRouter = require('aurelia-router');
 
 var _routeLoader = require('./route-loader');
@@ -16,7 +14,7 @@ var _routerView = require('./router-view');
 var _routeHref = require('./route-href');
 
 function configure(config) {
-  config.singleton(_aureliaRouter.RouteLoader, _routeLoader.TemplatingRouteLoader).singleton(_aureliaRouter.Router, _aureliaRouter.AppRouter).globalResources(_aureliaPal.PLATFORM.moduleName('./router-view'), _aureliaPal.PLATFORM.moduleName('./route-href'));
+  config.singleton(_aureliaRouter.RouteLoader, _routeLoader.TemplatingRouteLoader).singleton(_aureliaRouter.Router, _aureliaRouter.AppRouter).globalResources(_routerView.RouterView, _routeHref.RouteHref);
 
   config.container.registerAlias(_aureliaRouter.Router, _aureliaRouter.AppRouter);
 }

@@ -52,8 +52,6 @@ var TemplatingRouteLoader = exports.TemplatingRouteLoader = (_dec2 = (0, _aureli
       viewModel = (0, _aureliaPath.relativeToFile)(config.moduleId, _aureliaMetadata.Origin.get(router.container.viewModel.constructor).moduleId);
     }
 
-    config = config || {};
-
     var instruction = {
       viewModel: viewModel,
       childContainer: childContainer,

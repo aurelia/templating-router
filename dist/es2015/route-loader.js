@@ -27,8 +27,6 @@ export let TemplatingRouteLoader = (_dec2 = inject(CompositionEngine), _dec2(_cl
       viewModel = relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
     }
 
-    config = config || {};
-
     let instruction = {
       viewModel: viewModel,
       childContainer: childContainer,

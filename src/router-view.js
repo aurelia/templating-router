@@ -7,8 +7,12 @@ import {DOM} from 'aurelia-pal';
 
 @customElement('router-view')
 @noView
-@inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine)
 export class RouterView {
+
+  static inject() {
+    return [DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine];
+  }
+
   @bindable swapOrder;
   @bindable layoutView;
   @bindable layoutViewModel;

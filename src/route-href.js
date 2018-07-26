@@ -10,8 +10,12 @@ const logger = LogManager.getLogger('route-href');
 @bindable({name: 'route', changeHandler: 'processChange', primaryProperty: true})
 @bindable({name: 'params', changeHandler: 'processChange'})
 @bindable({name: 'attribute', defaultValue: 'href'})
-@inject(Router, DOM.Element)
 export class RouteHref {
+
+  static inject() {
+    return [Router, DOM.Element];
+  }
+
   constructor(router, element) {
     this.router = router;
     this.element = element;

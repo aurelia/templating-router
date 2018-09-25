@@ -1,8 +1,8 @@
 import * as LogManager from 'aurelia-logging';
 import {customAttribute,bindable,ViewSlot,ViewLocator,customElement,noView,BehaviorInstruction,CompositionTransaction,CompositionEngine,ShadowDOM,SwapStrategies,useView,inlineView} from 'aurelia-templating';
-import {inject,Container} from 'aurelia-dependency-injection';
 import {Router,RouteLoader} from 'aurelia-router';
 import {DOM} from 'aurelia-pal';
+import {Container,inject} from 'aurelia-dependency-injection';
 import {createOverrideContext} from 'aurelia-binding';
 import {Origin} from 'aurelia-metadata';
 import {relativeToFile} from 'aurelia-path';
@@ -13,8 +13,12 @@ const logger = LogManager.getLogger('route-href');
 @bindable({name: 'route', changeHandler: 'processChange', primaryProperty: true})
 @bindable({name: 'params', changeHandler: 'processChange'})
 @bindable({name: 'attribute', defaultValue: 'href'})
-@inject(Router, DOM.Element)
 export class RouteHref {
+
+  static inject() {
+    return [Router, DOM.Element];
+  }
+
   constructor(router, element) {
     this.router = router;
     this.element = element;
@@ -61,8 +65,12 @@ export class RouteHref {
 
 @customElement('router-view')
 @noView
-@inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine)
 export class RouterView {
+
+  static inject() {
+    return [DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine];
+  }
+
   @bindable swapOrder;
   @bindable layoutView;
   @bindable layoutViewModel;

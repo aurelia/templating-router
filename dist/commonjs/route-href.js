@@ -5,11 +5,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.RouteHref = undefined;
 
-var _dec, _dec2, _dec3, _dec4, _dec5, _class;
+var _dec, _dec2, _dec3, _dec4, _class;
 
 var _aureliaTemplating = require('aurelia-templating');
-
-var _aureliaDependencyInjection = require('aurelia-dependency-injection');
 
 var _aureliaRouter = require('aurelia-router');
 
@@ -25,7 +23,11 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 var logger = LogManager.getLogger('route-href');
 
-var RouteHref = exports.RouteHref = (_dec = (0, _aureliaTemplating.customAttribute)('route-href'), _dec2 = (0, _aureliaTemplating.bindable)({ name: 'route', changeHandler: 'processChange', primaryProperty: true }), _dec3 = (0, _aureliaTemplating.bindable)({ name: 'params', changeHandler: 'processChange' }), _dec4 = (0, _aureliaTemplating.bindable)({ name: 'attribute', defaultValue: 'href' }), _dec5 = (0, _aureliaDependencyInjection.inject)(_aureliaRouter.Router, _aureliaPal.DOM.Element), _dec(_class = _dec2(_class = _dec3(_class = _dec4(_class = _dec5(_class = function () {
+var RouteHref = exports.RouteHref = (_dec = (0, _aureliaTemplating.customAttribute)('route-href'), _dec2 = (0, _aureliaTemplating.bindable)({ name: 'route', changeHandler: 'processChange', primaryProperty: true }), _dec3 = (0, _aureliaTemplating.bindable)({ name: 'params', changeHandler: 'processChange' }), _dec4 = (0, _aureliaTemplating.bindable)({ name: 'attribute', defaultValue: 'href' }), _dec(_class = _dec2(_class = _dec3(_class = _dec4(_class = function () {
+  RouteHref.inject = function inject() {
+    return [_aureliaRouter.Router, _aureliaPal.DOM.Element];
+  };
+
   function RouteHref(router, element) {
     
 
@@ -73,4 +75,4 @@ var RouteHref = exports.RouteHref = (_dec = (0, _aureliaTemplating.customAttribu
   };
 
   return RouteHref;
-}()) || _class) || _class) || _class) || _class) || _class);
+}()) || _class) || _class) || _class) || _class);

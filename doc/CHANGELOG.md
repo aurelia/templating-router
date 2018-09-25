@@ -1,3 +1,13 @@
+<a name="1.3.3"></a>
+## [1.3.3](https://github.com/aurelia/templating-router/compare/1.3.2...1.3.3) (2018-09-25)
+
+
+### Bug Fixes
+
+* **RouterView, RouteHref:** delay element injection ([a465e6e](https://github.com/aurelia/templating-router/commit/a465e6e))
+
+
+
 <a name="1.3.2"></a>
 ## [1.3.2](https://github.com/aurelia/templating-router/compare/1.3.1...1.3.2) (2018-07-03)
 

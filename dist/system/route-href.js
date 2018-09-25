@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['aurelia-templating', 'aurelia-dependency-injection', 'aurelia-router', 'aurelia-pal', 'aurelia-logging'], function (_export, _context) {
+System.register(['aurelia-templating', 'aurelia-router', 'aurelia-pal', 'aurelia-logging'], function (_export, _context) {
   "use strict";
 
-  var customAttribute, bindable, inject, Router, DOM, LogManager, _dec, _dec2, _dec3, _dec4, _dec5, _class, logger, RouteHref;
+  var customAttribute, bindable, Router, DOM, LogManager, _dec, _dec2, _dec3, _dec4, _class, logger, RouteHref;
 
   
 
@@ -11,8 +11,6 @@ System.register(['aurelia-templating', 'aurelia-dependency-injection', 'aurelia-
     setters: [function (_aureliaTemplating) {
       customAttribute = _aureliaTemplating.customAttribute;
       bindable = _aureliaTemplating.bindable;
-    }, function (_aureliaDependencyInjection) {
-      inject = _aureliaDependencyInjection.inject;
     }, function (_aureliaRouter) {
       Router = _aureliaRouter.Router;
     }, function (_aureliaPal) {
@@ -23,7 +21,11 @@ System.register(['aurelia-templating', 'aurelia-dependency-injection', 'aurelia-
     execute: function () {
       logger = LogManager.getLogger('route-href');
 
-      _export('RouteHref', RouteHref = (_dec = customAttribute('route-href'), _dec2 = bindable({ name: 'route', changeHandler: 'processChange', primaryProperty: true }), _dec3 = bindable({ name: 'params', changeHandler: 'processChange' }), _dec4 = bindable({ name: 'attribute', defaultValue: 'href' }), _dec5 = inject(Router, DOM.Element), _dec(_class = _dec2(_class = _dec3(_class = _dec4(_class = _dec5(_class = function () {
+      _export('RouteHref', RouteHref = (_dec = customAttribute('route-href'), _dec2 = bindable({ name: 'route', changeHandler: 'processChange', primaryProperty: true }), _dec3 = bindable({ name: 'params', changeHandler: 'processChange' }), _dec4 = bindable({ name: 'attribute', defaultValue: 'href' }), _dec(_class = _dec2(_class = _dec3(_class = _dec4(_class = function () {
+        RouteHref.inject = function inject() {
+          return [Router, DOM.Element];
+        };
+
         function RouteHref(router, element) {
           
 
@@ -71,7 +73,7 @@ System.register(['aurelia-templating', 'aurelia-dependency-injection', 'aurelia-
         };
 
         return RouteHref;
-      }()) || _class) || _class) || _class) || _class) || _class));
+      }()) || _class) || _class) || _class) || _class));
 
       _export('RouteHref', RouteHref);
     }

@@ -1,16 +1,19 @@
-var _dec, _dec2, _dec3, _dec4, _dec5, _class;
+var _dec, _dec2, _dec3, _dec4, _class;
 
 
 
 import { customAttribute, bindable } from 'aurelia-templating';
-import { inject } from 'aurelia-dependency-injection';
 import { Router } from 'aurelia-router';
 import { DOM } from 'aurelia-pal';
 import * as LogManager from 'aurelia-logging';
 
 var logger = LogManager.getLogger('route-href');
 
-export var RouteHref = (_dec = customAttribute('route-href'), _dec2 = bindable({ name: 'route', changeHandler: 'processChange', primaryProperty: true }), _dec3 = bindable({ name: 'params', changeHandler: 'processChange' }), _dec4 = bindable({ name: 'attribute', defaultValue: 'href' }), _dec5 = inject(Router, DOM.Element), _dec(_class = _dec2(_class = _dec3(_class = _dec4(_class = _dec5(_class = function () {
+export var RouteHref = (_dec = customAttribute('route-href'), _dec2 = bindable({ name: 'route', changeHandler: 'processChange', primaryProperty: true }), _dec3 = bindable({ name: 'params', changeHandler: 'processChange' }), _dec4 = bindable({ name: 'attribute', defaultValue: 'href' }), _dec(_class = _dec2(_class = _dec3(_class = _dec4(_class = function () {
+  RouteHref.inject = function inject() {
+    return [Router, DOM.Element];
+  };
+
   function RouteHref(router, element) {
     
 
@@ -58,4 +61,4 @@ export var RouteHref = (_dec = customAttribute('route-href'), _dec2 = bindable({
   };
 
   return RouteHref;
-}()) || _class) || _class) || _class) || _class) || _class);
+}()) || _class) || _class) || _class) || _class);

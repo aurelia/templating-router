@@ -3,7 +3,7 @@
 System.register(['aurelia-dependency-injection', 'aurelia-binding', 'aurelia-templating', 'aurelia-router', 'aurelia-metadata', 'aurelia-pal'], function (_export, _context) {
   "use strict";
 
-  var Container, inject, createOverrideContext, ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM, SwapStrategies, Router, Origin, DOM, _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, RouterView, RouterViewLocator;
+  var Container, createOverrideContext, ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM, SwapStrategies, Router, Origin, DOM, _dec, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, RouterView, RouterViewLocator;
 
   function _initDefineProp(target, property, descriptor, context) {
     if (!descriptor) return;
@@ -53,7 +53,6 @@ System.register(['aurelia-dependency-injection', 'aurelia-binding', 'aurelia-tem
   return {
     setters: [function (_aureliaDependencyInjection) {
       Container = _aureliaDependencyInjection.Container;
-      inject = _aureliaDependencyInjection.inject;
     }, function (_aureliaBinding) {
       createOverrideContext = _aureliaBinding.createOverrideContext;
     }, function (_aureliaTemplating) {
@@ -75,7 +74,11 @@ System.register(['aurelia-dependency-injection', 'aurelia-binding', 'aurelia-tem
       DOM = _aureliaPal.DOM;
     }],
     execute: function () {
-      _export('RouterView', RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine), _dec(_class = noView(_class = _dec2(_class = (_class2 = function () {
+      _export('RouterView', RouterView = (_dec = customElement('router-view'), _dec(_class = noView(_class = (_class2 = function () {
+        RouterView.inject = function inject() {
+          return [DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine];
+        };
+
         function RouterView(element, container, viewSlot, router, viewLocator, compositionTransaction, compositionEngine) {
           
 
@@ -227,7 +230,7 @@ System.register(['aurelia-dependency-injection', 'aurelia-binding', 'aurelia-tem
       }), _descriptor4 = _applyDecoratedDescriptor(_class2.prototype, 'layoutModel', [bindable], {
         enumerable: true,
         initializer: null
-      })), _class2)) || _class) || _class) || _class));
+      })), _class2)) || _class) || _class));
 
       _export('RouterView', RouterView);
 

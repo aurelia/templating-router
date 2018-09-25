@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.TemplatingRouteLoader = exports.RouterViewLocator = exports.RouterView = exports.RouteHref = undefined;
 
-var _dec, _dec2, _dec3, _dec4, _dec5, _class, _dec6, _dec7, _class2, _desc, _value, _class3, _descriptor, _descriptor2, _descriptor3, _descriptor4, _dec8, _class5, _dec9, _class6;
+var _dec, _dec2, _dec3, _dec4, _class, _dec5, _class2, _desc, _value, _class3, _descriptor, _descriptor2, _descriptor3, _descriptor4, _dec6, _class5, _dec7, _class6;
 
 var _aureliaLogging = require('aurelia-logging');
 
@@ -13,11 +13,11 @@ var LogManager = _interopRequireWildcard(_aureliaLogging);
 
 var _aureliaTemplating = require('aurelia-templating');
 
-var _aureliaDependencyInjection = require('aurelia-dependency-injection');
-
 var _aureliaRouter = require('aurelia-router');
 
 var _aureliaPal = require('aurelia-pal');
+
+var _aureliaDependencyInjection = require('aurelia-dependency-injection');
 
 var _aureliaBinding = require('aurelia-binding');
 
@@ -78,7 +78,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var logger = LogManager.getLogger('route-href');
 
-var RouteHref = exports.RouteHref = (_dec = (0, _aureliaTemplating.customAttribute)('route-href'), _dec2 = (0, _aureliaTemplating.bindable)({ name: 'route', changeHandler: 'processChange', primaryProperty: true }), _dec3 = (0, _aureliaTemplating.bindable)({ name: 'params', changeHandler: 'processChange' }), _dec4 = (0, _aureliaTemplating.bindable)({ name: 'attribute', defaultValue: 'href' }), _dec5 = (0, _aureliaDependencyInjection.inject)(_aureliaRouter.Router, _aureliaPal.DOM.Element), _dec(_class = _dec2(_class = _dec3(_class = _dec4(_class = _dec5(_class = function () {
+var RouteHref = exports.RouteHref = (_dec = (0, _aureliaTemplating.customAttribute)('route-href'), _dec2 = (0, _aureliaTemplating.bindable)({ name: 'route', changeHandler: 'processChange', primaryProperty: true }), _dec3 = (0, _aureliaTemplating.bindable)({ name: 'params', changeHandler: 'processChange' }), _dec4 = (0, _aureliaTemplating.bindable)({ name: 'attribute', defaultValue: 'href' }), _dec(_class = _dec2(_class = _dec3(_class = _dec4(_class = function () {
+  RouteHref.inject = function inject() {
+    return [_aureliaRouter.Router, _aureliaPal.DOM.Element];
+  };
+
   function RouteHref(router, element) {
     _classCallCheck(this, RouteHref);
 
@@ -126,8 +130,12 @@ var RouteHref = exports.RouteHref = (_dec = (0, _aureliaTemplating.customAttribu
   };
 
   return RouteHref;
-}()) || _class) || _class) || _class) || _class) || _class);
-var RouterView = exports.RouterView = (_dec6 = (0, _aureliaTemplating.customElement)('router-view'), _dec7 = (0, _aureliaDependencyInjection.inject)(_aureliaPal.DOM.Element, _aureliaDependencyInjection.Container, _aureliaTemplating.ViewSlot, _aureliaRouter.Router, _aureliaTemplating.ViewLocator, _aureliaTemplating.CompositionTransaction, _aureliaTemplating.CompositionEngine), _dec6(_class2 = (0, _aureliaTemplating.noView)(_class2 = _dec7(_class2 = (_class3 = function () {
+}()) || _class) || _class) || _class) || _class);
+var RouterView = exports.RouterView = (_dec5 = (0, _aureliaTemplating.customElement)('router-view'), _dec5(_class2 = (0, _aureliaTemplating.noView)(_class2 = (_class3 = function () {
+  RouterView.inject = function inject() {
+    return [_aureliaPal.DOM.Element, _aureliaDependencyInjection.Container, _aureliaTemplating.ViewSlot, _aureliaRouter.Router, _aureliaTemplating.ViewLocator, _aureliaTemplating.CompositionTransaction, _aureliaTemplating.CompositionEngine];
+  };
+
   function RouterView(element, container, viewSlot, router, viewLocator, compositionTransaction, compositionEngine) {
     _classCallCheck(this, RouterView);
 
@@ -279,7 +287,7 @@ var RouterView = exports.RouterView = (_dec6 = (0, _aureliaTemplating.customElem
 }), _descriptor4 = _applyDecoratedDescriptor(_class3.prototype, 'layoutModel', [_aureliaTemplating.bindable], {
   enumerable: true,
   initializer: null
-})), _class3)) || _class2) || _class2) || _class2);
+})), _class3)) || _class2) || _class2);
 
 var RouterViewLocator = exports.RouterViewLocator = function () {
   function RouterViewLocator() {
@@ -303,10 +311,10 @@ var RouterViewLocator = exports.RouterViewLocator = function () {
   return RouterViewLocator;
 }();
 
-var EmptyClass = (_dec8 = (0, _aureliaTemplating.inlineView)('<template></template>'), _dec8(_class5 = function EmptyClass() {
+var EmptyClass = (_dec6 = (0, _aureliaTemplating.inlineView)('<template></template>'), _dec6(_class5 = function EmptyClass() {
   _classCallCheck(this, EmptyClass);
 }) || _class5);
-var TemplatingRouteLoader = exports.TemplatingRouteLoader = (_dec9 = (0, _aureliaDependencyInjection.inject)(_aureliaTemplating.CompositionEngine), _dec9(_class6 = function (_RouteLoader) {
+var TemplatingRouteLoader = exports.TemplatingRouteLoader = (_dec7 = (0, _aureliaDependencyInjection.inject)(_aureliaTemplating.CompositionEngine), _dec7(_class6 = function (_RouteLoader) {
   _inherits(TemplatingRouteLoader, _RouteLoader);
 
   function TemplatingRouteLoader(compositionEngine) {
@@ -357,11 +365,11 @@ var TemplatingRouteLoader = exports.TemplatingRouteLoader = (_dec9 = (0, _aureli
 
 
 function createDynamicClass(moduleId) {
-  var _dec10, _dec11, _class7;
+  var _dec8, _dec9, _class7;
 
   var name = /([^\/^\?]+)\.html/i.exec(moduleId)[1];
 
-  var DynamicClass = (_dec10 = (0, _aureliaTemplating.customElement)(name), _dec11 = (0, _aureliaTemplating.useView)(moduleId), _dec10(_class7 = _dec11(_class7 = function () {
+  var DynamicClass = (_dec8 = (0, _aureliaTemplating.customElement)(name), _dec9 = (0, _aureliaTemplating.useView)(moduleId), _dec8(_class7 = _dec9(_class7 = function () {
     function DynamicClass() {
       _classCallCheck(this, DynamicClass);
     }

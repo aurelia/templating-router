@@ -1,4 +1,4 @@
-var _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4;
+var _dec, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4;
 
 function _initDefineProp(target, property, descriptor, context) {
   if (!descriptor) return;
@@ -43,14 +43,18 @@ function _initializerWarningHelper(descriptor, context) {
   throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
 }
 
-import { Container, inject } from 'aurelia-dependency-injection';
+import { Container } from 'aurelia-dependency-injection';
 import { createOverrideContext } from 'aurelia-binding';
 import { ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM, SwapStrategies } from 'aurelia-templating';
 import { Router } from 'aurelia-router';
 import { Origin } from 'aurelia-metadata';
 import { DOM } from 'aurelia-pal';
 
-export let RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine), _dec(_class = noView(_class = _dec2(_class = (_class2 = class RouterView {
+export let RouterView = (_dec = customElement('router-view'), _dec(_class = noView(_class = (_class2 = class RouterView {
+
+  static inject() {
+    return [DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine];
+  }
 
   constructor(element, container, viewSlot, router, viewLocator, compositionTransaction, compositionEngine) {
     _initDefineProp(this, 'swapOrder', _descriptor, this);
@@ -195,7 +199,7 @@ export let RouterView = (_dec = customElement('router-view'), _dec2 = inject(DOM
 }), _descriptor4 = _applyDecoratedDescriptor(_class2.prototype, 'layoutModel', [bindable], {
   enumerable: true,
   initializer: null
-})), _class2)) || _class) || _class) || _class);
+})), _class2)) || _class) || _class);
 
 export let RouterViewLocator = class RouterViewLocator {
   constructor() {

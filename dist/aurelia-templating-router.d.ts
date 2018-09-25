@@ -15,16 +15,16 @@ import {
   inlineView
 } from 'aurelia-templating';
 import {
-  inject,
-  Container
-} from 'aurelia-dependency-injection';
-import {
   Router,
   RouteLoader
 } from 'aurelia-router';
 import {
   DOM
 } from 'aurelia-pal';
+import {
+  Container,
+  inject
+} from 'aurelia-dependency-injection';
 import {
   createOverrideContext
 } from 'aurelia-binding';
@@ -35,6 +35,7 @@ import {
   relativeToFile
 } from 'aurelia-path';
 export declare class RouteHref {
+  static inject(): any;
   constructor(router?: any, element?: any);
   bind(): any;
   unbind(): any;
@@ -42,6 +43,7 @@ export declare class RouteHref {
   processChange(): any;
 }
 export declare class RouterView {
+  static inject(): any;
   swapOrder: any;
   layoutView: any;
   layoutViewModel: any;

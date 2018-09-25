@@ -1,4 +1,4 @@
-import {Container, inject} from 'aurelia-dependency-injection';
+import {Container} from 'aurelia-dependency-injection';
 import {createOverrideContext} from 'aurelia-binding';
 import {ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM,  SwapStrategies} from 'aurelia-templating';
 import {Router} from 'aurelia-router';

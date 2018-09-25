@@ -1,5 +1,4 @@
 import {customAttribute, bindable} from 'aurelia-templating';
-import {inject} from 'aurelia-dependency-injection';
 import {Router} from 'aurelia-router';
 import {DOM} from 'aurelia-pal';
 import * as LogManager from 'aurelia-logging';

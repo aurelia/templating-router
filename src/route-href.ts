@@ -1,21 +1,33 @@
-import {customAttribute, bindable} from 'aurelia-templating';
-import {Router} from 'aurelia-router';
-import {DOM} from 'aurelia-pal';
+import { customAttribute, bindable } from 'aurelia-templating';
+import { Router } from 'aurelia-router';
+import { DOM } from 'aurelia-pal';
 import * as LogManager from 'aurelia-logging';
+import { IAureliaElement } from './interfaces';
 
 const logger = LogManager.getLogger('route-href');
 
-@customAttribute('route-href')
-@bindable({name: 'route', changeHandler: 'processChange', primaryProperty: true})
-@bindable({name: 'params', changeHandler: 'processChange'})
-@bindable({name: 'attribute', defaultValue: 'href'})
 export class RouteHref {
 
   static inject() {
     return [Router, DOM.Element];
   }
 
-  constructor(router, element) {
+  router: Router;
+
+  element: IAureliaElement;
+
+  isActive: boolean;
+
+  route: string;
+
+  params: Record<string, any>;
+
+  attribute: string;
+
+  constructor(
+    router: Router,
+    element: Element
+  ) {
     this.router = router;
     this.element = element;
   }
@@ -29,7 +41,7 @@ export class RouteHref {
     this.isActive = false;
   }
 
-  attributeChanged(value, previous) {
+  attributeChanged(value: any, previous: any) {
     if (previous) {
       this.element.removeAttribute(previous);
     }
@@ -38,7 +50,8 @@ export class RouteHref {
   }
 
   processChange() {
-    return this.router.ensureConfigured()
+    return this.router
+      .ensureConfigured()
       .then(() => {
         if (!this.isActive) {
           return null;
@@ -53,8 +66,15 @@ export class RouteHref {
         }
 
         return null;
-      }).catch(reason => {
+      })
+      .catch(reason => {
         logger.error(reason);
       });
   }
 }
+
+// Doing this to miniize the amount of code generated
+customAttribute('route-href')(RouteHref);
+bindable({ name: 'route', changeHandler: 'processChange', primaryProperty: true })(RouteHref);
+bindable({ name: 'params', changeHandler: 'processChange' })(RouteHref);
+bindable({ name: 'attribute', defaultValue: 'href' })(RouteHref);

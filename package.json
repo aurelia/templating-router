@@ -14,6 +14,7 @@
   "license": "MIT",
   "author": "Rob Eisenberg <rob@bluespire.com> (http://robeisenberg.com/)",
   "main": "dist/commonjs/aurelia-templating-router.js",
+  "module": "dist/es2015/aurelia-templating-router.js",
   "typings": "dist/aurelia-templating-router.d.ts",
   "repository": {
     "type": "git",

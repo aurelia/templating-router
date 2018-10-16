@@ -46,6 +46,11 @@ export class RouteHref {
 
         let href = this.router.generate(this.route, this.params);
 
+        // Ensure fragments are created correctly
+        if (href.startsWith('#') && window.location) {
+          href = `${window.location.origin}${window.location.pathname}${window.location.search}${href}`;
+        }
+
         if (this.element.au.controller) {
           this.element.au.controller.viewModel[this.attribute] = href;
         } else {

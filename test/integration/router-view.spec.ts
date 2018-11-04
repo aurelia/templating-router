@@ -1,346 +1,350 @@
-// import { RouteHref } from '../../src/route-href';
-// import { TemplatingRouteLoader } from '../../src/route-loader';
-// import { bootstrap } from 'aurelia-bootstrapper';
-// import { RouteLoader, AppRouter, Router, RouteConfig, RouterConfiguration } from 'aurelia-router';
-// import { StageComponent, ComponentTester } from 'aurelia-testing';
-// import './shared';
-// import { RouterView } from '../../src/router-view';
+import { RouteHref } from '../../src/route-href';
+import { TemplatingRouteLoader } from '../../src/route-loader';
+import { bootstrap } from 'aurelia-bootstrapper';
+import { RouteLoader, AppRouter, Router, RouteConfig, RouterConfiguration } from 'aurelia-router';
+import { StageComponent, ComponentTester } from 'aurelia-testing';
+import './shared';
+import { RouterView } from '../../src/router-view';
+import { LogManager } from 'aurelia-framework';
+import { logLevel } from 'aurelia-logging';
+import { ConsoleAppender } from 'aurelia-logging-console';
 
-// describe('router-view', () => {
-//   let component: ComponentTester;
+describe('<router-view/>', () => {
+  let component: ComponentTester;
 
-//   beforeEach(done => {
-//     window.location.hash = '#/';
-//     done();
-//   });
+  beforeEach(async () => {
+    window.location.hash = '#/';
+    await Promise.resolve();
+  });
 
-//   afterEach(done => {
-//     component.viewModel.router.deactivate();
-//     component.dispose();
-//     done();
-//   });
+  afterEach(async () => {
+    (component.viewModel.router as any).deactivate();
+    component.dispose();
+    await Promise.resolve();
+  });
 
-//   it('has a router instance', (done) => {
-//     component = withDefaultViewport();
-//     component.create(bootstrap)
-//       .then(() => {
-//         expect(component.viewModel.router).toBeDefined();
-//       })
-//       .then(done)
-//       .catch((ex) => {
-//         done.fail();
-//       });
-//   });
+  fdescribe('Basic integration', function _1_basic_integration__Tests() {
 
-//   it('loads a basic view / view-model', done => {
-//     component = withDefaultViewport({
-//       moduleId: 'test/routes/route-2'
-//     } as RouteConfig);
+    it('has a router instance', async () => {
+      component = withDefaultViewport();
+      await component.create(bootstrap);
+      expect(component.viewModel instanceof RouterView).toBe(true);
+      expect(component.viewModel.router).toBeDefined();
+    });
 
-//     component.create(bootstrap)
-//       .then(() => {
-//         expect(component.element.querySelectorAll('.route-1').length).toBe(1);
-//         expect(component.element.querySelectorAll('.route-2').length).toBe(0);
-//         return component.viewModel.router.navigate('route');
-//       })
-//       .then(() => {
-//         expect(component.element.querySelectorAll('.route-1').length).toBe(0);
-//         expect(component.element.querySelectorAll('.route-2').length).toBe(1);
-//         done();
-//       })
-//       .catch(done.fail);
-//   });
+    it('loads a basic view / view-model', async () => {
+      component = withDefaultViewport({
+        moduleId: 'routes/route-2'
+      } as RouteConfig);
 
-//   it('loads a view-only module', done => {
-//     component = withDefaultViewport({
-//       moduleId: 'test/routes/route-2.html'
-//     } as RouteConfig);
+      await component.create(bootstrap);
 
-//     component.create(bootstrap)
-//       .then(() => {
-//         expect(component.element.querySelectorAll('.route-1').length).toBe(1);
-//         expect(component.element.querySelectorAll('.route-2.view-only').length).toBe(0);
-//         return component.viewModel.router.navigate('route');
-//       })
-//       .then(() => {
-//         expect(component.element.querySelectorAll('.route-1').length).toBe(0);
-//         expect(component.element.querySelectorAll('.route-2.view-only').length).toBe(1);
-//         done();
-//       })
-//       .catch(done.fail);
-//   });
+      expect(component.element.querySelectorAll('.route-1').length).toBe(1);
+      expect(component.element.querySelectorAll('.route-2').length).toBe(0);
 
-//   describe('with layouts', () => {
+      await component.viewModel.router.navigate('route');
 
-//     it('loads a module based layout', done => {
-//       component = withDefaultViewport({
-//         moduleId: 'test/routes/route-2',
-//         layoutViewModel: 'test/routes/layout-1'
-//       } as RouteConfig);
+      expect(component.element.querySelectorAll('.route-1').length).toBe(0);
+      expect(component.element.querySelectorAll('.route-2').length).toBe(1);
+    });
 
-//       component.create(bootstrap)
-//         .then(() => {
-//           expect(component.element.querySelectorAll('.route-1').length).toBe(1);
-//           expect(component.element.querySelectorAll('.route-2').length).toBe(0);
-//           expect(component.element.querySelectorAll('.layout-1').length).toBe(0);
-//           return component.viewModel.router.navigate('route');
-//         })
-//         .then(wait)
-//         .then(() => {
-//           expect(component.element.querySelectorAll('.route-1').length).toBe(0);
-//           expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
-//           expect(component.element.querySelectorAll('.layout-1:not(.view-only)').length).toBe(1);
-//           done();
-//         })
-//         .catch(done.fail);
-//     });
+    it('loads a view-only module', async () => {
+      component = withDefaultViewport({
+        moduleId: 'routes/route-2.html'
+      } as RouteConfig);
 
-//     it('loads a view-only layout', done => {
-//       component = withDefaultViewport({
-//         moduleId: 'test/routes/route-2',
-//         layoutView: 'test/routes/layout-1.html'
-//       } as RouteConfig);
+      await component.create(bootstrap);
+      expect(component.element.querySelectorAll('.route-1').length).toBe(1);
+      expect(component.element.querySelectorAll('.route-2.view-only').length).toBe(0);
 
-//       component.create(bootstrap)
-//         .then(() => {
-//           expect(component.element.querySelectorAll('.route-1').length).toBe(1);
-//           expect(component.element.querySelectorAll('.route-2').length).toBe(0);
-//           expect(component.element.querySelectorAll('.layout-1').length).toBe(0);
-//           return component.viewModel.router.navigate('route');
-//         })
-//         .then(wait)
-//         .then(() => {
-//           expect(component.element.querySelectorAll('.route-1').length).toBe(0);
-//           expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
-//           expect(component.element.querySelectorAll('.layout-1.view-only').length).toBe(1);
-//           done();
-//         })
-//         .catch(done.fail);
-//     });
+      await component.viewModel.router.navigate('route');
 
-//     it('loads a module based layout with a specific view', done => {
-//       component = withDefaultViewport({
-//         moduleId: 'test/routes/route-2',
-//         layoutView: 'test/routes/layout-1.html',
-//         layoutViewModel: 'test/routes/layout-2'
-//       } as RouteConfig);
+      expect(component.element.querySelectorAll('.route-1').length).toBe(0);
+      expect(component.element.querySelectorAll('.route-2.view-only').length).toBe(1);
+    });
+  });
 
-//       component.create(bootstrap)
-//         .then(() => {
-//           expect(component.element.querySelectorAll('.route-1').length).toBe(1);
-//           expect(component.element.querySelectorAll('.route-2').length).toBe(0);
-//           expect(component.element.querySelectorAll('.layout-1').length).toBe(0);
-//           expect(component.element.querySelectorAll('.layout-2').length).toBe(0);
-//           return component.viewModel.router.navigate('route');
-//         })
-//         .then(wait)
-//         .then(() => {
-//           expect(component.element.querySelectorAll('.route-1').length).toBe(0);
-//           expect(component.element.querySelectorAll('.route-2').length).toBe(1);
-//           expect(component.element.querySelectorAll('.layout-1:not(.view-only)').length).toBe(1);
-//           expect(component.element.querySelectorAll('.layout-2:not(.view-only)').length).toBe(1);
-//           done();
-//         })
-//         .catch(done.fail);
-//     });
+  describe('with layouts', () => {
 
-//     it('loads a layout with multiple slots', done => {
-//       component = withDefaultViewport({
-//         moduleId: 'test/routes/multiple-slots-route-1',
-//         layoutView: 'test/routes/multiple-slots-layout-1.html'
-//       } as RouteConfig);
+    fit('loads a module based layout', done => {
+      component = withDefaultViewport({
+        moduleId: 'routes/route-2',
+        layoutViewModel: 'routes/layout-1'
+      } as RouteConfig);
 
-//       component.create(bootstrap)
-//         .then(() => {
-//           expect(component.element.querySelectorAll('.route-1').length).toBe(1);
-//           expect(component.element.querySelectorAll('.multiple-slots-layout-1').length).toBe(0);
-//           expect(component.element.querySelectorAll('.multiple-slots-route-1-slot-1').length).toBe(0);
-//           expect(component.element.querySelectorAll('.multiple-slots-route-1-slot-2').length).toBe(0);
-//           return component.viewModel.router.navigate('route');
-//         })
-//         .then(wait)
-//         .then(() => {
-//           expect(component.element.querySelectorAll('.route-1').length).toBe(0);
-//           expect(component.element.querySelectorAll('.multiple-slots-layout-1.view-only').length).toBe(1);
-//           expect(component.element.querySelectorAll('.multiple-slots-route-1-slot-1:not(.view-only)').length).toBe(1);
-//           expect(component.element.querySelectorAll('.multiple-slots-route-1-slot-2:not(.view-only)').length).toBe(1);
-//           done();
-//         })
-//         .catch(done.fail);
-//     });
+      component.create(bootstrap)
+        .then(() => {
+          expect(component.element.querySelectorAll('.route-1').length).toBe(1);
+          expect(component.element.querySelectorAll('.route-2').length).toBe(0);
+          expect(component.element.querySelectorAll('.layout-1').length).toBe(0);
+          return component.viewModel.router.navigate('route');
+        })
+        .then(wait)
+        .then(() => {
+          expect(component.element.querySelectorAll('.route-1').length).toBe(0);
+          expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
+          expect(component.element.querySelectorAll('.layout-1:not(.view-only)').length).toBe(1);
+          done();
+        })
+        .catch(done.fail);
+    });
 
-//     it('loads layouts for a named viewport', done => {
-//       component = withNamedViewport({
-//         viewPorts: {
-//           viewport1: { moduleId: 'test/routes/route-2', layoutViewModel: 'test/routes/layout-1' }
-//         }
-//       } as RouteConfig);
+    it('loads a view-only layout', done => {
+      component = withDefaultViewport({
+        moduleId: 'test/integration/routes/route-2',
+        layoutView: 'test/integration/routes/layout-1.html'
+      } as RouteConfig);
 
-//       component.create(bootstrap)
-//         .then(() => {
-//           expect(component.element.querySelectorAll('.route-1').length).toBe(1);
-//           expect(component.element.querySelectorAll('.route-2').length).toBe(0);
-//           expect(component.element.querySelectorAll('.layout-1').length).toBe(0);
-//           return component.viewModel.router.navigate('route');
-//         })
-//         .then(wait)
-//         .then(() => {
-//           expect(component.element.querySelectorAll('.route-1').length).toBe(0);
-//           expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
-//           expect(component.element.querySelectorAll('.layout-1:not(.view-only)').length).toBe(1);
-//           done();
-//         })
-//         .catch(done.fail);
-//     });
+      component.create(bootstrap)
+        .then(() => {
+          expect(component.element.querySelectorAll('.route-1').length).toBe(1);
+          expect(component.element.querySelectorAll('.route-2').length).toBe(0);
+          expect(component.element.querySelectorAll('.layout-1').length).toBe(0);
+          return component.viewModel.router.navigate('route');
+        })
+        .then(wait)
+        .then(() => {
+          expect(component.element.querySelectorAll('.route-1').length).toBe(0);
+          expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
+          expect(component.element.querySelectorAll('.layout-1.view-only').length).toBe(1);
+          done();
+        })
+        .catch(done.fail);
+    });
 
-//     it('activates the layout viewmodel with a model value', done => {
-//       const params = 1;
-//       component = withDefaultViewport({
-//         moduleId: 'test/routes/route-2',
-//         layoutViewModel: 'test/routes/layout-1',
-//         layoutModel: params
-//       } as RouteConfig);
+    it('loads a module based layout with a specific view', done => {
+      component = withDefaultViewport({
+        moduleId: 'test/integration/routes/route-2',
+        layoutView: 'test/integration/routes/layout-1.html',
+        layoutViewModel: 'test/integration/routes/layout-2'
+      } as RouteConfig);
 
-//       component.create(bootstrap)
-//         .then(() => {
-//           expect(component.element.querySelectorAll('.route-1').length).toBe(1);
-//           expect(component.element.querySelectorAll('.route-2').length).toBe(0);
-//           expect(component.element.querySelectorAll('.layout-1').length).toBe(0);
-//           return component.viewModel.router.navigate('route');
-//         })
-//         .then(wait)
-//         .then(() => {
-//           expect(component.element.querySelectorAll('.route-1').length).toBe(0);
-//           expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
-//           expect(component.element.querySelectorAll(`.layout-1[data-activate="${params}"]`).length).toBe(1);
-//           done();
-//         })
-//         .catch(done.fail);
-//     });
+      component.create(bootstrap)
+        .then(() => {
+          expect(component.element.querySelectorAll('.route-1').length).toBe(1);
+          expect(component.element.querySelectorAll('.route-2').length).toBe(0);
+          expect(component.element.querySelectorAll('.layout-1').length).toBe(0);
+          expect(component.element.querySelectorAll('.layout-2').length).toBe(0);
+          return component.viewModel.router.navigate('route');
+        })
+        .then(wait)
+        .then(() => {
+          expect(component.element.querySelectorAll('.route-1').length).toBe(0);
+          expect(component.element.querySelectorAll('.route-2').length).toBe(1);
+          expect(component.element.querySelectorAll('.layout-1:not(.view-only)').length).toBe(1);
+          expect(component.element.querySelectorAll('.layout-2:not(.view-only)').length).toBe(1);
+          done();
+        })
+        .catch(done.fail);
+    });
 
-//     // INFO [Matt] This failing test is a bug that needs to get resolved, but
-//     // it is existing and apprarently not critical. References to existing issues
-//     // appreciated.
-//     // it('resolves the navigate promise when navigation is complete', done => {
-//     //   component = withDefaultViewport({ moduleId: 'test/routes/route-2', layoutViewModel: 'test/routes/layout-1' });
+    it('loads a layout with multiple slots', done => {
+      component = withDefaultViewport({
+        moduleId: 'test/integration/routes/multiple-slots-route-1',
+        layoutView: 'test/integration/routes/multiple-slots-layout-1.html'
+      } as RouteConfig);
 
-//     //   component.create(bootstrap)
-//     //     .then(() => {
-//     //       expect(component.element.querySelectorAll('.route-1').length).toBe(1);
-//     //       expect(component.element.querySelectorAll('.route-2').length).toBe(0);
-//     //       expect(component.element.querySelectorAll('.layout-1').length).toBe(0);
-//     //       return component.viewModel.router.navigate('route');
-//     //     })
-//     //     .then(() => {
-//     //       expect(component.element.querySelectorAll('.route-1').length).toBe(0);
-//     //       expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
-//     //       expect(component.element.querySelectorAll('.layout-1:not(.view-only)').length).toBe(1);
-//     //       done();
-//     //     });
-//     // });
-//   });
+      component.create(bootstrap)
+        .then(() => {
+          expect(component.element.querySelectorAll('.route-1').length).toBe(1);
+          expect(component.element.querySelectorAll('.multiple-slots-layout-1').length).toBe(0);
+          expect(component.element.querySelectorAll('.multiple-slots-route-1-slot-1').length).toBe(0);
+          expect(component.element.querySelectorAll('.multiple-slots-route-1-slot-2').length).toBe(0);
+          return component.viewModel.router.navigate('route');
+        })
+        .then(wait)
+        .then(() => {
+          expect(component.element.querySelectorAll('.route-1').length).toBe(0);
+          expect(component.element.querySelectorAll('.multiple-slots-layout-1.view-only').length).toBe(1);
+          expect(component.element.querySelectorAll('.multiple-slots-route-1-slot-1:not(.view-only)').length).toBe(1);
+          expect(component.element.querySelectorAll('.multiple-slots-route-1-slot-2:not(.view-only)').length).toBe(1);
+          done();
+        })
+        .catch(done.fail);
+    });
 
-//   // INFO [Matt] TODO [Binh] Attached isn't being called properly.
-//   // it('supports classes as a module id', (done) => {
-//   //   const { Route2ViewModel } = require('test/routes/route-2');
+    it('loads layouts for a named viewport', done => {
+      component = withNamedViewport({
+        viewPorts: {
+          viewport1: {
+            moduleId: 'test/integration/routes/route-2',
+            layoutViewModel: 'test/integration/routes/layout-1'
+          }
+        }
+      } as RouteConfig);
 
-//   //   component = withDefaultViewport({ moduleId: Route2ViewModel });
+      component.create(bootstrap)
+        .then(() => {
+          expect(component.element.querySelectorAll('.route-1').length).toBe(1);
+          expect(component.element.querySelectorAll('.route-2').length).toBe(0);
+          expect(component.element.querySelectorAll('.layout-1').length).toBe(0);
+          return component.viewModel.router.navigate('route');
+        })
+        .then(wait)
+        .then(() => {
+          expect(component.element.querySelectorAll('.route-1').length).toBe(0);
+          expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
+          expect(component.element.querySelectorAll('.layout-1:not(.view-only)').length).toBe(1);
+          done();
+        })
+        .catch(done.fail);
+    });
 
-//   //   component.create(bootstrap)
-//   //     .then(() => {
-//   //       expect(component.element.querySelectorAll('.route-1').length).toBe(1);
-//   //       expect(component.element.querySelectorAll('.route-2').length).toBe(0);
-//   //       return component.viewModel.router.navigate('route');
-//   //     })
-//   //     .then(() => {
-//   //       expect(component.element.querySelectorAll('.route-1').length).toBe(0);
-//   //       expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
-//   //       done();
-//   //     });
-//   // });
+    it('activates the layout viewmodel with a model value', done => {
+      const params = 1;
+      component = withDefaultViewport({
+        moduleId: 'test/integration/routes/route-2',
+        layoutViewModel: 'test/integration/routes/layout-1',
+        layoutModel: params
+      } as RouteConfig);
 
-//   // INFO [Matt] Not supported.
-//   // it('supports objects as a module id', (done) => {
-//   //   const { Route2ViewModel } = require('test/routes/route-2');
+      component.create(bootstrap)
+        .then(() => {
+          expect(component.element.querySelectorAll('.route-1').length).toBe(1);
+          expect(component.element.querySelectorAll('.route-2').length).toBe(0);
+          expect(component.element.querySelectorAll('.layout-1').length).toBe(0);
+          return component.viewModel.router.navigate('route');
+        })
+        .then(wait)
+        .then(() => {
+          expect(component.element.querySelectorAll('.route-1').length).toBe(0);
+          expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
+          expect(component.element.querySelectorAll(`.layout-1[data-activate="${params}"]`).length).toBe(1);
+          done();
+        })
+        .catch(done.fail);
+    });
 
-//   //   component = withDefaultViewport({ moduleId: new Route2ViewModel() });
+    // INFO [Matt] This failing test is a bug that needs to get resolved, but
+    // it is existing and apprarently not critical. References to existing issues
+    // appreciated.
+    // it('resolves the navigate promise when navigation is complete', done => {
+    //   component = withDefaultViewport({ moduleId: 'test/routes/route-2', layoutViewModel: 'test/routes/layout-1' });
 
-//   //   component.create(bootstrap)
-//   //     .then(() => {
-//   //       expect(component.element.querySelectorAll('.route-1').length).toBe(1);
-//   //       expect(component.element.querySelectorAll('.route-2').length).toBe(0);
-//   //       return component.viewModel.router.navigate('route');
-//   //     })
-//   //     .then(() => {
-//   //       expect(component.element.querySelectorAll('.route-1').length).toBe(0);
-//   //       expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
-//   //       done();
-//   //     });
-//   // });
-// });
+    //   component.create(bootstrap)
+    //     .then(() => {
+    //       expect(component.element.querySelectorAll('.route-1').length).toBe(1);
+    //       expect(component.element.querySelectorAll('.route-2').length).toBe(0);
+    //       expect(component.element.querySelectorAll('.layout-1').length).toBe(0);
+    //       return component.viewModel.router.navigate('route');
+    //     })
+    //     .then(() => {
+    //       expect(component.element.querySelectorAll('.route-1').length).toBe(0);
+    //       expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
+    //       expect(component.element.querySelectorAll('.layout-1:not(.view-only)').length).toBe(1);
+    //       done();
+    //     });
+    // });
+  });
 
-// function wait() {
-//   return new Promise(res => setTimeout(() => res(), 250));
-// }
+  // INFO [Matt] TODO [Binh] Attached isn't being called properly.
+  // it('supports classes as a module id', (done) => {
+  //   const { Route2ViewModel } = require('test/routes/route-2');
 
-// function withDefaultViewport(routeConfig?: RouteConfig) {
-//   let component = StageComponent
-//     .withResources('src/router-view')
-//     .inView('<router-view></router-view>');
+  //   component = withDefaultViewport({ moduleId: Route2ViewModel });
 
-//   configure(component, {
-//     route: ['', 'default'],
-//     moduleId: 'test/routes/route-1',
-//     activationStrategy: 'replace'
-//   }, routeConfig);
+  //   component.create(bootstrap)
+  //     .then(() => {
+  //       expect(component.element.querySelectorAll('.route-1').length).toBe(1);
+  //       expect(component.element.querySelectorAll('.route-2').length).toBe(0);
+  //       return component.viewModel.router.navigate('route');
+  //     })
+  //     .then(() => {
+  //       expect(component.element.querySelectorAll('.route-1').length).toBe(0);
+  //       expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
+  //       done();
+  //     });
+  // });
 
-//   return component;
-// }
+  // INFO [Matt] Not supported.
+  // it('supports objects as a module id', (done) => {
+  //   const { Route2ViewModel } = require('test/routes/route-2');
 
-// function withNamedViewport(routeConfig: RouteConfig) {
-//   let component = StageComponent
-//     .withResources('src/router-view')
-//     .inView('<router-view name="viewport1"></router-view>');
+  //   component = withDefaultViewport({ moduleId: new Route2ViewModel() });
 
-//   configure(component, {
-//     route: ['', 'default'],
-//     viewPorts: {
-//       viewport1: { moduleId: 'test/routes/route-1' }
-//     },
-//     activationStrategy: 'replace'
-//   }, routeConfig);
+  //   component.create(bootstrap)
+  //     .then(() => {
+  //       expect(component.element.querySelectorAll('.route-1').length).toBe(1);
+  //       expect(component.element.querySelectorAll('.route-2').length).toBe(0);
+  //       return component.viewModel.router.navigate('route');
+  //     })
+  //     .then(() => {
+  //       expect(component.element.querySelectorAll('.route-1').length).toBe(0);
+  //       expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
+  //       done();
+  //     });
+  // });
+});
 
-//   return component;
-// }
+function wait(time: number = 250) {
+  return new Promise(res => setTimeout(() => res(), time));
+}
 
-// function configure(component: ComponentTester, defaultRoute: RouteConfig, routeConfig: RouteConfig | RouteConfig[]) {
-//   component.bootstrap(aurelia => {
-//     aurelia.use
-//       .defaultBindingLanguage()
-//       .defaultResources()
-//       .history();
+function withDefaultViewport(routeConfig?: RouteConfig) {
+  let component = StageComponent
+    .withResources()
+    .inView('<router-view></router-view>');
 
-//     aurelia.use
-//       .singleton(RouteLoader, TemplatingRouteLoader)
-//       .singleton(Router, AppRouter)
-//       .globalResources([
-//         RouterView,
-//         RouteHref
-//       ]);
+  configure(component, {
+    route: ['', 'default'],
+    moduleId: './routes/route-1',
+    activationStrategy: 'replace'
+  }, routeConfig);
 
-//     if (routeConfig) {
-//       (routeConfig as RouteConfig).activationStrategy = 'replace';
-//       (routeConfig as RouteConfig).route = 'route';
-//       routeConfig = [defaultRoute, routeConfig] as RouteConfig[];
-//     } else {
-//       routeConfig = [defaultRoute];
-//     }
+  return component;
+}
 
-//     aurelia.use.container.viewModel = {
-//       configureRouter: (config: RouterConfiguration, router: Router) => {
-//         config.map(routeConfig);
-//       }
-//     };
-//     return aurelia.use;
-//   });
-// }
+function withNamedViewport(routeConfig: RouteConfig) {
+  let component = StageComponent
+    .withResources()
+    .inView('<router-view name="viewport1"></router-view>');
+
+  configure(component, {
+    route: ['', 'default'],
+    viewPorts: {
+      viewport1: { moduleId: './routes/route-1' }
+    },
+    activationStrategy: 'replace'
+  }, routeConfig);
+
+  return component;
+}
+
+function configure(component: ComponentTester, defaultRoute: RouteConfig, routeConfig: RouteConfig | RouteConfig[]) {
+  component.bootstrap(aurelia => {
+    aurelia.use
+      .defaultBindingLanguage()
+      .defaultResources()
+      .history()
+      .router();
+
+    // aurelia.use
+    //   .singleton(RouteLoader, TemplatingRouteLoader)
+    //   .singleton(Router, AppRouter)
+    //   .globalResources([
+    //     RouterView,
+    //     RouteHref
+    //   ]);
+
+    LogManager.setLevel(logLevel.error);
+    const appenders = LogManager.getAppenders();
+    if (!appenders || !appenders.length) {
+      LogManager.addAppender(new ConsoleAppender());
+    }
+
+    if (routeConfig) {
+      (routeConfig as RouteConfig).activationStrategy = 'replace';
+      (routeConfig as RouteConfig).route = 'route';
+      routeConfig = [defaultRoute, routeConfig] as RouteConfig[];
+    } else {
+      routeConfig = [defaultRoute];
+    }
+
+    aurelia.use.container.viewModel = {
+      configureRouter: (config: RouterConfiguration, router: Router) => {
+        config.map(routeConfig);
+      }
+    };
+    return aurelia.use;
+  });
+}

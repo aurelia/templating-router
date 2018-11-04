@@ -1,4 +1,4 @@
-import { customAttribute, bindable } from 'aurelia-templating';
+import { customAttribute, bindable, IStaticResourceConfig } from 'aurelia-templating';
 import { Router } from 'aurelia-router';
 import { DOM } from 'aurelia-pal';
 import * as LogManager from 'aurelia-logging';
@@ -8,9 +8,21 @@ const logger = LogManager.getLogger('route-href');
 
 export class RouteHref {
 
+  /*@internal */
   static inject() {
     return [Router, DOM.Element];
   }
+
+  /*@internal */
+  static $resource: IStaticResourceConfig = {
+    type: 'attribute',
+    name: 'route-href',
+    bindables: [
+      { name: 'route', changeHandler: 'processChange', primaryProperty: true },
+      { name: 'params', changeHandler: 'processChange' },
+      { name: 'attribute', defaultValue: 'href' }
+    ]
+  };
 
   router: Router;
 
@@ -73,8 +85,3 @@ export class RouteHref {
   }
 }
 
-// Doing this to miniize the amount of code generated
-customAttribute('route-href')(RouteHref);
-bindable({ name: 'route', changeHandler: 'processChange', primaryProperty: true })(RouteHref);
-bindable({ name: 'params', changeHandler: 'processChange' })(RouteHref);
-bindable({ name: 'attribute', defaultValue: 'href' })(RouteHref);

@@ -1,6 +1,9 @@
 import { Container } from 'aurelia-dependency-injection';
 import { Router } from 'aurelia-router';
 import { CompositionContext, Controller, HtmlBehaviorResource } from 'aurelia-templating';
+import { PLATFORM } from 'aurelia-pal';
+
+require.context('./routes', true, /\.(?:ts|html)$/im);
 
 export interface IAureliaElement extends Element {
   au?: any;
@@ -64,6 +67,6 @@ declare module 'aurelia-router' {
       viewModel: any;
       model: any;
       view: any;
-    }
+    };
   }
 }

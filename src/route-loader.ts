@@ -4,11 +4,15 @@ import { NavigationInstruction, RouteConfig, RouteLoader, Router, ViewPortCompon
 import { CompositionEngine, customElement, inlineView, useView } from 'aurelia-templating';
 import { RouterViewLocator } from './router-view';
 
+const moduleIdPropName = 'moduleId';
+const viewModelPropName = 'viewModel';
+
 class EmptyClass { }
 inlineView('<template></template>')(EmptyClass);
 
 export class TemplatingRouteLoader extends RouteLoader {
 
+  /**@internal */
   static inject = [CompositionEngine];
 
   compositionEngine: CompositionEngine;
@@ -20,16 +24,32 @@ export class TemplatingRouteLoader extends RouteLoader {
     this.compositionEngine = compositionEngine;
   }
 
-  loadRoute(router: Router, config: RouteConfig, _navInstruction: NavigationInstruction): Promise<ViewPortComponent> {
+  async loadRoute(router: Router, config: RouteConfig, _navInstruction: NavigationInstruction): Promise<ViewPortComponent> {
     const childContainer = router.container.createChild();
 
-    let viewModel;
-    if (config.moduleId === null) {
-      viewModel = EmptyClass;
-    } else if (/\.html/i.test(config.moduleId)) {
-      viewModel = createDynamicClass(config.moduleId);
+    let viewModel: string | /**Constructable */ Function | null | Record<string, any>;
+    if (moduleIdPropName in config) {
+      let moduleId = config.moduleId;
+      if (moduleId === null) {
+        viewModel = EmptyClass;
+      } else if (/\.html/i.test(moduleId)) {
+        viewModel = createDynamicClass(moduleId);
+      } else {
+        viewModel = relativeToFile(moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
+      }
+    } else if (viewModelPropName in config) {
+      // Implementation wise, the router already ensure this is a synchronous call
+      // but interface wise it's annoying
+      viewModel = await config.viewModel();
+      if (viewModel && typeof viewModel === 'object') {
+        // viewModel: () => import('...')
+        viewModel = viewModel.default;
+      }
+      if (typeof viewModel !== 'function') {
+        throw new Error('Invalid view model config');
+      }
     } else {
-      viewModel = relativeToFile(config.moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
+      throw new Error('Invalid route config. No "moduleId"/"viewModel" found.');
     }
 
     const instruction = {
@@ -51,7 +71,7 @@ export class TemplatingRouteLoader extends RouteLoader {
       return childContainer.get(Router);
     };
 
-    return this.compositionEngine.ensureViewModel(instruction) as any;
+    return this.compositionEngine.ensureViewModel(instruction) as Promise<ViewPortComponent>;
   }
 }
 

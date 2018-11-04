@@ -18,9 +18,9 @@ module.exports = function(config) {
       resolve: {
         extensions: [".ts", ".js"],
         modules: ["src", "node_modules"],
-        alias: {
-          src: path.resolve(__dirname, "src")
-        }
+        // alias: {
+        //   src: path.resolve(__dirname, "src")
+        // }
       },
       devtool: "cheap-module-eval-source-map",
       module: {

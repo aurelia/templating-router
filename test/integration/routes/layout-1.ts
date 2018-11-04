@@ -10,7 +10,7 @@ export class Layout1ViewModel {
     this.el.classList.add('layout-1');
   }
 
-  activate(params) {
+  activate(params: any) {
     this.activate = params;
   }
 }

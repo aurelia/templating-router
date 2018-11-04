@@ -64,6 +64,6 @@ declare module 'aurelia-router' {
       viewModel: any;
       model: any;
       view: any;
-    }
+    };
   }
 }

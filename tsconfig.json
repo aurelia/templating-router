@@ -8,7 +8,7 @@
     "importHelpers": true,
     "stripInternal": true,
     "preserveConstEnums": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "noImplicitThis": true,
     "strictFunctionTypes": true,
     "noImplicitReturns": true,
@@ -21,14 +21,11 @@
       "es2016.array.include"
     ]
   },
+  "include": [
+    "src",
+    "test"
+  ],
   "exclude": [
-    "node_modules",
-    "dist",
-    "build",
-    "doc",
-    "test",
-    "config.js",
-    "gulpfile.js",
-    "karma.conf.js"
+    "node_modules"
   ]
 }

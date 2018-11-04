@@ -1,7 +1,24 @@
 import { Container } from 'aurelia-dependency-injection';
 import { createOverrideContext, OverrideContext } from 'aurelia-binding';
-// tslint:disable-next-line:max-line-length
-import { ViewSlot, ViewLocator, customElement, noView, BehaviorInstruction, bindable, CompositionTransaction, CompositionEngine, ShadowDOM, SwapStrategies, ResourceDescription, HtmlBehaviorResource, CompositionTransactionNotifier, View, CompositionTransactionOwnershipToken, Controller, ViewFactory, CompositionContext } from 'aurelia-templating';
+import {
+  ViewSlot,
+  ViewLocator,
+  BehaviorInstruction,
+  CompositionTransaction,
+  CompositionEngine,
+  ShadowDOM,
+  SwapStrategies,
+  ResourceDescription,
+  HtmlBehaviorResource,
+  CompositionTransactionNotifier,
+  View,
+  CompositionTransactionOwnershipToken,
+  Controller,
+  ViewFactory,
+  CompositionContext,
+  IStaticResourceConfig,
+  IStaticViewConfig
+} from 'aurelia-templating';
 import {
   Router,
   ViewPortInstruction,
@@ -16,9 +33,18 @@ class EmptyViewModel {
 
 export class RouterView implements ViewPort {
 
+  /**@internal */
   static inject() {
     return [DOM.Element, Container, ViewSlot, Router, ViewLocator, CompositionTransaction, CompositionEngine];
   }
+
+  /**@internal */
+  static $view: IStaticViewConfig = null;
+  /**@internal */
+  static $resource: IStaticResourceConfig = {
+    name: 'router-view',
+    bindables: ['swapOrder', 'layoutView', 'layoutViewModel', 'layoutModel'] as any
+  };
 
   swapOrder: string;
 
@@ -113,6 +139,8 @@ export class RouterView implements ViewPort {
 
     return metadata
       .load(childContainer, viewModelResource.value, null, viewStrategy, true)
+      // Wrong typing from aurelia templating
+      // it's supposed to be a Promise<ViewFactory>
       .then((viewFactory: ViewFactory | HtmlBehaviorResource) => {
         if (!this.compositionTransactionNotifier) {
           this.compositionTransactionOwnershipToken = this.compositionTransaction.tryCapture();
@@ -175,7 +203,7 @@ export class RouterView implements ViewPort {
 
       return this.compositionEngine
         .createController(layoutInstruction as CompositionContext)
-        .then(controller => {
+        .then((controller: Controller) => {
           ShadowDOM.distributeView(viewPortInstruction.controller.view, controller.slots || controller.view.slots);
           controller.automate(createOverrideContext(layoutInstruction.viewModel), this.owningView);
           controller.view.children.push(viewPortInstruction.controller.view);
@@ -201,18 +229,16 @@ export class RouterView implements ViewPort {
   }
 }
 
-noView()(RouterView);
-customElement('router-view')(RouterView);
-
-['swapOrder', 'layoutView', 'layoutViewModel', 'layoutModel'].forEach(f => bindable(f)(RouterView));
 
 /**
 * Locator which finds the nearest RouterView, relative to the current dependency injection container.
 */
 export class RouterViewLocator {
 
+  /*@internal */
   promise: Promise<any>;
 
+  /*@internal */
   resolve: (val?: any) => any;
 
   /**
@@ -230,6 +256,7 @@ export class RouterViewLocator {
     return this.promise;
   }
 
+  /**@internal */
   _notify(routerView: RouterView): void {
     this.resolve(routerView);
   }

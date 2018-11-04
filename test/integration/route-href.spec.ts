@@ -3,11 +3,12 @@ import { bootstrap } from 'aurelia-bootstrapper';
 // import { bootstrap } from './bootstrap';
 import { RouteLoader, AppRouter, Router, RouterConfiguration } from 'aurelia-router';
 import { StageComponent, ComponentTester } from 'aurelia-testing';
-import { Aurelia, PLATFORM } from 'aurelia-framework';
+import { Aurelia, PLATFORM, LogManager } from 'aurelia-framework';
 import './shared';
+import { RouteHref } from '../../src';
 
 describe('route-href', () => {
-  let component: ComponentTester;
+  let component: ComponentTester<RouteHref>;
 
   afterEach(done => {
     component.dispose();
@@ -16,7 +17,7 @@ describe('route-href', () => {
 
   it('should use route as primary property', done => {
     component = StageComponent
-      .withResources(PLATFORM.moduleName('src/route-href'))
+      .withResources()
       .inView('<a route-href.bind="name"></a>')
       .boundTo({ name: 'b' });
 
@@ -37,11 +38,7 @@ function configure(component: ComponentTester) {
       .defaultBindingLanguage()
       .defaultResources()
       .history()
-      .developmentLogging();
-
-    aurelia.use
-      .singleton(RouteLoader, TemplatingRouteLoader)
-      .singleton(Router, AppRouter);
+      .router();
 
     aurelia.use.container.viewModel = {
       configureRouter: (config: RouterConfiguration, router: Router) => {

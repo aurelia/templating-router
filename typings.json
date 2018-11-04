@@ -1,4 +1,4 @@
 {
   "name": "aurelia-templating-router",
-  "main": "dist/aurelia-templating-router.d.ts"
+  "main": "dist/index.d.ts"
 }

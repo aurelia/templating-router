@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    // Less transpilation for easier debugging with async code
+    "target": "es2017",
+    "sourceMap": true,
+    "baseUrl": ""
+  }
+}

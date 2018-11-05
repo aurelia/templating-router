@@ -65,6 +65,7 @@ const configs: Record<IBuildTargetFormat, { input: string; outputs: rollup.Outpu
   }
 };
 
+
 if (args.dev) {
   // watch mode
   let generateDtsTO: any;
@@ -88,18 +89,7 @@ if (args.dev) {
       generateDtsTO = setTimeout(() => {
         generateDts().then(() => {
           if (args.target) {
-            console.log('=============\nCopying to target\n=============');
-            targetFormats.forEach((targetFormat) => {
-              copy(
-                path.join(DIST_DIR, targetFormat, DIST_FILE_NAME),
-                path.join(BASE_DIR, args.target, NODE_MODULES, LIB_NAME, 'dist', targetFormat, DIST_FILE_NAME)
-              );
-            });
-            copy(
-              path.join(DIST_DIR, TYPE_DIST_FILE_NAME),
-              path.join(BASE_DIR, args.target, NODE_MODULES, LIB_NAME, 'dist', TYPE_DIST_FILE_NAME)
-            );
-            console.log('=============\nCopied to target\n=============');
+            copyToTargetProject(targetFormats, args.target);
           }
         });
       }, 1000);
@@ -114,7 +104,28 @@ if (args.dev) {
       return build(target, { ...options, external: EXTERNAL_LIBS }, outputs as rollup.OutputOptionsFile[]);
     }))
     .then(() => generateDts())
+    .then(() => {
+      if (args.target) {
+        copyToTargetProject(targetFormats, args.target);
+      }
+    })
     .catch(ex => {
       console.log(ex);
     });
 }
+
+function copyToTargetProject(targetFormats: string[], targetProject: string) {
+  console.log('=============\nCopying to target\n=============');
+  targetFormats.forEach((targetFormat) => {
+    copy(
+      path.join(DIST_DIR, targetFormat, DIST_FILE_NAME),
+      path.join(BASE_DIR, targetProject, NODE_MODULES, LIB_NAME, 'dist', targetFormat, DIST_FILE_NAME)
+    );
+  });
+  copy(
+    path.join(DIST_DIR, TYPE_DIST_FILE_NAME),
+    path.join(BASE_DIR, targetProject, NODE_MODULES, LIB_NAME, 'dist', TYPE_DIST_FILE_NAME)
+  );
+  console.log('=============\nCopied to target\n=============');
+}
+

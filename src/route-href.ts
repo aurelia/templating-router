@@ -5,6 +5,9 @@ import * as LogManager from 'aurelia-logging';
 
 const logger = LogManager.getLogger('route-href');
 
+/**
+ * Helper custom attribute to help associate an element with a route by name
+ */
 export class RouteHref {
 
   /*@internal */

@@ -31,6 +31,9 @@ class EmptyViewModel {
 
 }
 
+/**
+ * Implementation of Aurelia Router ViewPort. Responsible for loading route, composing and swapping routes views
+ */
 export class RouterView implements ViewPort {
 
   /**@internal */
@@ -46,36 +49,74 @@ export class RouterView implements ViewPort {
     bindables: ['swapOrder', 'layoutView', 'layoutViewModel', 'layoutModel'] as any
   };
 
+  /**
+   * Swapping order when going to a new route. By default, supports 3 value: before, after, with
+   * - Before = new in -> old out
+   * - After = old out -> new in
+   * - with = new in + old out
+   *
+   * These values are defined by swapStrategies export in aurelia-templating/ aurelia-framework
+   */
   swapOrder: string;
 
   layoutView: any;
 
-  layoutViewModel: any;
+  layoutViewModel: string | Function | object;
 
   layoutModel: any;
 
-  element: Element;
+  /**
+   * Element associated with this <router-view/> custom element
+   */
+  readonly element: Element;
 
-  router: Router;
+  /**
+   * Current router associated with this <router-view/>
+   */
+  readonly router: Router;
 
+  /**
+   * Container at this <router-view/> level
+   */
   container: Container;
 
+  /**@internal */
   viewSlot: ViewSlot;
 
+  /**@internal */
   viewLocator: ViewLocator;
 
-  compositionTransaction: CompositionTransaction;
-
-  compositionEngine: CompositionEngine;
-
+  /**@internal */
   view: View;
 
+  /**@internal */
   owningView: View;
 
+  /**
+   * @internal
+   * Composition Transaction of initial composition transaction, when this <router-view/> is created
+   */
+  compositionTransaction: CompositionTransaction;
+
+  /**
+   * @internal
+   * CompositionEngine instance, responsible for composing view/view model during process changes phase of this <router-view/>
+   */
+  compositionEngine: CompositionEngine;
+
+  /**
+   * @internal
+   */
   compositionTransactionNotifier: CompositionTransactionNotifier;
 
+  /**
+   * @internal
+   */
   compositionTransactionOwnershipToken: CompositionTransactionOwnershipToken;
 
+  /**
+   * @internal
+   */
   overrideContext: OverrideContext;
 
   constructor(

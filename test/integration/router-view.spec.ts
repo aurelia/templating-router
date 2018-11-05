@@ -1,29 +1,35 @@
-import { RouteHref } from '../../src/route-href';
-import { TemplatingRouteLoader } from '../../src/route-loader';
 import { bootstrap } from 'aurelia-bootstrapper';
-import { RouteLoader, AppRouter, Router, RouteConfig, RouterConfiguration } from 'aurelia-router';
-import { StageComponent, ComponentTester } from 'aurelia-testing';
-import './shared';
-import { RouterView } from '../../src/router-view';
 import { LogManager } from 'aurelia-framework';
 import { logLevel } from 'aurelia-logging';
 import { ConsoleAppender } from 'aurelia-logging-console';
+import { RouteConfig, Router, RouterConfiguration } from 'aurelia-router';
+import { ComponentTester, StageComponent } from 'aurelia-testing';
+import { RouterView } from '../../src/router-view';
+import './shared';
+import { verifyElementsCount, wait } from './utilities';
 
 describe('<router-view/>', () => {
-  let component: ComponentTester;
+  let component: ComponentTester<RouterView>;
+
+  beforeAll(() => {
+    addDebugLogging();
+  });
 
   beforeEach(async () => {
+    component = undefined;
     window.location.hash = '#/';
     await Promise.resolve();
   });
 
   afterEach(async () => {
-    (component.viewModel.router as any).deactivate();
-    component.dispose();
+    if (component) {
+      (component.viewModel.router as any).deactivate();
+      component.dispose();
+    }
     await Promise.resolve();
   });
 
-  fdescribe('Basic integration', function _1_basic_integration__Tests() {
+  describe('Basic integration', function _1_basic_integration__Tests() {
 
     it('has a router instance', async () => {
       component = withDefaultViewport();
@@ -54,8 +60,10 @@ describe('<router-view/>', () => {
       } as RouteConfig);
 
       await component.create(bootstrap);
-      expect(component.element.querySelectorAll('.route-1').length).toBe(1);
-      expect(component.element.querySelectorAll('.route-2.view-only').length).toBe(0);
+      verifyElementsCount(component, '.route-1', 1);
+      verifyElementsCount(component, '.route-2.view-only', 0);
+      // expect(component.element.querySelectorAll('.route-1').length).toBe(1);
+      // expect(component.element.querySelectorAll('.route-2.view-only').length).toBe(0);
 
       await component.viewModel.router.navigate('route');
 
@@ -66,7 +74,7 @@ describe('<router-view/>', () => {
 
   describe('with layouts', () => {
 
-    fit('loads a module based layout', done => {
+    it('loads a module based layout', done => {
       component = withDefaultViewport({
         moduleId: 'routes/route-2',
         layoutViewModel: 'routes/layout-1'
@@ -91,8 +99,8 @@ describe('<router-view/>', () => {
 
     it('loads a view-only layout', done => {
       component = withDefaultViewport({
-        moduleId: 'test/integration/routes/route-2',
-        layoutView: 'test/integration/routes/layout-1.html'
+        moduleId: 'routes/route-2',
+        layoutView: 'routes/layout-1.html'
       } as RouteConfig);
 
       component.create(bootstrap)
@@ -114,9 +122,9 @@ describe('<router-view/>', () => {
 
     it('loads a module based layout with a specific view', done => {
       component = withDefaultViewport({
-        moduleId: 'test/integration/routes/route-2',
-        layoutView: 'test/integration/routes/layout-1.html',
-        layoutViewModel: 'test/integration/routes/layout-2'
+        moduleId: 'routes/route-2',
+        layoutView: 'routes/layout-1.html',
+        layoutViewModel: 'routes/layout-2'
       } as RouteConfig);
 
       component.create(bootstrap)
@@ -140,8 +148,8 @@ describe('<router-view/>', () => {
 
     it('loads a layout with multiple slots', done => {
       component = withDefaultViewport({
-        moduleId: 'test/integration/routes/multiple-slots-route-1',
-        layoutView: 'test/integration/routes/multiple-slots-layout-1.html'
+        moduleId: 'routes/multiple-slots-route-1',
+        layoutView: 'routes/multiple-slots-layout-1.html'
       } as RouteConfig);
 
       component.create(bootstrap)
@@ -167,8 +175,8 @@ describe('<router-view/>', () => {
       component = withNamedViewport({
         viewPorts: {
           viewport1: {
-            moduleId: 'test/integration/routes/route-2',
-            layoutViewModel: 'test/integration/routes/layout-1'
+            moduleId: 'routes/route-2',
+            layoutViewModel: 'routes/layout-1'
           }
         }
       } as RouteConfig);
@@ -193,8 +201,8 @@ describe('<router-view/>', () => {
     it('activates the layout viewmodel with a model value', done => {
       const params = 1;
       component = withDefaultViewport({
-        moduleId: 'test/integration/routes/route-2',
-        layoutViewModel: 'test/integration/routes/layout-1',
+        moduleId: 'routes/route-2',
+        layoutViewModel: 'routes/layout-1',
         layoutModel: params
       } as RouteConfig);
 
@@ -276,16 +284,12 @@ describe('<router-view/>', () => {
   // });
 });
 
-function wait(time: number = 250) {
-  return new Promise(res => setTimeout(() => res(), time));
-}
-
 function withDefaultViewport(routeConfig?: RouteConfig) {
   let component = StageComponent
     .withResources()
     .inView('<router-view></router-view>');
 
-  configure(component, {
+  configureComponent(component, {
     route: ['', 'default'],
     moduleId: './routes/route-1',
     activationStrategy: 'replace'
@@ -299,7 +303,7 @@ function withNamedViewport(routeConfig: RouteConfig) {
     .withResources()
     .inView('<router-view name="viewport1"></router-view>');
 
-  configure(component, {
+  configureComponent(component, {
     route: ['', 'default'],
     viewPorts: {
       viewport1: { moduleId: './routes/route-1' }
@@ -310,13 +314,13 @@ function withNamedViewport(routeConfig: RouteConfig) {
   return component;
 }
 
-function configure(component: ComponentTester, defaultRoute: RouteConfig, routeConfig: RouteConfig | RouteConfig[]) {
+function configureComponent(
+  component: ComponentTester,
+  defaultRoute: RouteConfig,
+  routeConfig: RouteConfig
+) {
   component.bootstrap(aurelia => {
-    aurelia.use
-      .defaultBindingLanguage()
-      .defaultResources()
-      .history()
-      .router();
+    aurelia.use.standardConfiguration();
 
     // aurelia.use
     //   .singleton(RouteLoader, TemplatingRouteLoader)
@@ -326,25 +330,35 @@ function configure(component: ComponentTester, defaultRoute: RouteConfig, routeC
     //     RouteHref
     //   ]);
 
-    LogManager.setLevel(logLevel.error);
-    const appenders = LogManager.getAppenders();
-    if (!appenders || !appenders.length) {
-      LogManager.addAppender(new ConsoleAppender());
-    }
+
+    let configs: RouteConfig[];
 
     if (routeConfig) {
-      (routeConfig as RouteConfig).activationStrategy = 'replace';
-      (routeConfig as RouteConfig).route = 'route';
-      routeConfig = [defaultRoute, routeConfig] as RouteConfig[];
+      routeConfig.activationStrategy = 'replace';
+      routeConfig.route = 'route';
+      configs = [defaultRoute, routeConfig];
     } else {
-      routeConfig = [defaultRoute];
+      configs = [defaultRoute];
     }
 
     aurelia.use.container.viewModel = {
       configureRouter: (config: RouterConfiguration, router: Router) => {
-        config.map(routeConfig);
+        config.map(configs);
       }
     };
+
     return aurelia.use;
   });
+}
+
+function addDebugLogging() {
+  const appenders = LogManager.getAppenders();
+  if (!appenders || !appenders.length) {
+    LogManager.setLevel(logLevel.error);
+    LogManager.addAppender(new ConsoleAppender());
+  }
+}
+
+function removeDebugLogging() {
+  LogManager.clearAppenders();
 }

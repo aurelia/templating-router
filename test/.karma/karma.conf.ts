@@ -167,7 +167,11 @@ function getWebpackConfigs(karmaConfig: IKarmaConfig): webpack.Configuration {
           loader: 'ts-loader',
           exclude: /node_modules/,
           options: {
-            configFile: path.resolve(BASE_DIR, 'test/tsconfig.test.json')
+            configFile: path.resolve(BASE_DIR, 'test/tsconfig.test.json'),
+            compilerOptions: {
+              ...require('../../tsconfig.json').compilerOptions,
+              ...require('../tsconfig.test.json').compilerOptions
+            }
           }
         },
         {
@@ -182,14 +186,16 @@ function getWebpackConfigs(karmaConfig: IKarmaConfig): webpack.Configuration {
     plugins: [
       new AureliaPlugin({
         aureliaApp: undefined,
+        dist: 'es2015',
         // includeAll: path.resolve(BASE_DIR, 'test/integration/routes'),
-        // aureliaConfig: [
-        //   'defaultBindingLanguage',
-        //   'history',
-        //   'defaultResources',
-        //   'developmentLogging',
-        //   'router'
-        // ],
+        aureliaConfig: [
+          'defaultBindingLanguage',
+          'history',
+          'defaultResources',
+          'developmentLogging',
+          'eventAggregator',
+          'router'
+        ],
         noWebpackLoader: true
       })
     ]

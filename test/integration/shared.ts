@@ -1,9 +1,12 @@
+/// <reference path="./html.d.ts" />
 import { Container } from 'aurelia-dependency-injection';
 import { Router } from 'aurelia-router';
 import { CompositionContext, Controller, HtmlBehaviorResource } from 'aurelia-templating';
 import { PLATFORM } from 'aurelia-pal';
 
+
 require.context('./routes', true, /\.(?:ts|html)$/im);
+// require.context('./dynamic-import-routes')
 
 export interface IAureliaElement extends Element {
   au?: any;

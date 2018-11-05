@@ -7,3 +7,6 @@ Error.stackTraceLimit = Infinity;
 
 const testContext = require.context('./integration', true, /\.spec\.ts$/im);
 testContext.keys().forEach(testContext);
+
+// import './integration/route-href.spec';
+// import './integration/router-view.spec';

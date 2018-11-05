@@ -2,6 +2,7 @@ import { Container } from 'aurelia-dependency-injection';
 import { Router } from 'aurelia-router';
 import { CompositionContext, Controller } from 'aurelia-templating';
 
+/**@internal */
 export interface IAureliaElement extends Element {
   au?: any;
 }

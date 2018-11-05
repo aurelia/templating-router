@@ -4,8 +4,8 @@ import { RouterView } from './router-view';
 import { RouteHref } from './route-href';
 import { IFrameworkConfiguration } from './interfaces';
 
-export function configure(config: any) {
-  (config as IFrameworkConfiguration)
+export function configure(config: IFrameworkConfiguration) {
+  config
     .singleton(RouteLoader, TemplatingRouteLoader)
     .singleton(Router, AppRouter)
     .globalResources(

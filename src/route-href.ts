@@ -2,7 +2,6 @@ import { customAttribute, bindable, IStaticResourceConfig } from 'aurelia-templa
 import { Router } from 'aurelia-router';
 import { DOM } from 'aurelia-pal';
 import * as LogManager from 'aurelia-logging';
-import { IAureliaElement } from './interfaces';
 
 const logger = LogManager.getLogger('route-href');
 
@@ -24,16 +23,33 @@ export class RouteHref {
     ]
   };
 
-  router: Router;
+  /**
+   * Current router of this attribute
+   */
+  readonly router: Router;
 
-  element: IAureliaElement;
+  /**
+   * Element this attribute is associated with
+   */
+  readonly element: Element;
 
-  isActive: boolean;
+  /**@internal */
+  private isActive: boolean;
 
+  /**
+   * Name of the route this attribute refers to. This name should exist in the current router hierarchy
+   */
   route: string;
 
+  /**
+   * Parameters of this attribute to generate URL.
+   */
   params: Record<string, any>;
 
+  /**
+   * Target property on a custom element if this attribute is put on a custom element
+   * OR an attribute if this attribute is put on a normal element
+   */
   attribute: string;
 
   constructor(
@@ -68,13 +84,14 @@ export class RouteHref {
         if (!this.isActive) {
           return null;
         }
+        const element = this.element as Element & { au: any };
 
         let href = this.router.generate(this.route, this.params);
 
-        if (this.element.au.controller) {
-          this.element.au.controller.viewModel[this.attribute] = href;
+        if (element.au.controller) {
+          element.au.controller.viewModel[this.attribute] = href;
         } else {
-          this.element.setAttribute(this.attribute, href);
+          element.setAttribute(this.attribute, href);
         }
 
         return null;

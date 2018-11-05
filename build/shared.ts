@@ -1,10 +1,8 @@
 import * as rollup from 'rollup';
 import typescript from 'rollup-plugin-typescript2';
 import rimraf from 'rimraf';
-import ChildProcess from 'child_process';
 import { IRollupWatchOptions } from './interfaces';
 import * as fs from 'fs';
-import * as path from 'path';
 
 const CACHE_DIR = '.rollupcache';
 export type IBuildTargetFormat = 'es5' | 'es2015' | 'es2017' | 'amd' | 'commonjs' | 'native-modules';
@@ -77,10 +75,10 @@ export async function watchAndReBuild(
   });
 }
 
-export async function clean(): Promise<void> {
-  console.log('\n==============\nCleaning dist folder...\n==============');
+export async function clean(folder: string): Promise<void> {
+  console.log(`\n==============\nCleaning ${folder} folder...\n==============`);
   return new Promise<void>(resolve => {
-    rimraf('dist', (error) => {
+    rimraf(folder, (error) => {
       if (error) {
         throw error;
       }
@@ -89,21 +87,6 @@ export async function clean(): Promise<void> {
   });
 }
 
-export async function generateDts(): Promise<void> {
-  console.log('\n==============\nGenerating dts bundle...\n==============');
-  return new Promise<void>(resolve => {
-    ChildProcess.exec('npm run bundle-dts', (err, stdout, stderr) => {
-      if (err || stderr) {
-        console.log('Generating dts error:');
-        console.log(stderr);
-      } else {
-        console.log('Generated dts bundle successfully');
-        console.log(stdout);
-      }
-      resolve();
-    });
-  });
-}
 
 export async function copy(basePath: string, targetPath: string) {
   try {

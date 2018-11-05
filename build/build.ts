@@ -1,9 +1,10 @@
 import rollup from 'rollup';
-import { build, generateDts, IBuildTargetFormat, watchAndReBuild, copy } from './shared';
+import { build, IBuildTargetFormat, watchAndReBuild, copy } from './shared';
 import { args } from './args';
 import packageJson from '../package.json';
 import { IRollupWatchOptions } from './interfaces';
 import * as path from 'path';
+import ChildProcess from 'child_process';
 
 const BASE_DIR = process.cwd();
 const DIST_DIR = path.join(BASE_DIR, 'dist');
@@ -112,6 +113,22 @@ if (args.dev) {
     .catch(ex => {
       console.log(ex);
     });
+}
+
+async function generateDts(): Promise<void> {
+  console.log('\n==============\nGenerating dts bundle...\n==============');
+  return new Promise<void>(resolve => {
+    ChildProcess.exec(`npm run build:dts -- -o dist/${TYPE_DIST_FILE_NAME} ${ENTRY_PATH}`, (err, stdout, stderr) => {
+      if (err || stderr) {
+        console.log('Generating dts error:');
+        console.log(stderr);
+      } else {
+        console.log('Generated dts bundle successfully');
+        console.log(stdout);
+      }
+      resolve();
+    });
+  });
 }
 
 function copyToTargetProject(targetFormats: string[], targetProject: string) {

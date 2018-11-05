@@ -24,11 +24,13 @@ export class TemplatingRouteLoader extends RouteLoader {
     this.compositionEngine = compositionEngine;
   }
 
-  async loadRoute(router: Router, config: RouteConfig, _navInstruction: NavigationInstruction): Promise<ViewPortComponent> {
+  loadRoute(router: Router, config: RouteConfig, _navInstruction: NavigationInstruction): Promise<ViewPortComponent> {
     const childContainer = router.container.createChild();
 
-    let viewModel: string | /**Constructable */ Function | null | Record<string, any>;
-    if (moduleIdPropName in config) {
+    let promise: Promise<string | /**Constructable */ Function | null>;
+    // let viewModel: string | /**Constructable */ Function | null | Record<string, any>;
+    if ('moduleId' in config) {
+      let viewModel: string | Function;
       let moduleId = config.moduleId;
       if (moduleId === null) {
         viewModel = EmptyClass;
@@ -37,41 +39,48 @@ export class TemplatingRouteLoader extends RouteLoader {
       } else {
         viewModel = relativeToFile(moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
       }
-    } else if (viewModelPropName in config) {
+      promise = Promise.resolve(viewModel);
+    } else if ('viewModel' in config) {
       // Implementation wise, the router already ensure this is a synchronous call
       // but interface wise it's annoying
-      viewModel = await config.viewModel();
-      if (viewModel && typeof viewModel === 'object') {
-        // viewModel: () => import('...')
-        viewModel = viewModel.default;
-      }
-      if (typeof viewModel !== 'function') {
-        throw new Error('Invalid view model config');
-      }
+      promise = Promise
+        .resolve(config.viewModel())
+        .then(vm => {
+          if (typeof vm === 'function') {
+            return vm;
+          }
+          if (vm && typeof vm === 'object') {
+            // viewModel: () => import('...')
+            return vm.default;
+          }
+          throw new Error('Invalid view model config');
+        });
     } else {
       throw new Error('Invalid route config. No "moduleId"/"viewModel" found.');
     }
 
-    const instruction = {
-      viewModel: viewModel,
-      childContainer: childContainer,
-      view: config.view || config.viewStrategy,
-      router: router
-    } as ViewPortComponent;
+    return promise
+      .then(viewModel => {
+        const instruction = {
+          viewModel: viewModel,
+          childContainer: childContainer,
+          view: config.view || config.viewStrategy,
+          router: router
+        } as ViewPortComponent;
 
-    childContainer.registerSingleton(RouterViewLocator);
+        childContainer.registerSingleton(RouterViewLocator);
 
-    childContainer.getChildRouter = function() {
-      let childRouter: Router;
+        childContainer.getChildRouter = function() {
+          let childRouter: Router;
 
-      childContainer.registerHandler(Router, () => {
-        return childRouter || (childRouter = router.createChild(childContainer));
+          childContainer.registerHandler(Router, () => {
+            return childRouter || (childRouter = router.createChild(childContainer));
+          });
+
+          return childContainer.get(Router);
+        };
+        return this.compositionEngine.ensureViewModel(instruction) as Promise<ViewPortComponent>;
       });
-
-      return childContainer.get(Router);
-    };
-
-    return this.compositionEngine.ensureViewModel(instruction) as Promise<ViewPortComponent>;
   }
 }
 

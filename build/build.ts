@@ -8,8 +8,9 @@ import * as path from 'path';
 const BASE_DIR = process.cwd();
 const DIST_DIR = path.join(BASE_DIR, 'dist');
 const NODE_MODULES = 'node_modules';
-const DIST_FILE_NAME = 'index.js';
 const LIB_NAME = 'aurelia-templating-router';
+const DIST_FILE_NAME = `${LIB_NAME}.js`;
+const TYPE_DIST_FILE_NAME = `${LIB_NAME}.d.ts`;
 const ENTRY_PATH = 'src/index.ts';
 const EXTERNAL_LIBS = Object
   .keys({ ...packageJson.dependencies, ...packageJson.devDependencies })
@@ -95,8 +96,8 @@ if (args.dev) {
               );
             });
             copy(
-              path.join(DIST_DIR, 'index.d.ts'),
-              path.join(BASE_DIR, args.target, NODE_MODULES, LIB_NAME, 'dist', 'index.d.ts')
+              path.join(DIST_DIR, TYPE_DIST_FILE_NAME),
+              path.join(BASE_DIR, args.target, NODE_MODULES, LIB_NAME, 'dist', TYPE_DIST_FILE_NAME)
             );
             console.log('=============\nCopied to target\n=============');
           }

@@ -28,7 +28,23 @@ To build the code, follow these steps.
   ```shell
   npm run build
   ```
-5. You will find the compiled code in the `dist` folder, available in three module formats: AMD, CommonJS, ES6 and ES7.
+4. You will find the compiled code in the `dist` folder, available in three module formats: AMD, CommonJS, ES6 and ES7.
+
+
+## Development
+
+1. To run the project in development mode, you can run:
+
+  ```shell
+  npm start
+  ```
+
+2. If you want to copy over the newly built bundle, you can specified `--target`:
+
+  ```
+  npm start -- --target ../my-test-project
+  ```
+
 
 ## Running The Tests
 

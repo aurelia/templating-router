@@ -137,6 +137,8 @@ export class RouterView implements ViewPort {
     this.compositionEngine = compositionEngine;
     this.router.registerViewPort(this, this.element.getAttribute('name'));
 
+    // This means the first <router-view/> created in an Aurelia application (one Aurelia instance)
+    // composition finish event will be delayed until compositionNotifier invokes done()
     if (!('initialComposition' in compositionTransaction)) {
       compositionTransaction.initialComposition = true;
       this.compositionTransactionNotifier = compositionTransaction.enlist();

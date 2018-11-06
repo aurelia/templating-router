@@ -1,10 +1,9 @@
-import '../setup';
+import './setup';
 import './shared';
 import { bootstrap } from 'aurelia-bootstrapper';
-import { Aurelia } from 'aurelia-framework';
 import { Router, RouterConfiguration, RouteConfig, AppRouter, ConfiguresRouter } from 'aurelia-router';
 import { ComponentTester, StageComponent } from 'aurelia-testing';
-import { RouteHref, RouterView } from '../../src';
+import { RouteHref } from '../../src';
 import { wait } from './utilities';
 import { addDebugLogging, removeDebugLogging } from './shared';
 import { patchComponentTeser, unpatchComponentTester } from './component-tester-patch';

@@ -1,4 +1,4 @@
-import '../setup';
+import './setup';
 import './shared';
 import { ComponentTester, StageComponent } from 'aurelia-testing';
 import { RouterView } from '../../src';

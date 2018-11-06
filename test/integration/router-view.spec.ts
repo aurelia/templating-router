@@ -1,4 +1,4 @@
-import '../setup';
+import './setup';
 import './shared';
 import { bootstrap } from 'aurelia-bootstrapper';
 import { LogManager, PLATFORM } from 'aurelia-framework';
@@ -219,16 +219,19 @@ describe('<router-view/>', () => {
       } as RouteConfig);
 
       await component.create(bootstrap);
-
-      expect(component.element.querySelectorAll('.route-1').length).toBe(1);
-      expect(component.element.querySelectorAll('.route-2').length).toBe(0);
-      expect(component.element.querySelectorAll('.layout-1').length).toBe(0);
+      verifyElementsCount(component, [
+        ['.route-1', 1],
+        ['.route-2', 0],
+        ['.layout-1', 0]
+      ]);
 
       await component.viewModel.router.navigate('route');
 
-      expect(component.element.querySelectorAll('.route-1').length).toBe(0);
-      expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
-      expect(component.element.querySelectorAll(`.layout-1[data-activate="${params}"]`).length).toBe(1);
+      verifyElementsCount(component, [
+        ['.route-1', 0],
+        ['.route-2:not(.view-only)', 1],
+        [`.layout-1[data-activate="${params}"]`, 1]
+      ]);
     });
 
     // INFO [Matt] This failing test is a bug that needs to get resolved, but

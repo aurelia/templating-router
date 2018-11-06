@@ -1,4 +1,4 @@
-import '../setup';
+import './setup';
 import { Container } from 'aurelia-framework';
 import { Logger } from 'aurelia-logging';
 import { Router } from 'aurelia-router';

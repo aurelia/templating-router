@@ -4,7 +4,8 @@ import { NavigationInstruction, RouteConfig, RouteLoader, Router, ViewPortCompon
 import { CompositionEngine, customElement, inlineView, useView } from 'aurelia-templating';
 import { RouterViewLocator } from './router-view';
 
-class EmptyClass { }
+/**@internal exported for unit testing */
+export class EmptyClass { }
 inlineView('<template></template>')(EmptyClass);
 
 export class TemplatingRouteLoader extends RouteLoader {
@@ -21,9 +22,11 @@ export class TemplatingRouteLoader extends RouteLoader {
     this.compositionEngine = compositionEngine;
   }
 
-  loadRoute(router: Router, config: RouteConfig, _navInstruction: NavigationInstruction): Promise<ViewPortComponent> {
-    const childContainer = router.container.createChild();
-
+  /**
+   * @internal Resolve a view model from a RouteConfig
+   * Throws when there is neither "moduleId" nor "viewModel" property
+   */
+  resolveViewModel(router: Router, config: RouteConfig): Promise<string | null | Function> {
     let promise: Promise<string | /**Constructable */ Function | null>;
     // let viewModel: string | /**Constructable */ Function | null | Record<string, any>;
     if ('moduleId' in config) {
@@ -41,23 +44,29 @@ export class TemplatingRouteLoader extends RouteLoader {
       // Implementation wise, the router already ensure this is a synchronous call
       // but interface wise it's annoying
       promise = Promise
-        .resolve(config.viewModel())
+        .resolve()
+        .then(() => config.viewModel())
         .then(vm => {
-          if (typeof vm === 'function') {
-            return vm;
-          }
           if (vm && typeof vm === 'object') {
             // viewModel: () => import('...')
-            return vm.default;
+            vm = vm.default;
+          }
+          if (typeof vm === 'function') {
+            return vm;
           }
           throw new Error('Invalid view model config');
         });
     } else {
-      throw new Error('Invalid route config. No "moduleId"/"viewModel" found.');
+      return Promise.reject(new Error('Invalid route config. No "moduleId"/"viewModel" found.'));
     }
+    return promise;
+  }
 
-    return promise
+  loadRoute(router: Router, config: RouteConfig, _navInstruction: NavigationInstruction): Promise<ViewPortComponent> {
+    return this
+      .resolveViewModel(router, config)
       .then(viewModel => {
+        const childContainer = router.container.createChild();
         const instruction = {
           viewModel: viewModel,
           childContainer: childContainer,
@@ -81,7 +90,8 @@ export class TemplatingRouteLoader extends RouteLoader {
   }
 }
 
-function createDynamicClass(moduleId: string) {
+/**@internal exported for unit testing */
+export function createDynamicClass(moduleId: string) {
   const name = /([^\/^\?]+)\.html/i.exec(moduleId)[1];
 
   class DynamicClass {

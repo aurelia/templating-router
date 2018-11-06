@@ -161,15 +161,15 @@ export class RouterView implements ViewPort {
     const viewModelResource: ResourceDescription = component.viewModelResource as any;
     const metadata = viewModelResource.metadata;
     const config = component.router.currentInstruction.config;
-    const viewPort = config.viewPorts ? (config.viewPorts[viewPortInstruction.name] || {}) : {};
+    const viewPortConfig = config.viewPorts ? (config.viewPorts[viewPortInstruction.name] || {}) : {};
 
     (childContainer.get(RouterViewLocator) as RouterViewLocator)._notify(this);
 
     // layoutInstruction is our layout viewModel
     const layoutInstruction = {
-      viewModel: viewPort.layoutViewModel || config.layoutViewModel || this.layoutViewModel,
-      view: viewPort.layoutView || config.layoutView || this.layoutView,
-      model: viewPort.layoutModel || config.layoutModel || this.layoutModel,
+      viewModel: viewPortConfig.layoutViewModel || config.layoutViewModel || this.layoutViewModel,
+      view: viewPortConfig.layoutView || config.layoutView || this.layoutView,
+      model: viewPortConfig.layoutModel || config.layoutModel || this.layoutModel,
       router: viewPortInstruction.component.router,
       childContainer: childContainer,
       viewSlot: this.viewSlot

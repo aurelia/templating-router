@@ -1,7 +1,7 @@
 import '../setup';
 import './shared';
 import { bootstrap } from 'aurelia-bootstrapper';
-import { LogManager } from 'aurelia-framework';
+import { LogManager, PLATFORM } from 'aurelia-framework';
 import { logLevel } from 'aurelia-logging';
 import { ConsoleAppender } from 'aurelia-logging-console';
 import { RouteConfig, Router, RouterConfiguration, AppRouter } from 'aurelia-router';

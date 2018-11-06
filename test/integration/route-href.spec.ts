@@ -8,6 +8,7 @@ import { RouteHref, RouterView } from '../../src';
 import { wait } from './utilities';
 import { addDebugLogging, removeDebugLogging } from './shared';
 import { patchComponentTeser, unpatchComponentTester } from './component-tester-patch';
+import { Logger } from 'aurelia-logging';
 
 describe('[route-href]', () => {
   let component: ComponentTester<RouteHref>;
@@ -93,6 +94,7 @@ describe('[route-href]', () => {
         }
       }
     });
+
   });
 
   describe('with <router-view />', () => {
@@ -149,6 +151,27 @@ describe('[route-href]', () => {
       });
     });
 
+    describe('with INVALID "route" name', () => {
+      const invalidRoutes: any[] = [
+        '',
+        'route-c',
+        null,
+        undefined,
+        5,
+        [],
+        {}
+      ];
+      for (const routeName of invalidRoutes) {
+        it(`throws when binding "route" to invalid route name: "${routeName}"`, async () => {
+          component = createComponent(`<a route-href.bind="name"></a><router-view></router-view>`, undefined, { name: routeName });
+          const errors: Set<any> = new Set();
+          const spy = spyOn(Logger.prototype, 'error').and.callFake((err: any) => errors.add(err));
+          await component.create(bootstrap);
+          expect(spy.calls.count()).toBeGreaterThan(0);
+          expect(Array.from(errors).some(err => ('' + err).includes(`A route with name '${routeName}' could not be found.`)));
+        });
+      }
+    });
   });
 
   class DefaultAppViewModel implements ConfiguresRouter {

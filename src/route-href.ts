@@ -22,8 +22,8 @@ export class RouteHref {
     bindables: [
       { name: 'route', changeHandler: 'processChange', primaryProperty: true },
       { name: 'params', changeHandler: 'processChange' },
-      { name: 'attribute', defaultValue: 'href' }
-    ]
+      'attribute'
+    ] as any
   };
 
   /**
@@ -61,6 +61,7 @@ export class RouteHref {
   ) {
     this.router = router;
     this.element = element;
+    this.attribute = 'href';
   }
 
   bind() {
@@ -77,7 +78,7 @@ export class RouteHref {
       this.element.removeAttribute(previous);
     }
 
-    this.processChange();
+    return this.processChange();
   }
 
   processChange() {

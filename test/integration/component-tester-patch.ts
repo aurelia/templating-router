@@ -22,7 +22,9 @@ export function patchComponentTeser() {
           return new InlineViewStrategy(this['html']);
         };
       }
+      console.log('Setting Root for Aurelia....');
       await aurelia.setRoot(bindingContext, host);
+      console.log('Starting');
       const rootView = this['rootView'] = (aurelia as any).root.view;
       this.element = host.firstElementChild as Element;
 

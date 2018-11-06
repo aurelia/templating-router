@@ -59,11 +59,11 @@ export default function(config: IKarmaConfig) {
     basePath: BASE_DIR,
     frameworks: ['jasmine'],
     files: [
-      'test/setup.ts'
+      'test/**/*.spec.ts'
       // 'test/setup.integration.ts'
     ],
     preprocessors: {
-      'test/setup.ts': ['webpack', 'sourcemap']
+      'test/**/*.spec.ts': ['webpack', 'sourcemap']
     },
     webpack: webpackConfigs,
     mime: {

@@ -1,11 +1,12 @@
+import '../setup';
+import './shared';
 import { bootstrap } from 'aurelia-bootstrapper';
 import { LogManager } from 'aurelia-framework';
 import { logLevel } from 'aurelia-logging';
 import { ConsoleAppender } from 'aurelia-logging-console';
-import { RouteConfig, Router, RouterConfiguration } from 'aurelia-router';
+import { RouteConfig, Router, RouterConfiguration, AppRouter } from 'aurelia-router';
 import { ComponentTester, StageComponent } from 'aurelia-testing';
 import { RouterView } from '../../src/router-view';
-import './shared';
 import { verifyElementsCount, wait } from './utilities';
 
 describe('<router-view/>', () => {
@@ -15,18 +16,22 @@ describe('<router-view/>', () => {
     addDebugLogging();
   });
 
-  beforeEach(async () => {
-    component = undefined;
-    window.location.hash = '#/';
-    await Promise.resolve();
+  afterAll(() => {
+    removeDebugLogging();
   });
 
-  afterEach(async () => {
+  beforeEach(() => {
+  });
+
+  afterEach(() => {
     if (component) {
-      (component.viewModel.router as any).deactivate();
+      const appRouter = component.viewModel.router as AppRouter;
+      appRouter.reset();
+      appRouter.deactivate();
       component.dispose();
+      component = undefined;
     }
-    await Promise.resolve();
+    window.location.hash = '';
   });
 
   describe('Basic integration', function _1_basic_integration__Tests() {
@@ -79,30 +84,27 @@ describe('<router-view/>', () => {
   });
 
   describe('with layouts', () => {
-
     it('loads a module based layout', async () => {
       component = withDefaultViewport({
         moduleId: 'routes/route-2',
         layoutViewModel: 'routes/layout-1'
-      } as RouteConfig);
+      });
 
       await component.create(bootstrap);
-
       verifyElementsCount(component, [
         ['.route-1', 1],
         ['.route-2', 0],
         ['.layout-1', 0]
       ]);
 
-      await component.viewModel.router.navigate('route');
-      await wait();
-
+      // awaiting the navigate invokation directly will make the test fail???
+      let wait1 = component.viewModel.router.navigate('route');
+      await wait(wait1);
       verifyElementsCount(component, [
         ['.route-1', 0],
         ['.route-2:not(.view-only)', 1],
         ['.layout-1:not(.view-only)', 1]
       ]);
-
     });
 
     it('loads a view-only layout', async () => {
@@ -170,7 +172,7 @@ describe('<router-view/>', () => {
       ]);
 
       await component.viewModel.router.navigate('route');
-      // TODO: figure out why fail without wait
+      // TODO: figure out why it fails without wait
       await wait(50);
 
       verifyElementsCount(component, [
@@ -265,7 +267,7 @@ function withDefaultViewport(routeConfig?: RouteConfig) {
 
   configureComponent(component, {
     route: ['', 'default'],
-    moduleId: './routes/route-1',
+    moduleId: 'routes/route-1',
     activationStrategy: 'replace'
   }, routeConfig);
 
@@ -280,7 +282,7 @@ function withNamedViewport(routeConfig: RouteConfig) {
   configureComponent(component, {
     route: ['', 'default'],
     viewPorts: {
-      viewport1: { moduleId: './routes/route-1' }
+      viewport1: { moduleId: 'routes/route-1' }
     },
     activationStrategy: 'replace'
   }, routeConfig);
@@ -291,7 +293,7 @@ function withNamedViewport(routeConfig: RouteConfig) {
 function configureComponent(
   component: ComponentTester,
   defaultRoute: RouteConfig,
-  routeConfig: RouteConfig
+  routeConfig?: RouteConfig
 ) {
   component.bootstrap(aurelia => {
     aurelia.use.standardConfiguration();

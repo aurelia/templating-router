@@ -1,3 +1,5 @@
+import '../setup';
+import './shared';
 import { ComponentTester, StageComponent } from 'aurelia-testing';
 import { RouterView } from '../../src';
 import { RouterConfiguration, Router, AppRouter } from 'aurelia-router';
@@ -11,18 +13,19 @@ describe('<router-view/> with "viewModel"', function() {
   let view: string;
   let component: ComponentTester<RouterView>;
 
-  beforeEach(async () => {
-    component = undefined;
-    window.location.hash = '#/';
-    await Promise.resolve();
+  beforeEach(() => {
+    view = '<router-view></router-view>';
   });
 
   afterEach(async () => {
     if (component) {
-      (component.viewModel.router as AppRouter).deactivate();
+      const appRouter = component.viewModel.router as AppRouter;
+      appRouter.deactivate();
+      appRouter.reset();
       component.dispose();
+      component = undefined;
     }
-    await Promise.resolve();
+    location.hash = '';
   });
 
   // beforeAll(patchComponentTeser);
@@ -30,7 +33,6 @@ describe('<router-view/> with "viewModel"', function() {
   // afterAll(unpatchComponentTester);
 
   beforeEach(function __setup__() {
-    view = '<router-view></router-view>';
   });
 
   describe('with basic usage', function _1_basic_usage__Tests() {

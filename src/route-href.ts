@@ -37,7 +37,7 @@ export class RouteHref {
   readonly element: Element;
 
   /**@internal */
-  private isActive: boolean;
+  isActive: boolean;
 
   /**
    * Name of the route this attribute refers to. This name should exist in the current router hierarchy

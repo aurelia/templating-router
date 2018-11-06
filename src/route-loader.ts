@@ -4,9 +4,6 @@ import { NavigationInstruction, RouteConfig, RouteLoader, Router, ViewPortCompon
 import { CompositionEngine, customElement, inlineView, useView } from 'aurelia-templating';
 import { RouterViewLocator } from './router-view';
 
-const moduleIdPropName = 'moduleId';
-const viewModelPropName = 'viewModel';
-
 class EmptyClass { }
 inlineView('<template></template>')(EmptyClass);
 

@@ -3,7 +3,21 @@ import { Container } from 'aurelia-dependency-injection';
 import { Router } from 'aurelia-router';
 import { CompositionContext, Controller, HtmlBehaviorResource } from 'aurelia-templating';
 import { PLATFORM } from 'aurelia-pal';
+import { LogManager } from 'aurelia-framework';
+import { ConsoleAppender } from 'aurelia-logging-console';
 
+
+export function addDebugLogging() {
+  const appenders = LogManager.getAppenders();
+  if (!appenders || !appenders.length) {
+    LogManager.setLevel(LogManager.logLevel.error);
+    LogManager.addAppender(new ConsoleAppender());
+  }
+}
+
+export function removeDebugLogging() {
+  LogManager.clearAppenders();
+}
 
 require.context('./routes', true, /\.(?:ts|html)$/im);
 // require.context('./dynamic-import-routes')

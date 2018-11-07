@@ -1,3 +1,12 @@
 {
-  "extends": "../tsconfig.test.json"
+  "extends": "../tsconfig.test.json",
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "lib": [
+      "es2017",
+      "dom",
+      "dom.iterable",
+      "es2017.object"
+    ]
+  }
 }

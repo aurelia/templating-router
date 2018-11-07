@@ -5,6 +5,7 @@
     "module": "esnext",
     "sourceMap": true,
     "baseUrl": "",
-    "suppressImplicitAnyIndexErrors": true
+    "suppressImplicitAnyIndexErrors": true,
+    "noImplicitAny": false
   }
 }

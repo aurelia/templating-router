@@ -1,10 +1,11 @@
 import './setup';
 import { bootstrap } from 'aurelia-bootstrapper';
-import { Aurelia, Controller } from 'aurelia-framework';
+import { Aurelia, Controller, PLATFORM } from 'aurelia-framework';
 import { ConfiguresRouter, RouterConfiguration, Router, RouteConfig, AppRouter } from 'aurelia-router';
-import { wait, IConstructable, h, ITestRoutingComponent, verifyElementsCount, IRouteConfigs, ILifeCyclesCallbacks, ILifeCyclesAssertions } from './utilities';
+import { wait, IConstructable, h, ITestRoutingComponent, verifyElementsCount, IRouteConfigs, ILifeCyclesAssertions, createEntryConfigure } from './utilities';
+import { any } from 'bluebird';
 
-describe('INTEGRATION -- App like', () => {
+fdescribe('INTEGRATION -- App like', () => {
 
   let routeConfigs: RouteConfig[];
   let lifecyclesCallbacks: ILifeCyclesAssertions;
@@ -14,7 +15,6 @@ describe('INTEGRATION -- App like', () => {
   let root: string | IConstructable<ITestRoutingComponent>;
   let host: Element;
   let aurelia: Aurelia;
-  let viewModel: ITestRoutingComponent;
   let appRouter: AppRouter;
 
   beforeEach(() => {
@@ -38,105 +38,97 @@ describe('INTEGRATION -- App like', () => {
   });
 
   describe('static app', () => {
-
     it('bootstraps a static root app', async () => {
-      routeConfigs = [
-        { route: ['', 'home'], moduleId: 'pages/home/home' }
-      ];
-      root = BaseRoutingComponent;
-      await bootstrap(configure);
-      expect(viewModel instanceof (root as IConstructable<ITestRoutingComponent>)).toBe(true);
-      expect(viewModel.router.currentInstruction.fragment).toBe('/');
-      verifyElementsCount(viewModel.element, '.home-route', 1);
+      await bootstrap(createEntryConfigure(
+        BaseRoutingComponent,
+        host,
+        [
+          [IRouteConfigs, [
+            { route: ['', 'home'], moduleId: 'pages/home/home' }
+          ]]
+        ],
+        (aurelia, viewModel) => {
+          expect(viewModel instanceof BaseRoutingComponent).toBe(true);
+          expect(viewModel.router.currentInstruction.fragment).toBe('/');
+          verifyElementsCount(viewModel.element, '.home-route', 1);
+        }
+      ));
     });
   });
 
   describe('dynamic root app', () => {
     it('bootstraps', async () => {
       let lifecycleCount = 0;
-      routeConfigs = [
-        { route: '', moduleId: 'pages/home/home' }
-        // { route: 'dashboard', moduleId: 'pages/dashboard/dashboard' }
-      ];
-      routeLifeCylceCallbacks = {
-        'pages/app/app': {
-          created: viewModel => {
-            lifecycleCount++;
-            verifyElementsCount(viewModel.view.firstChild.parentNode, [
-              ['.app', 1],
-              ['.home-route', 1]
-            ]);
-          },
-          attached: viewModel => {
-            lifecycleCount++;
-            verifyElementsCount(viewModel.element, [
-              ['.app', 1],
-              ['.home-route', 1]
-            ]);
-          }
+      await bootstrap(createEntryConfigure(
+        'pages/app/app',
+        host,
+        [
+          [IRouteConfigs, [
+            { route: '', moduleId: 'pages/home/home' }
+          ]],
+          ['pages/app/app', {
+            created: viewModel => {
+              verifyElementsCount(viewModel.view.firstChild.parentNode, [
+                ['.app', 1],
+                ['.home-route', 1]
+              ]);
+              lifecycleCount++;
+            },
+            attached: viewModel => {
+              verifyElementsCount(viewModel.element, [
+                ['.app', 1],
+                ['.home-route', 1]
+              ]);
+              lifecycleCount++;
+            }
+          }]
+        ],
+        function onBootstrapped(aurelia, viewModel) {
+          expect(lifecycleCount).toBe(2);
+          expect(viewModel.router.currentInstruction.fragment).toBe('/');
         }
-      };
-      root = 'pages/app/app';
-      await bootstrap(configure);
-      expect(lifecycleCount).toBe(2);
-      expect(viewModel.router.currentInstruction.fragment).toBe('/');
+      ));
     });
 
     it('bootstrap with multiple routes', async () => {
       let lifecycleCount = 0;
-      routeConfigs = [
-        { route: '', moduleId: 'pages/home/home' },
-        { route: 'dashboard', moduleId: 'pages/dashboard/dashboard' }
-      ];
-      routeLifeCylceCallbacks = {
-        'pages/app/app': {
-          created: viewModel => {
-            lifecycleCount++;
-            verifyElementsCount(viewModel.view.firstChild.parentNode, [
-              ['.app', 1],
-              ['.home-route', 1]
-            ]);
-          },
-          attached: viewModel => {
-            lifecycleCount++;
-            verifyElementsCount(viewModel.element, [
-              ['.app', 1],
-              ['.home-route', 1]
-            ]);
-          }
-        },
-        'pages/home/home': {
-          attached: viewModel => {
-            lifecycleCount++;
-          }
+      await bootstrap(createEntryConfigure(
+        'pages/app/app',
+        host,
+        [
+          [IRouteConfigs, [
+            { route: '', moduleId: 'pages/home/home' },
+            { route: 'dashboard', moduleId: 'pages/dashboard/dashboard' }
+          ]],
+          ['pages/app/app', {
+            created: viewModel => {
+              verifyElementsCount(viewModel.view.firstChild.parentNode, [
+                ['.app', 1],
+                ['.home-route', 1]
+              ]);
+              lifecycleCount++;
+            },
+            attached: viewModel => {
+              verifyElementsCount(viewModel.element, [
+                ['.app', 1],
+                ['.home-route', 1]
+              ]);
+              lifecycleCount++;
+            }
+          }],
+          ['pages/home/home', {
+            attached: viewModel => {
+              lifecycleCount++;
+            }
+          }]
+        ],
+        (aurelia, viewModel) => {
+          expect(lifecycleCount).toBe(3);
+          expect(viewModel.router.currentInstruction.fragment).toBe('/');
         }
-      };
-      root = 'pages/app/app';
-      await bootstrap(configure);
-      expect(lifecycleCount).toBe(3);
-      expect(viewModel.router.currentInstruction.fragment).toBe('/');
+      ));
     });
   });
-
-  async function configure($aurelia: Aurelia): Promise<void> {
-    $aurelia
-      .use
-      .standardConfiguration();
-
-    await $aurelia.start();
-
-    $aurelia.container.registerHandler(IRouteConfigs, () => routeConfigs);
-    Object
-      .keys(routeLifeCylceCallbacks)
-      .forEach(route => $aurelia.container.registerHandler(route, () => routeLifeCylceCallbacks[route]));
-    appRouter = $aurelia.container.get(Router);
-
-    await $aurelia.setRoot(root, host);
-
-    viewModel = ($aurelia as any).root.viewModel;
-
-    aurelia = $aurelia;
-  }
 
   class BaseRoutingComponent implements ITestRoutingComponent {
 

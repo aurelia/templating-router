@@ -1,4 +1,7 @@
-import { ConfiguresRouter, Router } from 'aurelia-router';
+import { ConfiguresRouter, Router, AppRouter } from 'aurelia-router';
+import { Aurelia, Controller } from 'aurelia-framework';
+import { bootstrap } from 'aurelia-bootstrapper';
+import { IConstructable } from 'integration/interfaces';
 
 export * from '../integration/utilities';
 export * from '../integration/shared';
@@ -54,4 +57,60 @@ export function invokeAssertions(obj: { lifecycleCallbacks?: ILifeCyclesAssertio
   if (obj.lifecycleCallbacks && obj.lifecycleCallbacks[method]) {
     obj.lifecycleCallbacks[method].call(null, obj);
   }
+}
+
+export interface IEntryConfigure<T> {
+  aurelia: Aurelia;
+  viewModel: T;
+  (aurelia: Aurelia): Promise<any>;
+}
+
+export function createEntryConfigure<T = ITestRoutingComponent>(
+  root: string | IConstructable<ITestRoutingComponent>,
+  host: Element,
+  registrations: [any, any][],
+  onBootstrapped: (aurelia: Aurelia, viewModel: T) => any = () => Promise.resolve(),
+  autoCleanUp = true
+): IEntryConfigure<T> {
+  const entryConfigure = async function($aurelia: Aurelia) {
+    try {
+      entryConfigure.aurelia = $aurelia;
+      $aurelia.use.standardConfiguration();
+      for (const [key, value] of registrations) {
+        // register as either instance / singleton
+        // by default instance for everything except function
+        // if a function has custom registration, then it will be resolved based on that
+        $aurelia.container.autoRegister(key, value);
+      }
+      await $aurelia.start();
+      await $aurelia.setRoot(root, host);
+
+      entryConfigure.viewModel = ($aurelia as any).root.viewModel;
+
+      await Promise.resolve(onBootstrapped($aurelia, entryConfigure.viewModel));
+      if (autoCleanUp) {
+        await Promise.resolve(cleanUp($aurelia));
+      }
+    } catch (ex) {
+      try {
+        const appRouter = $aurelia.container.get(Router) as AppRouter;
+        appRouter.deactivate();
+        appRouter.reset();
+      } catch (ex2) {
+        console.warn('Unable to deactivate app router. Expect tests to have buggy behavior due to multiple app routers.');
+      }
+      throw ex;
+    }
+  } as IEntryConfigure<T>;
+  return entryConfigure;
+}
+
+export function cleanUp(aurelia: Aurelia) {
+  const appRouter = aurelia.container.get(Router) as AppRouter;
+  appRouter.deactivate();
+  appRouter.reset();
+  const root = (aurelia as any).root as Controller;
+  root.unbind();
+  root.detached();
+  aurelia.host.remove();
 }

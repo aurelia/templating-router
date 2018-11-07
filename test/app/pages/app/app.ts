@@ -2,7 +2,7 @@ import { RouterConfiguration, Router, RouteConfig } from 'aurelia-router';
 import { inject, CompositionTransaction, View } from 'aurelia-framework';
 import { IRouteConfigs, ILifeCyclesAssertions, ILifeCyclesCallbacks, invokeAssertions } from '../../utilities';
 
-@inject(Element, CompositionTransaction, IRouteConfigs, ILifeCyclesCallbacks)
+@inject(Element, CompositionTransaction, IRouteConfigs, 'pages/app/app')
 export class App {
   router: Router;
 

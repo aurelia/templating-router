@@ -4,10 +4,13 @@ import { Aurelia, Controller } from 'aurelia-framework';
 import { ConfiguresRouter, RouterConfiguration, Router, RouteConfig, AppRouter } from 'aurelia-router';
 import { wait, IConstructable, h, ITestRoutingComponent, verifyElementsCount, IRouteConfigs, ILifeCyclesCallbacks, ILifeCyclesAssertions } from './utilities';
 
-fdescribe('INTEGRATION -- App like', () => {
+describe('INTEGRATION -- App like', () => {
 
   let routeConfigs: RouteConfig[];
   let lifecyclesCallbacks: ILifeCyclesAssertions;
+  // Helps easily inject lifecycle callbacks into each route dynamically
+  // based on their file location structure
+  let routeLifeCylceCallbacks: Record<string, ILifeCyclesAssertions>;
   let root: string | IConstructable<ITestRoutingComponent>;
   let host: Element;
   let aurelia: Aurelia;
@@ -15,6 +18,7 @@ fdescribe('INTEGRATION -- App like', () => {
   let appRouter: AppRouter;
 
   beforeEach(() => {
+    routeLifeCylceCallbacks = {};
     host = h('div');
   });
 
@@ -47,27 +51,29 @@ fdescribe('INTEGRATION -- App like', () => {
     });
   });
 
-  fdescribe('dynamic root app', () => {
+  describe('dynamic root app', () => {
     it('bootstraps', async () => {
       let lifecycleCount = 0;
       routeConfigs = [
         { route: '', moduleId: 'pages/home/home' }
         // { route: 'dashboard', moduleId: 'pages/dashboard/dashboard' }
       ];
-      lifecyclesCallbacks = {
-        created: viewModel => {
-          lifecycleCount++;
-          verifyElementsCount(viewModel.view.firstChild.parentNode, [
-            ['.app', 1],
-            ['.home-route', 1]
-          ]);
-        },
-        attached: viewModel => {
-          lifecycleCount++;
-          verifyElementsCount(viewModel.element, [
-            ['.app', 1],
-            ['.home-route', 1]
-          ]);
+      routeLifeCylceCallbacks = {
+        'pages/app/app': {
+          created: viewModel => {
+            lifecycleCount++;
+            verifyElementsCount(viewModel.view.firstChild.parentNode, [
+              ['.app', 1],
+              ['.home-route', 1]
+            ]);
+          },
+          attached: viewModel => {
+            lifecycleCount++;
+            verifyElementsCount(viewModel.element, [
+              ['.app', 1],
+              ['.home-route', 1]
+            ]);
+          }
         }
       };
       root = 'pages/app/app';
@@ -82,25 +88,32 @@ fdescribe('INTEGRATION -- App like', () => {
         { route: '', moduleId: 'pages/home/home' },
         { route: 'dashboard', moduleId: 'pages/dashboard/dashboard' }
       ];
-      lifecyclesCallbacks = {
-        created: viewModel => {
-          lifecycleCount++;
-          verifyElementsCount(viewModel.view.firstChild.parentNode, [
-            ['.app', 1],
-            ['.home-route', 1]
-          ]);
+      routeLifeCylceCallbacks = {
+        'pages/app/app': {
+          created: viewModel => {
+            lifecycleCount++;
+            verifyElementsCount(viewModel.view.firstChild.parentNode, [
+              ['.app', 1],
+              ['.home-route', 1]
+            ]);
+          },
+          attached: viewModel => {
+            lifecycleCount++;
+            verifyElementsCount(viewModel.element, [
+              ['.app', 1],
+              ['.home-route', 1]
+            ]);
+          }
         },
-        attached: viewModel => {
-          lifecycleCount++;
-          verifyElementsCount(viewModel.element, [
-            ['.app', 1],
-            ['.home-route', 1]
-          ]);
+        'pages/home/home': {
+          attached: viewModel => {
+            lifecycleCount++;
+          }
         }
       };
       root = 'pages/app/app';
       await bootstrap(configure);
-      expect(lifecycleCount).toBe(2);
+      expect(lifecycleCount).toBe(3);
       expect(viewModel.router.currentInstruction.fragment).toBe('/');
     });
   });
@@ -113,7 +126,9 @@ fdescribe('INTEGRATION -- App like', () => {
     await $aurelia.start();
 
     $aurelia.container.registerHandler(IRouteConfigs, () => routeConfigs);
-    $aurelia.container.registerHandler(ILifeCyclesCallbacks, () => lifecyclesCallbacks || {});
+    Object
+      .keys(routeLifeCylceCallbacks)
+      .forEach(route => $aurelia.container.registerHandler(route, () => routeLifeCylceCallbacks[route]));
     appRouter = $aurelia.container.get(Router);
 
     await $aurelia.setRoot(root, host);

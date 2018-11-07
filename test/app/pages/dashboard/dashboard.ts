@@ -1,13 +1,17 @@
-import { customElement } from 'aurelia-framework';
-import { RouterConfiguration, Router } from 'aurelia-router';
+import { inject } from 'aurelia-framework';
+import { Router, RouterConfiguration } from 'aurelia-router';
+import { ILifeCyclesAssertions, invokeAssertions } from '../../utilities';
 
-@customElement('dashboard')
+@inject(Element, 'pages/dashboard/dashboard')
 export class Dashboard {
 
   router: Router;
 
-  constructor() {
-
+  constructor(
+    public element: Element,
+    public lifecycleCallbacks: ILifeCyclesAssertions
+  ) {
+    invokeAssertions(this, 'construct');
   }
 
   configureRouter(config: RouterConfiguration, router: Router) {
@@ -17,5 +21,6 @@ export class Dashboard {
     ]);
     config.mapUnknownRoutes({ route: '*', redirect: 'home-route' });
     this.router = router;
+    invokeAssertions(this, 'configureRouter');
   }
 }

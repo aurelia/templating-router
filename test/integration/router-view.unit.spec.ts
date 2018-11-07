@@ -2,7 +2,7 @@ import './setup';
 import { RouterViewLocator } from '../../src/router-view';
 import { wait } from './utilities';
 
-fdescribe('RouterView -- UNIT', () => {
+describe('RouterView -- UNIT', () => {
 
   describe('RouterViewLocator', () => {
     it('locates what is notified', async () => {

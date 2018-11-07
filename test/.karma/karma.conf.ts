@@ -154,7 +154,9 @@ function getWebpackConfigs(karmaConfig: IKarmaConfig): webpack.Configuration {
       ],
       alias: {
         'aurelia-templating-router': path.resolve(BASE_DIR, 'src', 'index'),
-        'routes': path.resolve(BASE_DIR, 'test/integration/routes')
+        'routes': path.resolve(BASE_DIR, 'test/integration/routes'),
+        'pages': path.resolve(BASE_DIR, 'test/app/pages'),
+        'resources': path.resolve(BASE_DIR, 'test/app/resources')
       }
     },
     // context: path.resolve(BASE_DIR, 'test'),

@@ -6,7 +6,6 @@ import { ComponentTester, StageComponent } from 'aurelia-testing';
 import { RouteHref } from '../../src';
 import { wait } from './utilities';
 import { addDebugLogging, removeDebugLogging } from './shared';
-import { patchComponentTeser, unpatchComponentTester } from './component-tester-patch';
 import { Logger } from 'aurelia-logging';
 
 describe('[route-href]', () => {

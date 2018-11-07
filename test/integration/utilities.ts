@@ -31,3 +31,33 @@ export function verifyElementsCount(component: ComponentTester, selectorOrSelect
 export function wait(time: any = 100) {
   return new Promise<void>(res => setTimeout(() => res(), typeof time === 'number' ? time : 250));
 }
+
+/**
+ * Easily create an element without heavy typing, using hyperscript signature
+ */
+export function h<T extends keyof HTMLElementTagNameMap>(
+  name: T,
+  attrs: { [attr: string]: any } = {},
+  ...children: (string | number | boolean | null | undefined | Node)[]
+) {
+  let el = document.createElement<T>(name);
+  for (let attr in attrs) {
+    if (attr === 'class' || attr === 'className' || attr === 'cls') {
+      let value: string[] = attrs[attr];
+      value = value === undefined || value === null ? [] : Array.isArray(value) ? value : ('' + value).split(' ');
+      el.classList.add(...value.filter(Boolean));
+    } else if (attr in el || attr === 'data' || attr[0] === '_') {
+      el[attr] = attrs[attr];
+    } else {
+      el.setAttribute(attr, attrs[attr]);
+    }
+  }
+  let childrenCt = el.tagName === 'TEMPLATE' ? (el as HTMLTemplateElement).content : el;
+  for (let child of children) {
+    if (child === null || child === undefined) {
+      continue;
+    }
+    childrenCt.appendChild(child instanceof Node ? child : document.createTextNode('' + child));
+  }
+  return el;
+}

@@ -1,9 +1,10 @@
-// import './setup';
+import './setup';
 import { RouteLoader, Router } from 'aurelia-router';
 import { TemplatingRouteLoader } from '../../src';
 import { Container, metadata, HtmlBehaviorResource, CompositionEngine, ViewLocator, RelativeViewStrategy } from 'aurelia-framework';
 import { EmptyClass, createDynamicClass } from '../../src/route-loader';
 import { RouterViewLocator } from '../../src/router-view';
+import { History } from 'aurelia-history';
 
 describe('RouteLoader -- UNIT', () => {
 
@@ -121,7 +122,7 @@ describe('RouteLoader -- UNIT', () => {
   });
 
   describe('createChildContainer()', () => {
-    it('creates', async () => {
+    it('creates', () => {
       let childContainer: MockRouterContainer;
       const childContainers: Set<Container> = new Set();
       const router = {
@@ -153,6 +154,20 @@ describe('RouteLoader -- UNIT', () => {
         childContainers.add($childContainer);
       }
       expect(childContainers.size).toBe(5);
+    });
+
+    it('creates real', () => {
+      const container = new Container();
+      routeLoader = container.get(TemplatingRouteLoader);
+      let router: any;
+      router = new Router(container, new History());
+      const childContainer = routeLoader.createChildContainer(router);
+      const childRouter = childContainer.getChildRouter!();
+      childRouter.parent = null;
+      const resolver = childContainer.getResolver(Router);
+      expect(resolver.strategy).toBe(3);
+      expect(childContainer.hasResolver(Router));
+      expect(childContainer.get(Router)).toBe(childRouter);
     });
   });
 

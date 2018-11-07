@@ -3,6 +3,7 @@ import { relativeToFile } from 'aurelia-path';
 import { NavigationInstruction, RouteConfig, RouteLoader, Router, ViewPortComponent } from 'aurelia-router';
 import { CompositionEngine, customElement, inlineView, useView } from 'aurelia-templating';
 import { RouterViewLocator } from './router-view';
+import { Container } from 'aurelia-framework';
 
 /**@internal exported for unit testing */
 export class EmptyClass { }
@@ -65,7 +66,12 @@ export class TemplatingRouteLoader extends RouteLoader {
       });
   }
 
-  createChildContainer(router: Router) {
+  /**
+   * @internal
+   * Create child container based on a router container
+   * Also ensures that child router are properly constructed in the newly created child container
+   */
+  createChildContainer(router: Router): Container {
     const childContainer = router.container.createChild();
 
     childContainer.registerSingleton(RouterViewLocator);

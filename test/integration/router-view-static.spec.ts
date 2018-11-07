@@ -28,10 +28,6 @@ describe('<router-view/> with "viewModel"', function() {
     location.hash = '';
   });
 
-  // beforeAll(patchComponentTeser);
-
-  // afterAll(unpatchComponentTester);
-
   beforeEach(function __setup__() {
   });
 

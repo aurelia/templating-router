@@ -23,7 +23,7 @@ export class RouteHref {
       { name: 'route', changeHandler: 'processChange', primaryProperty: true },
       { name: 'params', changeHandler: 'processChange' },
       'attribute'
-    ] as any
+    ] as any // type definition of Aurelia templating is wrong
   };
 
   /**

@@ -3,9 +3,8 @@ import { bootstrap } from 'aurelia-bootstrapper';
 import { Aurelia, Controller, PLATFORM } from 'aurelia-framework';
 import { ConfiguresRouter, RouterConfiguration, Router, RouteConfig, AppRouter } from 'aurelia-router';
 import { wait, IConstructable, h, ITestRoutingComponent, verifyElementsCount, IRouteConfigs, ILifeCyclesAssertions, createEntryConfigure } from './utilities';
-import { any } from 'bluebird';
 
-fdescribe('INTEGRATION -- App like', () => {
+describe('INTEGRATION -- App like', () => {
 
   let routeConfigs: RouteConfig[];
   let lifecyclesCallbacks: ILifeCyclesAssertions;

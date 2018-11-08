@@ -7,6 +7,8 @@ export * from '../integration/utilities';
 export * from '../integration/shared';
 export * from '../integration/interfaces';
 
+import { wait } from '../integration/utilities';
+
 export interface ITestRoutingComponent extends ConfiguresRouter {
   readonly element: Element;
   router: Router;
@@ -65,11 +67,16 @@ export interface IEntryConfigure<T> {
   (aurelia: Aurelia): Promise<any>;
 }
 
+/**
+ * Create an entry `configure` function, similar to `export function configure` in `main.js` of a normal Aurelia application
+ * This takes a few parameter to make the bootstrapping process more suitable for testing
+ */
 export function createEntryConfigure<T = ITestRoutingComponent>(
   root: string | IConstructable<ITestRoutingComponent>,
   host: Element,
   registrations: [any, any][],
   onBootstrapped: (aurelia: Aurelia, viewModel: T) => any = () => Promise.resolve(),
+  onBootstrappedFailed: <TFailure = Error>(ex: TFailure, aurelia: Aurelia) => any = () => Promise.resolve(),
   autoCleanUp = true
 ): IEntryConfigure<T> {
   const entryConfigure = async function($aurelia: Aurelia) {
@@ -77,9 +84,6 @@ export function createEntryConfigure<T = ITestRoutingComponent>(
       entryConfigure.aurelia = $aurelia;
       $aurelia.use.standardConfiguration();
       for (const [key, value] of registrations) {
-        // register as either instance / singleton
-        // by default instance for everything except function
-        // if a function has custom registration, then it will be resolved based on that
         $aurelia.container.autoRegister(key, value);
       }
       await $aurelia.start();
@@ -89,28 +93,46 @@ export function createEntryConfigure<T = ITestRoutingComponent>(
 
       await Promise.resolve(onBootstrapped($aurelia, entryConfigure.viewModel));
       if (autoCleanUp) {
-        await Promise.resolve(cleanUp($aurelia));
+        cleanUp($aurelia);
       }
     } catch (ex) {
-      try {
-        const appRouter = $aurelia.container.get(Router) as AppRouter;
-        appRouter.deactivate();
-        appRouter.reset();
-      } catch (ex2) {
-        console.warn('Unable to deactivate app router. Expect tests to have buggy behavior due to multiple app routers.');
-      }
+      cleanUp($aurelia);
+      console.log('Bootstrapping error:\n======================================');
+      console.error(ex);
+      await Promise.resolve(onBootstrappedFailed(ex, $aurelia));
       throw ex;
     }
   } as IEntryConfigure<T>;
   return entryConfigure;
 }
 
+/**
+ * Clean up all potential global handlers / states that can mess up subsequent test suites
+ */
 export function cleanUp(aurelia: Aurelia) {
-  const appRouter = aurelia.container.get(Router) as AppRouter;
-  appRouter.deactivate();
-  appRouter.reset();
-  const root = (aurelia as any).root as Controller;
-  root.unbind();
-  root.detached();
-  aurelia.host.remove();
+  try {
+    const appRouter = aurelia.container.get(Router) as AppRouter;
+    appRouter.deactivate();
+    appRouter.reset();
+    const root = (aurelia as any).root as Controller;
+    root.unbind();
+    root.detached();
+    aurelia.host.remove();
+  } catch (ex) {
+    console.warn('Unable to deactivate app router. Expect tests to have buggy behavior due to multiple app routers.');
+  }
+}
+
+/**
+ * Allow a timeframe for bootstrapping process to response, with a guard to fail and invoke onTimeout callback
+ * when a bootstrap failed to complete
+ */
+export function bootstrapAppWithTimeout(
+  configure: (aurelia: Aurelia) => Promise<any>,
+  onBootstrapTimeout: () => any = () => { }
+): Promise<any> {
+  return Promise.race([
+    wait(3000).then(onBootstrapTimeout),
+    bootstrap(configure)
+  ]);
 }

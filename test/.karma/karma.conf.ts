@@ -69,6 +69,9 @@ export default function(config: IKarmaConfig) {
     mime: {
       'text/x-typescript': ['ts']
     },
+    // How long in an infinite loop can we affort to wait
+    browserDisconnectTimeout: 3500,
+    browserNoActivityTimeout: 20000,
     reporters: ['mocha'],
     webpackMiddleware: {
       stats: {

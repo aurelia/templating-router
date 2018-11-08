@@ -1,4 +1,4 @@
-import { ConfiguresRouter, Router, AppRouter } from 'aurelia-router';
+import { ConfiguresRouter, Router, AppRouter, RouterConfiguration } from 'aurelia-router';
 import { Aurelia, Controller } from 'aurelia-framework';
 import { bootstrap } from 'aurelia-bootstrapper';
 import { IConstructable } from 'integration/interfaces';
@@ -55,9 +55,9 @@ export interface ILifeCyclesAssertions<T = any> {
   unbind?(viewModel: T): void;
 }
 
-export function invokeAssertions(obj: { lifecycleCallbacks?: ILifeCyclesAssertions }, method: keyof ILifeCyclesAssertions) {
+export function invokeAssertions(obj: { lifecycleCallbacks?: ILifeCyclesAssertions }, method: keyof ILifeCyclesAssertions, ...args: any[]) {
   if (obj.lifecycleCallbacks && obj.lifecycleCallbacks[method]) {
-    obj.lifecycleCallbacks[method].call(null, obj);
+    obj.lifecycleCallbacks[method].call(null, obj, ...args);
   }
 }
 
@@ -110,29 +110,62 @@ export function createEntryConfigure<T = ITestRoutingComponent>(
  * Clean up all potential global handlers / states that can mess up subsequent test suites
  */
 export function cleanUp(aurelia: Aurelia) {
+  if (!aurelia) {
+    return;
+  }
   try {
     const appRouter = aurelia.container.get(Router) as AppRouter;
     appRouter.deactivate();
     appRouter.reset();
     const root = (aurelia as any).root as Controller;
-    root.unbind();
-    root.detached();
+    if (root) {
+      root.unbind();
+      root.detached();
+    }
     aurelia.host.remove();
   } catch (ex) {
     console.warn('Unable to deactivate app router. Expect tests to have buggy behavior due to multiple app routers.');
   }
 }
 
+let bootstrapCount = 0;
 /**
  * Allow a timeframe for bootstrapping process to response, with a guard to fail and invoke onTimeout callback
  * when a bootstrap failed to complete
  */
 export function bootstrapAppWithTimeout(
   configure: (aurelia: Aurelia) => Promise<any>,
-  onBootstrapTimeout: () => any = () => { }
+  onBootstrapTimeout: () => any = () => { },
+  timeoutPeriod = 3000
 ): Promise<any> {
-  return Promise.race([
-    wait(3000).then(onBootstrapTimeout),
-    bootstrap(configure)
-  ]);
+  let timeoutED = false;
+  let $aurelia: Aurelia;
+  bootstrapCount++;
+  return Promise
+    .race([
+      wait(timeoutPeriod).then(() => {
+        timeoutED = true;
+        return onBootstrapTimeout();
+      }),
+      bootstrap((aurelia) => {
+        $aurelia = aurelia;
+        return configure(aurelia);
+      })
+    ])
+    .then(
+      (result) => {
+        if (timeoutED) {
+          console.log(`Resolved: [${bootstrapCount}] -----BOOTSTRAPPING ___ TIMEOUT'D-----`);
+          cleanUp($aurelia);
+        }
+        return result;
+      },
+      (ex) => {
+        if (timeoutED) {
+          console.log(`Rejected: [${bootstrapCount}] -----BOOTSTRAPPING ___ TIMEOUT'D-----`);
+          cleanUp($aurelia);
+        }
+        throw ex;
+      }
+    );
 }

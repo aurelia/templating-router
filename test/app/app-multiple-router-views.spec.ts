@@ -2,8 +2,9 @@ import './setup';
 import { wait, h, createEntryConfigure, IRouteConfigs, verifyElementsCount, bootstrapAppWithTimeout } from './utilities';
 import { bootstrap } from 'aurelia-bootstrapper';
 import { addDebugLogging, removeDebugLogging } from './utilities';
+import { NavigationInstruction, RouterConfiguration } from 'aurelia-router';
 
-describe('Multiple Viewports -- INTEGRATION', () => {
+fdescribe('Multiple Viewports -- INTEGRATION', () => {
 
   beforeAll(() => {
     addDebugLogging();
@@ -11,6 +12,10 @@ describe('Multiple Viewports -- INTEGRATION', () => {
 
   afterAll(() => {
     removeDebugLogging();
+  });
+
+  afterEach(() => {
+    location.hash = '';
   });
 
   it('bootstrap with multiple viewports', async () => {
@@ -81,8 +86,57 @@ describe('Multiple Viewports -- INTEGRATION', () => {
       }
     ), function onBootstrapTimeout() {
       lifecycleCount = 20;
-    });
+    }, 1000);
     expect(lifecycleCount).toBe(20);
   });
 
+  describe('multiple viewports boostrapping with mapUnknownRoutes()', () => {
+
+    it('with mapUnknownRoutes({ ...object })', async () => {
+      let lifecycleCount = 0;
+      expect(location.hash).toBe('');
+      await bootstrap(createEntryConfigure(
+        'pages/complex-app/app',
+        h('div'),
+        [
+          [IRouteConfigs, [
+            // TODO: fix issues when the route fails to redirect when there is no "name" property
+            { route: 'landing', name: 'landing-route', viewPorts: { left: { moduleId: 'pages/home/home' }, right: { moduleId: 'pages/home/home' } } }
+          ]],
+          ['pages/complex-app/app', {
+            configureRouter: (viewModel, config: RouterConfiguration, router) => {
+              config.mapUnknownRoutes({ route: '*', redirect: 'landing' });
+              // config.mapUnknownRoutes((navInstruction: NavigationInstruction) => {
+              //   navInstruction.config.route = 'landing';
+              //   navInstruction.config.redirect = 'landing-route';
+              // });
+            },
+            created: viewModel => {
+              verifyElementsCount(viewModel.view.firstChild.parentNode, [
+                ['.complex-app', 1],
+                ['.home-route', 2]
+              ]);
+              lifecycleCount++;
+            },
+            attached: viewModel => {
+              verifyElementsCount(viewModel.element, [
+                ['.complex-app', 1],
+                ['.home-route', 2]
+              ]);
+              lifecycleCount++;
+            }
+          }]
+        ],
+        function onBootstrapped(aurelia, viewModel) {
+          expect(viewModel.router.currentInstruction.fragment).toBe('/landing');
+        }
+      ));
+      expect(location.hash).toBe('#/landing');
+      expect(lifecycleCount).toBe(2);
+    });
+
+    it('with mapUnknownRoutes(instruction => ...)', async () => {
+
+    });
+  });
 });

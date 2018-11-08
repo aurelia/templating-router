@@ -56,6 +56,7 @@ export class RouterView implements ViewPort {
    * - with = new in + old out
    *
    * These values are defined by swapStrategies export in aurelia-templating/ aurelia-framework
+   * Can be extended there and used here
    */
   swapOrder: string;
 
@@ -80,16 +81,28 @@ export class RouterView implements ViewPort {
    */
   container: Container;
 
-  /**@internal */
+  /**
+   * @internal
+   * the view slot for adding / removing Routing related views created dynamically
+   */
   viewSlot: ViewSlot;
 
-  /**@internal */
+  /**
+   * @internal
+   * Used to mimic partially functionalities of CompositionEngine
+   */
   viewLocator: ViewLocator;
 
-  /**@internal */
+  /**
+   * @internal
+   * View composed by the CompositionEngine, depends on layout / viewports/ moduleId / viewModel of routeconfig
+   */
   view: View;
 
-  /**@internal */
+  /**
+   * @internal
+   * The view where this `<router-view/>` is placed in
+   */
   owningView: View;
 
   /**
@@ -154,7 +167,10 @@ export class RouterView implements ViewPort {
     this.overrideContext = overrideContext;
   }
 
-  process(viewPortInstruction: ViewPortInstruction, waitToSwap?: boolean) {
+  /**
+   * Implementation of `aurelia-router` ViewPort interface, responsible for templating related part in routing Pipeline
+   */
+  process(viewPortInstruction: ViewPortInstruction, waitToSwap?: boolean): Promise<void> {
     const component = viewPortInstruction.component;
     const childContainer = component.childContainer;
     const viewModel = component.viewModel;

@@ -1,26 +1,38 @@
 import './setup';
-import { wait, h, createEntryConfigure, IRouteConfigs, verifyElementsCount, bootstrapAppWithTimeout } from './utilities';
+import { wait, h, createEntryConfigure, IRouteConfigs, verifyElementsCount, bootstrapAppWithTimeout, ILifeCyclesAssertions, cleanUp } from './utilities';
 import { bootstrap } from 'aurelia-bootstrapper';
 import { addDebugLogging, removeDebugLogging } from './utilities';
-import { NavigationInstruction, RouterConfiguration } from 'aurelia-router';
+import { NavigationInstruction, RouterConfiguration, RouteConfig, UnknownRouteConfigSpecifier, Router } from 'aurelia-router';
+import { Aurelia } from 'aurelia-framework';
 
-fdescribe('Multiple Viewports -- INTEGRATION', () => {
+describe('Multiple Viewports -- INTEGRATION', () => {
+
+  let aurelia: Aurelia;
 
   beforeAll(() => {
     addDebugLogging();
   });
 
-  afterAll(() => {
+  afterAll(async () => {
     removeDebugLogging();
+    location.hash = '';
+    await wait();
+  });
+
+  beforeEach(() => {
+    cleanUp(aurelia);
+    location.hash = '';
   });
 
   afterEach(() => {
+    cleanUp(aurelia);
     location.hash = '';
   });
 
   it('bootstrap with multiple viewports', async () => {
     let lifecycleCount = 0;
-    await bootstrap(createEntryConfigure(
+    location.hash = '';
+    aurelia = await bootstrapAppWithTimeout(createEntryConfigure(
       'pages/complex-app/app',
       h('div'),
       [
@@ -53,7 +65,7 @@ fdescribe('Multiple Viewports -- INTEGRATION', () => {
 
   it('fails when viewports configs mismatch', async () => {
     let lifecycleCount = 0;
-    await bootstrapAppWithTimeout(createEntryConfigure(
+    aurelia = await bootstrapAppWithTimeout(createEntryConfigure(
       'pages/complex-app/app',
       h('div'),
       [
@@ -88,14 +100,15 @@ fdescribe('Multiple Viewports -- INTEGRATION', () => {
       lifecycleCount = 20;
     }, 1000);
     expect(lifecycleCount).toBe(20);
+    cleanUp(aurelia);
   });
 
-  describe('multiple viewports boostrapping with mapUnknownRoutes()', () => {
+  describe('> mapUnknownRoutes()', () => {
 
-    it('with mapUnknownRoutes({ ...object })', async () => {
+    it('> mapUnknownRoutes({ ...object })', async () => {
       let lifecycleCount = 0;
       expect(location.hash).toBe('');
-      await bootstrap(createEntryConfigure(
+      aurelia = await bootstrapAppWithTimeout(createEntryConfigure(
         'pages/complex-app/app',
         h('div'),
         [
@@ -105,11 +118,7 @@ fdescribe('Multiple Viewports -- INTEGRATION', () => {
           ]],
           ['pages/complex-app/app', {
             configureRouter: (viewModel, config: RouterConfiguration, router) => {
-              config.mapUnknownRoutes({ route: '*', redirect: 'landing' });
-              // config.mapUnknownRoutes((navInstruction: NavigationInstruction) => {
-              //   navInstruction.config.route = 'landing';
-              //   navInstruction.config.redirect = 'landing-route';
-              // });
+              config.mapUnknownRoutes({ redirect: 'landing' });
             },
             created: viewModel => {
               verifyElementsCount(viewModel.view.firstChild.parentNode, [
@@ -135,8 +144,179 @@ fdescribe('Multiple Viewports -- INTEGRATION', () => {
       expect(lifecycleCount).toBe(2);
     });
 
-    it('with mapUnknownRoutes(instruction => ...)', async () => {
+    describe('> mapUnknownRoutes(instruction => ...)', () => {
 
+      it('> mapUnknownRoutes(instruction => ({ redirect: ... }))', async () => {
+        let lifecycleCount = 0;
+        expect(location.hash).toBe('');
+        aurelia = await bootstrapAppWithTimeout(createEntryConfigure(
+          'pages/complex-app/app',
+          h('div'),
+          [
+            [IRouteConfigs, <RouteConfig[]>[
+              // TODO: fix issues when the route fails to redirect when there is no "name" property
+              { route: 'landing', name: 'landing-route', viewPorts: { left: { moduleId: 'pages/home/home' }, right: { moduleId: 'pages/home/home' } } }
+            ]],
+            ['pages/complex-app/app', <ILifeCyclesAssertions>{
+              configureRouter: (viewModel, config: RouterConfiguration, router: Router) => {
+                return config.mapUnknownRoutes((navInstruction: NavigationInstruction) => {
+                  expect(lifecycleCount).toBe(0);
+                  lifecycleCount += 100;
+                  return { redirect: 'landing' };
+                });
+              },
+              created: viewModel => {
+                verifyElementsCount(viewModel.view.firstChild.parentNode, [
+                  ['.complex-app', 1],
+                  ['.home-route', 2]
+                ]);
+                lifecycleCount++;
+              },
+              attached: viewModel => {
+                verifyElementsCount(viewModel.element, [
+                  ['.complex-app', 1],
+                  ['.home-route', 2]
+                ]);
+                lifecycleCount++;
+              }
+            }]
+          ],
+          function onBootstrapped(aurelia, viewModel) {
+            expect(viewModel.router.currentInstruction.fragment).toBe('/landing');
+          }
+        ));
+        expect(location.hash).toBe('#/landing');
+        expect(lifecycleCount).toBe(102);
+      });
+
+      it('> mapUnknownRoutes(instruction => ({ moduleId: ... }))', async () => {
+        let lifecycleCount = 0;
+        expect(location.hash).toBe('');
+        aurelia = await bootstrapAppWithTimeout(createEntryConfigure(
+          'pages/app/app',
+          h('div'),
+          [
+            [IRouteConfigs, <RouteConfig[]>[
+              // TODO: fix issues when the route fails to redirect when there is no "name" property
+              { route: 'landing', name: 'landing-route', viewPorts: { left: { moduleId: 'pages/home/home' }, right: { moduleId: 'pages/home/home' } } }
+            ]],
+            ['pages/app/app', <ILifeCyclesAssertions>{
+              configureRouter: (viewModel, config: RouterConfiguration, router: Router) => {
+                return config.mapUnknownRoutes((navInstruction: NavigationInstruction) => {
+                  expect(lifecycleCount).toBe(0);
+                  lifecycleCount += 100;
+                  return { moduleId: 'pages/home/home' };
+                });
+              },
+              created: viewModel => {
+                verifyElementsCount(viewModel.view.firstChild.parentNode, [
+                  ['.app', 1],
+                  ['.home-route', 1]
+                ]);
+                lifecycleCount++;
+              },
+              attached: viewModel => {
+                verifyElementsCount(viewModel.element, [
+                  ['.app', 1],
+                  ['.home-route', 1]
+                ]);
+                lifecycleCount++;
+              }
+            }]
+          ],
+          function onBootstrapped(aurelia, viewModel) {
+            expect(viewModel.router.currentInstruction.fragment).toBe('/');
+          }
+        ));
+        expect(location.hash).toBe('');
+        expect(lifecycleCount).toBe(102);
+      });
+
+      it('> mapUnknownRoutes(instruction => ({ viewModel: ... }))', async () => {
+        let lifecycleCount = 0;
+        expect(location.hash).toBe('');
+        aurelia = await bootstrapAppWithTimeout(createEntryConfigure(
+          'pages/app/app',
+          h('div'),
+          [
+            [IRouteConfigs, <RouteConfig[]>[
+              // TODO: fix issues when the route fails to redirect when there is no "name" property
+              { route: 'landing', name: 'landing-route', viewPorts: { left: { moduleId: 'pages/home/home' }, right: { moduleId: 'pages/home/home' } } }
+            ]],
+            ['pages/app/app', <ILifeCyclesAssertions>{
+              configureRouter: (viewModel, config: RouterConfiguration, router: Router) => {
+                return config.mapUnknownRoutes((navInstruction: NavigationInstruction): RouteConfig => {
+                  expect(lifecycleCount).toBe(0);
+                  lifecycleCount += 100;
+                  return { viewModel: () => class Home { static $view = '<template><div class="home-route-inline"></div></template>'; } };
+                });
+              },
+              created: viewModel => {
+                verifyElementsCount(viewModel.view.firstChild.parentNode, [
+                  ['.app', 1],
+                  ['.home-route-inline', 1]
+                ]);
+                lifecycleCount++;
+              },
+              attached: viewModel => {
+                verifyElementsCount(viewModel.element, [
+                  ['.app', 1],
+                  ['.home-route-inline', 1]
+                ]);
+                lifecycleCount++;
+              }
+            }]
+          ],
+          function onBootstrapped(aurelia, viewModel) {
+            expect(viewModel.router.currentInstruction.fragment).toBe('/');
+          }
+        ));
+        expect(location.hash).toBe('');
+        expect(lifecycleCount).toBe(102);
+      });
+    });
+
+    // This test feels a bit off for aurelia router
+    // as it requires the <router-view/> host to have a default view port
+    // otherwise route won't be able to load in
+    it('> mapUnknownRoutes("some-module-id")', async () => {
+      let lifecycleCount = 0;
+      expect(location.hash).toBe('');
+      aurelia = await bootstrapAppWithTimeout(createEntryConfigure(
+        'pages/app/app',
+        h('div'),
+        [
+          [IRouteConfigs, <RouteConfig[]>[
+            // TODO: fix issues when the route fails to redirect when there is no "name" property
+            { route: 'landing', viewPorts: { left: { moduleId: 'pages/home/home' }, right: { moduleId: 'pages/home/home' } } }
+          ]],
+          ['pages/app/app', <ILifeCyclesAssertions>{
+            configureRouter: (viewModel, config: RouterConfiguration, router: Router) => {
+              lifecycleCount += 100;
+              return config.mapUnknownRoutes('pages/home/home');
+            },
+            created: viewModel => {
+              verifyElementsCount(viewModel.view.firstChild.parentNode, [
+                ['.app', 1],
+                ['.home-route', 1]
+              ]);
+              lifecycleCount++;
+            },
+            attached: viewModel => {
+              verifyElementsCount(viewModel.element, [
+                ['.app', 1],
+                ['.home-route', 1]
+              ]);
+              lifecycleCount++;
+            }
+          }]
+        ],
+        function onBootstrapped(aurelia, viewModel) {
+          expect(viewModel.router.currentInstruction.fragment).toBe('/');
+        }
+      ));
+      expect(location.hash).toBe('');
+      expect(lifecycleCount).toBe(102);
     });
   });
 });

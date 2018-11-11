@@ -42,15 +42,15 @@ export function verifyElementsCount(element: Element, selectorOrSelectorCountPai
 export const IRouteConfigs = 'IRouteConfig';
 export const ILifeCyclesCallbacks = 'ILifeCycles';
 export interface ILifeCyclesAssertions<T = any> {
-  construct?(viewModel: T): void;
-  canActivate?(viewModel: T): void;
-  activate?(viewModel: T): void;
-  configureRouter?(viewModel: T): void;
-  created?(viewModel: T): void;
+  construct?(viewModel: T): any;
+  canActivate?(viewModel: T): any;
+  activate?(viewModel: T): any;
+  configureRouter?(viewModel: T): any;
+  created?(viewModel: T): any;
   bind?(viewModel: T): void;
   attached?(viewModel: T): void;
-  canDeactivate?(viewModel: T): void;
-  deactivate?(viewModel: T): void;
+  canDeactivate?(viewModel: T): any;
+  deactivate?(viewModel: T): any;
   detached?(viewModel: T): void;
   unbind?(viewModel: T): void;
 }
@@ -135,9 +135,9 @@ let bootstrapCount = 0;
  */
 export function bootstrapAppWithTimeout(
   configure: (aurelia: Aurelia) => Promise<any>,
-  onBootstrapTimeout: () => any = () => { },
+  onBootstrapTimeout: (reason?: any) => any = () => { },
   timeoutPeriod = 3000
-): Promise<any> {
+): Promise<Aurelia> {
   let timeoutED = false;
   let $aurelia: Aurelia;
   bootstrapCount++;
@@ -158,7 +158,7 @@ export function bootstrapAppWithTimeout(
           console.log(`Resolved: [${bootstrapCount}] -----BOOTSTRAPPING ___ TIMEOUT'D-----`);
           cleanUp($aurelia);
         }
-        return result;
+        return $aurelia;
       },
       (ex) => {
         if (timeoutED) {

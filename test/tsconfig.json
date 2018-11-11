@@ -6,6 +6,12 @@
     "sourceMap": true,
     "baseUrl": "",
     "suppressImplicitAnyIndexErrors": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "lib": [
+      "es2017",
+      "dom",
+      "dom.iterable",
+      "es2017.object"
+    ]
   }
 }

@@ -157,8 +157,14 @@ function getWebpackConfigs(karmaConfig: IKarmaConfig): webpack.Configuration {
       ],
       alias: {
         'aurelia-templating-router': path.resolve(BASE_DIR, 'src', 'index'),
+        /**
+         * Having this project at the same level with aurelia, and uncomment the following line
+         * will enable debugging / testing against aurelia-router source for better cross repo development
+         */
+        // 'aurelia-router': path.resolve(BASE_DIR, '../aurelia-router/src/index'),
         'routes': path.resolve(BASE_DIR, 'test/integration/routes'),
         'pages': path.resolve(BASE_DIR, 'test/app/pages'),
+        'bug619': path.resolve(BASE_DIR, 'test/app/bug619'),
         'resources': path.resolve(BASE_DIR, 'test/app/resources')
       }
     },
@@ -172,10 +178,10 @@ function getWebpackConfigs(karmaConfig: IKarmaConfig): webpack.Configuration {
           loader: 'ts-loader',
           exclude: /node_modules/,
           options: {
-            configFile: path.resolve(BASE_DIR, 'test/tsconfig.test.json'),
+            configFile: path.resolve(BASE_DIR, 'test/tsconfig.json'),
             compilerOptions: {
               ...require('../../tsconfig.json').compilerOptions,
-              ...require('../tsconfig.test.json').compilerOptions
+              ...require('../tsconfig.json').compilerOptions
             }
           }
         },

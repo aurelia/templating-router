@@ -5,6 +5,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": false,
     "moduleResolution": "node",
+    "baseUrl": "src",
     "importHelpers": true,
     "stripInternal": true,
     "preserveConstEnums": true,
@@ -19,7 +20,12 @@
       "es2015",
       "dom",
       "es2016.array.include"
-    ]
+    ],
+    "paths": {
+      "aurelia-router": [
+        "../../aurelia-router/src/index.ts"
+      ]
+    }
   },
   "include": [
     "src",

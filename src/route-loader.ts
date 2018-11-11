@@ -1,7 +1,7 @@
 import { Origin } from 'aurelia-metadata';
 import { relativeToFile } from 'aurelia-path';
 import { NavigationInstruction, RouteConfig, RouteLoader, Router, ViewPortComponent } from 'aurelia-router';
-import { CompositionEngine, customElement, inlineView, useView } from 'aurelia-templating';
+import { CompositionEngine, customElement, inlineView, useView, CompositionContext } from 'aurelia-templating';
 import { RouterViewLocator } from './router-view';
 import { Container } from 'aurelia-framework';
 
@@ -90,7 +90,7 @@ export class TemplatingRouteLoader extends RouteLoader {
   loadRoute(router: Router, config: RouteConfig, _navInstruction: NavigationInstruction): Promise<ViewPortComponent> {
     return this
       .resolveViewModel(router, config)
-      .then(viewModel => this.compositionEngine.ensureViewModel(<ViewPortComponent>{
+      .then(viewModel => this.compositionEngine.ensureViewModel(<CompositionContext>{
         viewModel: viewModel,
         childContainer: this.createChildContainer(router),
         view: config.view || config.viewStrategy,

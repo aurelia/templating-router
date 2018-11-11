@@ -1,5 +1,5 @@
 import { Container } from 'aurelia-dependency-injection';
-import { Router } from 'aurelia-router';
+import { Router, ViewPortInstruction } from 'aurelia-router';
 import { CompositionContext, Controller } from 'aurelia-templating';
 
 export interface IFrameworkConfiguration {
@@ -13,7 +13,7 @@ declare module 'aurelia-dependency-injection' {
 
   interface Container {
     viewModel?: any;
-    getChildRouter?(): Router;
+    getChildRouter(): Router;
   }
 }
 
@@ -48,18 +48,11 @@ declare module 'aurelia-templating' {
   }
 }
 
-/**@internal */
-declare module 'aurelia-router' {
-  interface ViewPortComponent extends CompositionContext {
-    // container?: Container;
-  }
-
-  interface ViewPortInstruction {
-    controller: Controller;
-    layoutInstruction: {
-      viewModel: any;
-      model: any;
-      view: any;
-    };
-  }
+export interface IRouterViewViewPortInstruction extends ViewPortInstruction {
+  controller?: Controller;
+  layoutInstruction?: {
+    viewModel: any;
+    model: any;
+    view: any;
+  };
 }

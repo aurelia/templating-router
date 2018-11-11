@@ -33,57 +33,45 @@ export interface IFrameworkConfiguration {
 }
 
 /**@internal */
-declare module 'aurelia-dependency-injection' {
+// declare module 'aurelia-templating' {
+//   interface CompositionContext {
+//     router?: Router;
+//   }
 
-  interface Container {
-    viewModel?: any;
-    getChildRouter?(): Router;
-  }
-}
+//   interface View {
+//     // not correct but works fine enough
+//     children: View[];
 
-/**@internal */
-declare module 'aurelia-templating' {
-  interface CompositionContext {
-    router?: Router;
-  }
+//     slots: Record<string, any>;
+//   }
 
-  interface View {
-    // not correct but works fine enough
-    children: View[];
+//   interface CompositionTransaction {
+//     initialComposition?: boolean;
+//   }
 
-    slots: Record<string, any>;
-  }
+//   interface ResourceDescription {
+//     value: Function;
+//     metadata: HtmlBehaviorResource;
+//   }
 
-  interface CompositionTransaction {
-    initialComposition?: boolean;
-  }
+//   interface Controller {
+//     slots: Record<string, any>;
+//   }
 
-  interface ResourceDescription {
-    value: Function;
-    metadata: HtmlBehaviorResource;
-  }
+//   interface ViewStrategy {
+//     makeRelativeTo(moduleId: string): void;
+//   }
+// }
 
-  interface Controller {
-    slots: Record<string, any>;
-  }
+// /**@internal */
+// declare module 'aurelia-router' {
 
-  interface ViewStrategy {
-    makeRelativeTo(moduleId: string): void;
-  }
-}
-
-/**@internal */
-declare module 'aurelia-router' {
-  interface ViewPortComponent extends CompositionContext {
-    // container?: Container;
-  }
-
-  interface ViewPortInstruction {
-    controller: Controller;
-    layoutInstruction: {
-      viewModel: any;
-      model: any;
-      view: any;
-    };
-  }
-}
+//   interface ViewPortInstruction {
+//     controller: Controller;
+//     layoutInstruction: {
+//       viewModel: any;
+//       model: any;
+//       view: any;
+//     };
+//   }
+// }

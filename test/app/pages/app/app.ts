@@ -1,4 +1,4 @@
-import { RouterConfiguration, Router, RouteConfig } from 'aurelia-router';
+import { RouterConfiguration, Router, RouteConfig, NavigationInstruction } from 'aurelia-router';
 import { inject, CompositionTransaction, View } from 'aurelia-framework';
 import { IRouteConfigs, ILifeCyclesAssertions, ILifeCyclesCallbacks, invokeAssertions } from '../../utilities';
 
@@ -20,22 +20,22 @@ export class App {
     invokeAssertions(this, 'construct');
   }
 
-  configureRouter(config: RouterConfiguration, router: Router) {
+  configureRouter(config: RouterConfiguration, router: Router, navInstruction: NavigationInstruction) {
     config.map(this.routeConfigs);
     this.router = router;
-    invokeAssertions(this, 'configureRouter');
+    return invokeAssertions(this, 'configureRouter', config, router, navInstruction);
   }
 
   created(_: any, view: View) {
     this.view = view;
-    invokeAssertions(this, 'created');
+    return invokeAssertions(this, 'created');
   }
 
   bind() {
-    invokeAssertions(this, 'bind');
+    return invokeAssertions(this, 'bind');
   }
 
   attached() {
-    invokeAssertions(this, 'attached');
+    return invokeAssertions(this, 'attached');
   }
 }

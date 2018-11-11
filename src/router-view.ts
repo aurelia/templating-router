@@ -26,6 +26,7 @@ import {
 } from 'aurelia-router';
 import { Origin } from 'aurelia-metadata';
 import { DOM } from 'aurelia-pal';
+import { IRouterViewViewPortInstruction } from './interfaces';
 
 class EmptyViewModel {
 
@@ -170,7 +171,7 @@ export class RouterView implements ViewPort {
   /**
    * Implementation of `aurelia-router` ViewPort interface, responsible for templating related part in routing Pipeline
    */
-  process(viewPortInstruction: ViewPortInstruction, waitToSwap?: boolean): Promise<void> {
+  process(viewPortInstruction: IRouterViewViewPortInstruction, waitToSwap?: boolean): Promise<void> {
     const component = viewPortInstruction.component;
     const childContainer = component.childContainer;
     const viewModel = component.viewModel;
@@ -225,7 +226,7 @@ export class RouterView implements ViewPort {
       });
   }
 
-  swap(viewPortInstruction: ViewPortInstruction) {
+  swap(viewPortInstruction: IRouterViewViewPortInstruction) {
     const layoutInstruction = viewPortInstruction.layoutInstruction;
     const previousView = this.view;
 

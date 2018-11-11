@@ -1,0 +1,10 @@
+<template>
+  <nav class="navbar">
+    <a repeat.for="nav of router.navigation"
+       href.bind="nav.href"
+       class="nav-link ${nav.isActive ? 'active' : ''}">
+      ${nav.title}
+    </a>
+  </nav>
+  <router-view></router-view>
+</template>

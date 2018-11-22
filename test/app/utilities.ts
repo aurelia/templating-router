@@ -17,14 +17,14 @@ export interface ITestRoutingComponent extends ConfiguresRouter {
 /**
  * Verify at number of element matching the selector inside component tester element matches count (default: 1)
  */
-export function verifyElementsCount(element: Element, selectorCountPair: [string, number][]): boolean;
+export function verifyElementsCount(element: Element, selectorCountPair: [string, number][], message?: string): boolean;
 export function verifyElementsCount(element: Element, selector: string, count?: number): boolean;
-export function verifyElementsCount(element: Element, selectorOrSelectorCountPair: string | [string, number][], count?: number): boolean {
+export function verifyElementsCount(element: Element, selectorOrSelectorCountPair: string | [string, number][], countOrMessage?: number | string): boolean {
   if (typeof selectorOrSelectorCountPair === 'string') {
     const elCount = element.querySelectorAll(selectorOrSelectorCountPair).length;
     return expect(elCount).toBe(
-      count,
-      `Expected ${count} elements with selector "${selectorOrSelectorCountPair}". Actual: ${elCount}.`
+      countOrMessage as number,
+      `Expected ${countOrMessage as number} elements with selector "${selectorOrSelectorCountPair}". Actual: ${elCount}.`
     );
   } else {
     return selectorOrSelectorCountPair
@@ -32,7 +32,7 @@ export function verifyElementsCount(element: Element, selectorOrSelectorCountPai
         const elCount = element.querySelectorAll(selector).length;
         return expect(elCount).toBe(
           count,
-          `Expected ${count} elements with selector "${selector}". Actual: ${elCount}.`
+          `Expected ${count} elements with selector "${selector}". Actual: ${elCount}.${countOrMessage ? `Failure message:\n${countOrMessage}` : ''}`
         );
       })
       .every(Boolean);
@@ -168,4 +168,8 @@ export function bootstrapAppWithTimeout(
         throw ex;
       }
     );
+}
+
+export function getNormalizedHash() {
+  return location.hash.replace(/^#?\/?/, '#/');
 }

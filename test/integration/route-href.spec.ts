@@ -128,8 +128,8 @@ describe('[route-href]', () => {
       it('with plain attribute', async () => {
         // [#/] and [#/a] are both valid
         // Probably route recognizer prefers to be more precise
-        // otherwise, ROUTE should have been "#/"
-        const ROUTE = '#/a';
+        // otherwise, ROUTE should have been both "#/a"
+        const ROUTE = '#/';
         const ROUTE_OF_CHOICE = 'route-a';
         component = createComponent(
           `

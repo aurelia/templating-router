@@ -1,8 +1,17 @@
 import './setup';
-import { wait, h, createEntryConfigure, IRouteConfigs, verifyElementsCount, bootstrapAppWithTimeout, ILifeCyclesAssertions, cleanUp } from './utilities';
-import { bootstrap } from 'aurelia-bootstrapper';
+import {
+  wait,
+  h,
+  createEntryConfigure,
+  IRouteConfigs,
+  verifyElementsCount,
+  bootstrapAppWithTimeout,
+  ILifeCyclesAssertions,
+  cleanUp,
+  getNormalizedHash
+} from './utilities';
 import { addDebugLogging, removeDebugLogging } from './utilities';
-import { NavigationInstruction, RouterConfiguration, RouteConfig, UnknownRouteConfigSpecifier, Router } from 'aurelia-router';
+import { NavigationInstruction, RouterConfiguration, RouteConfig, UnknownRouteConfigSpecifier, Router, RouteCommand } from 'aurelia-router';
 import { Aurelia } from 'aurelia-framework';
 
 describe('Multiple Viewports -- INTEGRATION', () => {
@@ -154,8 +163,13 @@ describe('Multiple Viewports -- INTEGRATION', () => {
           h('div'),
           [
             [IRouteConfigs, <RouteConfig[]>[
-              // TODO: fix issues when the route fails to redirect when there is no "name" property
-              { route: 'landing', name: 'landing-route', viewPorts: { left: { moduleId: 'pages/home/home' }, right: { moduleId: 'pages/home/home' } } }
+              {
+                route: 'landing',
+                viewPorts: {
+                  left: { moduleId: 'pages/home/home' },
+                  right: { moduleId: 'pages/home/home' }
+                }
+              }
             ]],
             ['pages/complex-app/app', <ILifeCyclesAssertions>{
               configureRouter: (viewModel, config: RouterConfiguration, router: Router) => {
@@ -185,7 +199,7 @@ describe('Multiple Viewports -- INTEGRATION', () => {
             expect(viewModel.router.currentInstruction.fragment).toBe('/landing');
           }
         ));
-        expect(location.hash).toBe('#/landing');
+        expect(getNormalizedHash()).toBe('#/landing');
         expect(lifecycleCount).toBe(102);
       });
 
@@ -245,7 +259,7 @@ describe('Multiple Viewports -- INTEGRATION', () => {
             ]],
             ['pages/app/app', <ILifeCyclesAssertions>{
               configureRouter: (viewModel, config: RouterConfiguration, router: Router) => {
-                return config.mapUnknownRoutes((navInstruction: NavigationInstruction): RouteConfig => {
+                return config.mapUnknownRoutes((navInstruction: NavigationInstruction): RouteCommand => {
                   expect(lifecycleCount).toBe(0);
                   lifecycleCount += 100;
                   return { viewModel: () => class Home { static $view = '<template><div class="home-route-inline"></div></template>'; } };
@@ -317,6 +331,49 @@ describe('Multiple Viewports -- INTEGRATION', () => {
       ));
       expect(location.hash).toBe('');
       expect(lifecycleCount).toBe(102);
+    });
+  });
+
+  describe('[swap-order]', function _x_MultipleViewPorts__With_SwapOrder__Tests() {
+
+    it('bootstrap with [swap-order]', async () => {
+      let lifecycleCount = 0;
+      location.hash = '';
+      aurelia = await bootstrapAppWithTimeout(createEntryConfigure(
+        'pages/swap-order-app/app',
+        h('div'),
+        [
+          [IRouteConfigs, [
+            {
+              route: '',
+              viewPorts: {
+                left: { moduleId: 'pages/home/home' },
+                right: { moduleId: 'pages/home/home' }
+              }
+            }
+          ]],
+          ['pages/swap-order-app/app', {
+            created: viewModel => {
+              verifyElementsCount(viewModel.view.firstChild.parentNode, [
+                ['.swap-order-app', 1],
+                ['.home-route', 2]
+              ], 'It should have right elements in "created"');
+              lifecycleCount++;
+            },
+            attached: viewModel => {
+              verifyElementsCount(viewModel.element, [
+                ['.swap-order-app', 1],
+                ['.home-route', 2]
+              ], 'It should have right elements in "attached"');
+              lifecycleCount++;
+            }
+          }]
+        ],
+        function onBootstrapped(aurelia, viewModel) {
+          expect(viewModel.router.currentInstruction.fragment).toBe('/');
+        }
+      ));
+      expect(lifecycleCount).toBe(2);
     });
   });
 });

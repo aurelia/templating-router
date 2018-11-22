@@ -1,6 +1,6 @@
 import './setup';
 import { bootstrap } from 'aurelia-bootstrapper';
-import { createEntryConfigure, h, removeDebugLogging, addDebugLogging, bootstrapAppWithTimeout, wait, cleanUp } from './utilities';
+import { createEntryConfigure, h, removeDebugLogging, addDebugLogging, bootstrapAppWithTimeout, wait, cleanUp, getNormalizedHash } from './utilities';
 import { PLATFORM } from 'aurelia-pal';
 import { noop } from '../../../aurelia-router/src/constants';
 
@@ -33,8 +33,8 @@ describe('REGRESSION FIXES', () => {
     await wait();
     console.log(document.querySelectorAll('a').length);
     document.getElementById('root-a-2').click();
-    await wait(50);
-    expect(location.hash).toBe('#/arrivals/products');
+    await wait(250);
+    expect(getNormalizedHash()).toBe('#/arrivals/products');
 
     cleanUp($aurelia);
   });

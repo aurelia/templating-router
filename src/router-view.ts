@@ -52,8 +52,8 @@ export class RouterView implements ViewPort {
 
   /**
    * Swapping order when going to a new route. By default, supports 3 value: before, after, with
-   * - Before = new in -> old out
-   * - After = old out -> new in
+   * - before = new in -> old out
+   * - after = old out -> new in
    * - with = new in + old out
    *
    * These values are defined by swapStrategies export in aurelia-templating/ aurelia-framework

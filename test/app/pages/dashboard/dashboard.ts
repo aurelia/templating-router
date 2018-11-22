@@ -19,7 +19,7 @@ export class Dashboard {
       { route: 'home', name: 'home-route', moduleId: 'pages/home/home' },
       { route: 'contacts', name: 'contacts-route', moduleId: 'pages/contacts/contacts' }
     ]);
-    config.mapUnknownRoutes({ route: '*', redirect: 'home-route' });
+    config.mapUnknownRoutes({ redirect: 'home-route' });
     this.router = router;
     invokeAssertions(this, 'configureRouter');
   }

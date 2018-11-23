@@ -2,57 +2,8 @@ import * as karma from 'karma';
 import * as path from 'path';
 import * as webpack from 'webpack';
 
-const BASE_DIR = process.cwd();
-
-export interface IKarmaConfig extends karma.Config, IKarmaConfigOptions {
-  transpileOnly?: boolean;
-  noInfo?: boolean;
-  coverage?: boolean;
-  package?: string;
-  reporter?: string;
-  set(config: any): void;
-}
-
-export interface IKarmaConfigOptions extends karma.ConfigOptions {
-  webpack: webpack.Configuration;
-  coverageIstanbulReporter?: any;
-  junitReporter?: any;
-  mochaReporter: {
-    ignoreSkipped: boolean;
-  };
-  customLaunchers: any;
-  webpackMiddleware?: any;
-  webpackServer?: {
-    noInfo: boolean
-  };
-}
-
-const commonChromeFlags: string[] = [
-  '--no-default-browser-check',
-  '--no-first-run',
-  '--no-managed-user-acknowledgment-check',
-  '--no-pings',
-  '--no-sandbox',
-  '--no-wifi',
-  '--no-zygote',
-  '--disable-background-networking',
-  '--disable-background-timer-throttling',
-  '--disable-backing-store-limit',
-  '--disable-boot-animation',
-  '--disable-breakpad',
-  '--disable-cache',
-  '--disable-clear-browsing-data-counters',
-  '--disable-cloud-import',
-  '--disable-component-extensions-with-background-pages',
-  '--disable-contextual-search',
-  '--disable-default-apps',
-  '--disable-extensions',
-  '--disable-infobars',
-  '--disable-translate',
-  '--disable-sync'
-];
-
 export default function(config: IKarmaConfig) {
+  const BASE_DIR = process.cwd();
   const { AureliaPlugin } = require('aurelia-webpack-plugin');
   const browsers = config.browsers || [];
   const options: IKarmaConfigOptions = {
@@ -115,24 +66,6 @@ export default function(config: IKarmaConfig) {
     browserDisconnectTimeout: 3500,
     browserNoActivityTimeout: 20000,
     reporters: ['mocha'],
-    // webpackMiddleware: {
-    //   stats: {
-    //     colors: true,
-    //     hash: false,
-    //     version: false,
-    //     timings: false,
-    //     assets: false,
-    //     chunks: false,
-    //     modules: false,
-    //     reasons: false,
-    //     children: false,
-    //     source: false,
-    //     errors: true,
-    //     errorDetails: true,
-    //     warnings: false,
-    //     publicPath: false
-    //   }
-    // },
     webpackServer: { noInfo: true },
     browsers: Array.isArray(browsers) && browsers.length > 0 ? browsers : ['Chrome'],
     customLaunchers: {
@@ -176,3 +109,51 @@ export default function(config: IKarmaConfig) {
   }
   config.set(options);
 }
+
+export interface IKarmaConfig extends karma.Config, IKarmaConfigOptions {
+  transpileOnly?: boolean;
+  noInfo?: boolean;
+  coverage?: boolean;
+  package?: string;
+  reporter?: string;
+  set(config: any): void;
+}
+
+export interface IKarmaConfigOptions extends karma.ConfigOptions {
+  webpack: webpack.Configuration;
+  coverageIstanbulReporter?: any;
+  junitReporter?: any;
+  mochaReporter: {
+    ignoreSkipped: boolean;
+  };
+  customLaunchers: any;
+  webpackMiddleware?: any;
+  webpackServer?: {
+    noInfo: boolean
+  };
+}
+
+const commonChromeFlags: string[] = [
+  '--no-default-browser-check',
+  '--no-first-run',
+  '--no-managed-user-acknowledgment-check',
+  '--no-pings',
+  '--no-sandbox',
+  '--no-wifi',
+  '--no-zygote',
+  '--disable-background-networking',
+  '--disable-background-timer-throttling',
+  '--disable-backing-store-limit',
+  '--disable-boot-animation',
+  '--disable-breakpad',
+  '--disable-cache',
+  '--disable-clear-browsing-data-counters',
+  '--disable-cloud-import',
+  '--disable-component-extensions-with-background-pages',
+  '--disable-contextual-search',
+  '--disable-default-apps',
+  '--disable-extensions',
+  '--disable-infobars',
+  '--disable-translate',
+  '--disable-sync'
+];

@@ -109,7 +109,40 @@ describe('Multiple Viewports -- INTEGRATION', () => {
       lifecycleCount = 20;
     }, 1000);
     expect(lifecycleCount).toBe(20);
-    cleanUp(aurelia);
+  });
+
+  describe('> navigation', () => {
+    it('navigates from multiple viewport view to another', async () => {
+      let lifecycleCount = 0;
+      aurelia = await bootstrapAppWithTimeout(createEntryConfigure(
+        'pages/navigation-app/app',
+        h('div'),
+        [
+          [IRouteConfigs, [
+            { route: '', moduleId: 'pages/home/home' }
+          ]],
+          ['pages/navigation-app/app', {
+            created: viewModel => {
+              verifyElementsCount(viewModel.view.firstChild.parentNode, [
+                ['.navigation-app', 1],
+                ['.home-route', 1]
+              ]);
+              lifecycleCount++;
+            },
+            attached: viewModel => {
+              verifyElementsCount(viewModel.element, [
+                ['.navigation-app', 1],
+                ['.home-route', 1]
+              ]);
+              lifecycleCount++;
+            }
+          }]
+        ]
+      ), function onBootstrapTimeout() {
+        lifecycleCount = 20;
+      }, 1000);
+      expect(lifecycleCount).toBe(20);
+    });
   });
 
   describe('> mapUnknownRoutes()', () => {

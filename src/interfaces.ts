@@ -2,6 +2,8 @@ import { Container } from 'aurelia-dependency-injection';
 import { Router, ViewPortInstruction } from 'aurelia-router';
 import { CompositionContext, Controller } from 'aurelia-templating';
 
+export type Constructable<T = any> = new (...args: any[]) => T;
+
 export interface IFrameworkConfiguration {
   container: Container;
   singleton(...args: any[]): this;

@@ -26,7 +26,7 @@ import {
 } from 'aurelia-router';
 import { Origin } from 'aurelia-metadata';
 import { DOM } from 'aurelia-pal';
-import { IRouterViewViewPortInstruction } from './interfaces';
+import { IRouterViewViewPortInstruction, Constructable } from './interfaces';
 
 class EmptyViewModel {
 
@@ -61,10 +61,19 @@ export class RouterView implements ViewPort {
    */
   swapOrder: string;
 
+  /**
+   * Layout view used for this router-view layout, if no layout-viewmodel specified
+   */
   layoutView: any;
 
-  layoutViewModel: string | Function | object;
+  /**
+   * Layout view model used as binding context for this router-view layout
+   */
+  layoutViewModel: string | Constructable | object;
 
+  /**
+   * Layout model used to activate layout view model, if specified with `layoutViewModel`
+   */
   layoutModel: any;
 
   /**
@@ -258,6 +267,7 @@ export class RouterView implements ViewPort {
     if (layoutInstruction) {
       if (!layoutInstruction.viewModel) {
         // createController chokes if there's no viewmodel, so create a dummy one
+        // but avoid using an POJO as it creates unwanted metadata in Object constructor
         layoutInstruction.viewModel = new EmptyViewModel();
       }
 

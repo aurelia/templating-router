@@ -1,11 +1,13 @@
-import {TemplatingRouteLoader} from 'src/route-loader';
-import {bootstrap} from 'aurelia-bootstrapper';
-import {RouteLoader, AppRouter, Router} from 'aurelia-router';
-import {StageComponent} from 'aurelia-testing';
+import './setup';
+import { TemplatingRouteLoader } from '../src/route-loader';
+import { Aurelia } from 'aurelia-framework';
+import { PLATFORM } from 'aurelia-pal';
+import { bootstrap } from 'aurelia-bootstrapper';
+import { RouteLoader, AppRouter, Router, RouterConfiguration } from 'aurelia-router';
+import { StageComponent, ComponentTester } from 'aurelia-testing';
 
 describe('route-href', () => {
-  /**@type {StageComponent} */
-  let component;
+  let component: ComponentTester;
 
   afterEach(done => {
     component.dispose();
@@ -14,7 +16,7 @@ describe('route-href', () => {
 
   it('should use route as primary property', done => {
     component = StageComponent
-      .withResources('src/route-href')
+      .withResources(PLATFORM.moduleName('src/route-href'))
       .inView('<a route-href.bind="name"></a>')
       .boundTo({ name: 'b' });
 
@@ -28,8 +30,8 @@ describe('route-href', () => {
   });
 });
 
-function configure(component) {
-  component.bootstrap(aurelia => {
+function configure(component: ComponentTester) {
+  component.bootstrap((aurelia: Aurelia) => {
     aurelia.use
       .defaultBindingLanguage()
       .defaultResources()
@@ -40,12 +42,13 @@ function configure(component) {
       .singleton(Router, AppRouter);
 
     aurelia.use.container.viewModel = {
-      configureRouter: (config, router) => {
+      configureRouter: (config: RouterConfiguration, router: Router) => {
         config.map([
           { route: 'a', name: 'a' },
           { route: 'b', name: 'b' }
         ]);
       }
     };
+    return aurelia.use;
   });
 }

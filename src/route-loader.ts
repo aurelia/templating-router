@@ -35,10 +35,13 @@ export class TemplatingRouteLoader extends RouteLoader {
         let moduleId = config.moduleId;
         if (moduleId === null) {
           viewModel = EmptyClass;
-        } else if (/\.html/i.test(moduleId)) {
-          viewModel = createDynamicClass(moduleId);
         } else {
-          viewModel = relativeToFile(moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
+          moduleId = relativeToFile(moduleId, Origin.get(router.container.viewModel.constructor).moduleId);
+          if (/\.html/i.test(moduleId)) {
+            viewModel = createDynamicClass(moduleId);
+          } else {
+            viewModel = moduleId;
+          }
         }
         resolve(viewModel);
       }

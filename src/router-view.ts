@@ -175,8 +175,9 @@ export class RouterView implements ViewPort {
 
     // Each <router-view/> process its instruction as a composition transaction
     // there are differences between intial composition and subsequent compositions
+    // also there are differences between root composition and child <router-view/> composition
     // mark the first composition transaction with a property initialComposition to distinguish it
-    // when the root <router-view/> gets new instruction
+    // when the root <router-view/> gets new instruction for the first time
     if (!('initialComposition' in compositionTransaction)) {
       compositionTransaction.initialComposition = true;
       this.compositionTransactionNotifier = compositionTransaction.enlist();
@@ -201,7 +202,7 @@ export class RouterView implements ViewPort {
     const component = viewPortInstruction.component;
     const childContainer = component.childContainer;
     const viewModel = component.viewModel;
-    const viewModelResource: ResourceDescription = component.viewModelResource as unknown as ResourceDescription;
+    const viewModelResource = component.viewModelResource as unknown as ResourceDescription;
     const metadata = viewModelResource.metadata;
     const config = component.router.currentInstruction.config;
     const viewPortConfig = config.viewPorts ? (config.viewPorts[viewPortInstruction.name] || {}) : {};
@@ -309,15 +310,21 @@ export class RouterView implements ViewPort {
     if (layoutInstruction) {
       if (!layoutInstruction.viewModel) {
         // createController chokes if there's no viewmodel, so create a dummy one
-        // but avoid using an POJO as it creates unwanted metadata in Object constructor
+        // but avoid using a POJO as it creates unwanted metadata in Object constructor
         layoutInstruction.viewModel = new EmptyLayoutViewModel();
       }
 
+      // using composition engine to create compose layout
       return this.compositionEngine
+        // first create controller from layoutInstruction
+        // and treat it as CompositionContext
+        // then emulate slot projection with ViewPortComponent view
         .createController(layoutInstruction as CompositionContext)
         .then((layoutController: Controller) => {
           const layoutView = layoutController.view;
           ShadowDOM.distributeView(viewPortController.view, layoutController.slots || layoutView.slots);
+          // when there is a layout
+          // view hierarchy is: <router-view/> owner view -> layout view -> ViewPortComponent view
           layoutController.automate(createOverrideContext(layoutInstruction.viewModel), this.owningView);
           layoutView.children.push(viewPortController.view);
           return layoutView || layoutController;
@@ -330,6 +337,8 @@ export class RouterView implements ViewPort {
 
     // if there is no layout, then get ViewPortComponent view ready as view property
     // and process controller/swapping
+    // when there is no layout
+    // view hierarchy is: <router-view/> owner view -> ViewPortComponent view
     this.view = viewPortController.view;
 
     return ready(this.owningView);

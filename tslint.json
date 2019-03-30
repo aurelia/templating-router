@@ -98,6 +98,6 @@
       "check-type"
     ],
     "interface-name": false,
-    "prefer-const": false
+    "prefer-const": true
   }
 }

@@ -13,17 +13,10 @@ describe('[route-href]', () => {
   let view: string;
   let viewModelData: Record<string, any>;
 
-  beforeAll(() => {
-    addDebugLogging();
-  });
-
-  afterAll(() => {
-    removeDebugLogging();
-  });
-
   beforeEach(() => {
     view = '';
     viewModelData = {};
+    addDebugLogging();
   });
 
   afterEach(() => {
@@ -35,6 +28,7 @@ describe('[route-href]', () => {
       component = undefined;
     }
     location.hash = '';
+    removeDebugLogging();
   });
 
   describe('Basic feature without <router-view/>', function _1_base_feature__Tests() {
@@ -196,7 +190,7 @@ describe('[route-href]', () => {
     $viewModel: unknown = DefaultAppViewModel,
     $viewModelData: Record<string, any> = viewModelData || {}
   ) {
-    let $comp = StageComponent
+    const $comp = StageComponent
       .withResources()
       .inView($view);
 

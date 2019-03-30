@@ -281,7 +281,7 @@ function wait() {
 }
 
 function withDefaultViewport(routeConfig?: Partial<RouteConfig>) {
-  let component = StageComponent
+  const component = StageComponent
       .withResources()
       .inView('<router-view></router-view>');
 
@@ -299,7 +299,7 @@ function withDefaultViewport(routeConfig?: Partial<RouteConfig>) {
 }
 
 function withNamedViewport(routeConfig?: Partial<RouteConfig>) {
-  let component = StageComponent
+  const component = StageComponent
       .withResources()
       .inView('<router-view name="viewport1"></router-view>');
 

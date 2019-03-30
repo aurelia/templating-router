@@ -112,8 +112,7 @@ describe('RouteLoader -- UNIT', () => {
     it('creates real', () => {
       const container = new Container();
       routeLoader = container.get(TemplatingRouteLoader);
-      let router: any;
-      router = new Router(container, new History() as any);
+      const router = new Router(container, new History() as any);
       const childContainer = routeLoader.createChildContainer(router);
       const childRouter = childContainer.getChildRouter!();
       childRouter.parent = null;

@@ -93,7 +93,7 @@ export class RouteHref {
         }
         const element = this.element as Element & { au: any };
 
-        let href = this.router.generate(this.route, this.params);
+        const href = this.router.generate(this.route, this.params);
 
         if (element.au.controller) {
           element.au.controller.viewModel[this.attribute] = href;

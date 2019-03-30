@@ -21,7 +21,6 @@
     "start": "npm run dev -- --format es2015",
     "dev": "node build/scripts/dev",
     "build": "node build/scripts/build",
-    "postbuild": "npm run build:dts",
     "build:dts": "dts-bundle-generator -o dist/aurelia-templating-router.d.ts src/aurelia-templating-router.ts",
     "test": "karma start --single-run",
     "test:watch": "karma start",

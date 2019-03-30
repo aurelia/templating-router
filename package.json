@@ -5,7 +5,9 @@
   "keywords": [
     "aurelia",
     "templating",
-    "html"
+    "html",
+    "router",
+    "routing"
   ],
   "homepage": "http://aurelia.io",
   "bugs": {
@@ -19,12 +21,17 @@
     "start": "npm run dev -- --format es2015",
     "dev": "node build/scripts/dev",
     "build": "node build/scripts/build",
+    "postbuild": "npm run build:dts",
     "build:dts": "dts-bundle-generator -o dist/aurelia-templating-router.d.ts src/aurelia-templating-router.ts",
     "test": "karma start --single-run",
     "test:watch": "karma start",
     "test:debugger": "karma start --browsers ChromeDebugging",
     "lint": "tslint -c tslint.json '{src,test}/**/*.ts' --force",
-    "cut-release": ""
+    "predoc": "rimraf doc/api.json && rimraf dist/doc-temp && tsc --project tsconfig.build.json --outFile dist/doc-temp/aurelia-validation.js && node doc/shape-defs && copyfiles tsconfig.json dist/doc-temp",
+    "doc": "typedoc --json doc/api.json --excludeExternals --includeDeclarations --mode modules --target ES6 --name aurelia-validation-docs dist/doc-temp/",
+    "postdoc": "node doc/shape-doc && rimraf dist/doc-temp",
+    "precut-release": "npm run test",
+    "cut-release": "standard-version -t \"\" -i doc/CHANGELOG.md && npm run build && npm run doc"
   },
   "typings": "dist/aurelia-templating-router.d.ts",
   "repository": {
@@ -91,9 +98,11 @@
     "rimraf": "^2.6.2",
     "rollup": "^1.7.4",
     "rollup-plugin-typescript2": "^0.20.1",
+    "standard-version": "^5.0.2",
     "ts-loader": "^4.5.0",
     "tslib": "^1.9.3",
     "tslint": "^5.11.0",
+    "typedoc": "^0.14.2",
     "typescript": "^3.4.1",
     "webpack": "^4.26.0",
     "yargs": "^4.8.1"

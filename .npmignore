@@ -1,4 +1,15 @@
 jspm_packages
 bower_components
-.idea
 build/reports
+build
+test
+.idea
+.rollupcache
+.vscode
+.editorconfig
+.gitignore
+karma.conf.js
+CONTRIBUTING.md
+ISSUE_TEMPLATE.md
+tsconfig.json
+tslint.json

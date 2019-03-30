@@ -212,23 +212,29 @@ describe('router-view', () => {
     // INFO [Matt] This failing test is a bug that needs to get resolved, but
     // it is existing and apprarently not critical. References to existing issues
     // appreciated.
-    // it('resolves the navigate promise when navigation is complete', done => {
-    //   component = withDefaultViewport({ moduleId: 'test/routes/route-2', layoutViewModel: 'test/routes/layout-1') });
+    // it appears there needs to be a small waiting period for navigation to complete
+    it('resolves the navigate promise when navigation is complete', done => {
+      component = withDefaultViewport({
+        moduleId: 'test/routes/route-2',
+        layoutViewModel: 'test/routes/layout-1'
+      });
 
-    //   component.create(bootstrap)
-    //     .then(() => {
-    //       expect(component.element.querySelectorAll('.route-1').length).toBe(1);
-    //       expect(component.element.querySelectorAll('.route-2').length).toBe(0);
-    //       expect(component.element.querySelectorAll('.layout-1').length).toBe(0);
-    //       return component.viewModel.router.navigate('route');
-    //     })
-    //     .then(() => {
-    //       expect(component.element.querySelectorAll('.route-1').length).toBe(0);
-    //       expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
-    //       expect(component.element.querySelectorAll('.layout-1:not(.view-only)').length).toBe(1);
-    //       done();
-    //     });
-    // });
+      component.create(bootstrap)
+        .then(() => {
+          expect(component.element.querySelectorAll('.route-1').length).toBe(1);
+          expect(component.element.querySelectorAll('.route-2').length).toBe(0);
+          expect(component.element.querySelectorAll('.layout-1').length).toBe(0);
+          return component.viewModel.router.navigate('route');
+        })
+        .then(wait)
+        .then(() => {
+          expect(component.element.querySelectorAll('.route-1').length).toBe(0);
+          expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
+          expect(component.element.querySelectorAll('.layout-1:not(.view-only)').length).toBe(1);
+          done();
+        })
+        .catch(done.fail);
+    });
   });
 
   // INFO [Matt] TODO [Binh] Attached isn't being called properly.
@@ -279,11 +285,15 @@ function withDefaultViewport(routeConfig?: Partial<RouteConfig>) {
       .withResources()
       .inView('<router-view></router-view>');
 
-  configure(component, {
-    route: ['', 'default'],
-    moduleId: 'test/routes/route-1',
-    activationStrategy: 'replace'
-  }, routeConfig);
+  configure(
+    component,
+    /*default route*/{
+      route: ['', 'default'],
+      moduleId: 'test/routes/route-1',
+      activationStrategy: 'replace'
+    },
+    /*extra route config */routeConfig
+  );
 
   return component;
 }
@@ -304,15 +314,15 @@ function withNamedViewport(routeConfig?: Partial<RouteConfig>) {
   return component;
 }
 
-function configure(component: ComponentTester, defaultRoute: RouteConfig, routeConfig: Partial<RouteConfig>) {
+function configure(component: ComponentTester, defaultRoute: RouteConfig, extraRouteConfig: Partial<RouteConfig>) {
   component.bootstrap((aurelia: Aurelia) => {
     aurelia.use.standardConfiguration();
 
     const routeConfigs: RouteConfig[] = [defaultRoute];
-    if (routeConfig) {
-      routeConfig.activationStrategy = 'replace';
-      routeConfig.route = 'route';
-      routeConfigs.push(routeConfig as RouteConfig);
+    if (extraRouteConfig) {
+      extraRouteConfig.activationStrategy = 'replace';
+      extraRouteConfig.route = 'route';
+      routeConfigs.push(extraRouteConfig as RouteConfig);
     }
 
     aurelia.container.viewModel = {

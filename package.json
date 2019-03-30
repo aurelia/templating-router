@@ -27,11 +27,8 @@
     "test:watch": "karma start",
     "test:debugger": "karma start --browsers ChromeDebugging",
     "lint": "tslint -c tslint.json '{src,test}/**/*.ts' --force",
-    "predoc": "rimraf doc/api.json && rimraf dist/doc-temp && tsc --project tsconfig.build.json --outFile dist/doc-temp/aurelia-validation.js && node doc/shape-defs && copyfiles tsconfig.json dist/doc-temp",
-    "doc": "typedoc --json doc/api.json --excludeExternals --includeDeclarations --mode modules --target ES6 --name aurelia-validation-docs dist/doc-temp/",
-    "postdoc": "node doc/shape-doc && rimraf dist/doc-temp",
     "precut-release": "npm run test",
-    "cut-release": "standard-version -t \"\" -i doc/CHANGELOG.md && npm run build && npm run doc"
+    "cut-release": "standard-version -t \"\" -i doc/CHANGELOG.md && npm run build"
   },
   "typings": "dist/aurelia-templating-router.d.ts",
   "repository": {
@@ -102,7 +99,6 @@
     "ts-loader": "^4.5.0",
     "tslib": "^1.9.3",
     "tslint": "^5.11.0",
-    "typedoc": "^0.14.2",
     "typescript": "^3.4.1",
     "webpack": "^4.26.0",
     "yargs": "^4.8.1"

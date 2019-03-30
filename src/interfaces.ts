@@ -50,6 +50,52 @@ declare module 'aurelia-templating' {
   }
 }
 
+/**@internal */
+declare module 'aurelia-router' {
+
+  /**
+   * The component responsible for routing
+   */
+  export interface ViewPortComponent {
+    viewModel: any;
+    childContainer?: Container;
+    router: Router;
+    config?: RouteConfig;
+    childRouter?: Router;
+    /**
+     * This is for backward compat, when moving from any to a more strongly typed interface
+     */
+    [key: string]: any;
+  }
+
+
+  export interface ViewPortInstruction {
+
+    name?: string;
+
+    strategy: 'no-change' | 'invoke-lifecycle' | 'replace';
+
+    childNavigationInstruction?: NavigationInstruction;
+
+    moduleId: string;
+
+    component: ViewPortComponent;
+
+    childRouter?: Router;
+
+    lifecycleArgs: [Record<string, string>, RouteConfig, NavigationInstruction];
+
+    prevComponent?: ViewPortComponent;
+  }
+
+  export interface ViewPort {
+    /**@internal */
+    container: Container;
+    swap(viewportInstruction: ViewPortInstruction): void;
+    process(viewportInstruction: ViewPortInstruction, waitToSwap?: boolean): Promise<void>;
+  }
+}
+
 export interface IRouterViewViewPortInstruction extends ViewPortInstruction {
   controller?: Controller;
   layoutInstruction?: {

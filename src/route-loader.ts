@@ -1,6 +1,6 @@
 import { Origin } from 'aurelia-metadata';
 import { relativeToFile } from 'aurelia-path';
-import { NavigationInstruction, RouteConfig, RouteLoader, Router, ViewPortComponent } from 'aurelia-router';
+import { NavigationInstruction, RouteConfig, RouteLoader, Router } from 'aurelia-router';
 import { CompositionEngine, customElement, inlineView, useView, CompositionContext } from 'aurelia-templating';
 import { RouterViewLocator } from './router-view';
 import { Container } from 'aurelia-dependency-injection';

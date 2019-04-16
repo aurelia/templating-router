@@ -1,6 +1,6 @@
 import { Container } from 'aurelia-dependency-injection';
-import { Router, ViewPortInstruction } from 'aurelia-router';
-import { CompositionContext, Controller } from 'aurelia-templating';
+import { Router, RouteConfig, NavigationInstruction } from 'aurelia-router';
+import { Controller } from 'aurelia-templating';
 
 export type Constructable<T = any> = new (...args: any[]) => T;
 
@@ -50,50 +50,47 @@ declare module 'aurelia-templating' {
   }
 }
 
-/**@internal */
-declare module 'aurelia-router' {
 
+/**
+ * The component responsible for routing
+ */
+export interface ViewPortComponent {
+  viewModel: any;
+  childContainer?: Container;
+  router: Router;
+  config?: RouteConfig;
+  childRouter?: Router;
   /**
-   * The component responsible for routing
+   * This is for backward compat, when moving from any to a more strongly typed interface
    */
-  export interface ViewPortComponent {
-    viewModel: any;
-    childContainer?: Container;
-    router: Router;
-    config?: RouteConfig;
-    childRouter?: Router;
-    /**
-     * This is for backward compat, when moving from any to a more strongly typed interface
-     */
-    [key: string]: any;
-  }
+  [key: string]: any;
+}
 
 
-  export interface ViewPortInstruction {
+export interface ViewPortInstruction {
 
-    name?: string;
+  name?: string;
 
-    strategy: 'no-change' | 'invoke-lifecycle' | 'replace';
+  strategy: 'no-change' | 'invoke-lifecycle' | 'replace';
 
-    childNavigationInstruction?: NavigationInstruction;
+  childNavigationInstruction?: NavigationInstruction;
 
-    moduleId: string;
+  moduleId: string;
 
-    component: ViewPortComponent;
+  component: ViewPortComponent;
 
-    childRouter?: Router;
+  childRouter?: Router;
 
-    lifecycleArgs: [Record<string, string>, RouteConfig, NavigationInstruction];
+  lifecycleArgs: [Record<string, string>, RouteConfig, NavigationInstruction];
 
-    prevComponent?: ViewPortComponent;
-  }
+  prevComponent?: ViewPortComponent;
+}
 
-  export interface ViewPort {
-    /**@internal */
-    container: Container;
-    swap(viewportInstruction: ViewPortInstruction): void;
-    process(viewportInstruction: ViewPortInstruction, waitToSwap?: boolean): Promise<void>;
-  }
+export interface ViewPort {
+  /**@internal */
+  container: Container;
+  swap(viewportInstruction: ViewPortInstruction): void;
+  process(viewportInstruction: ViewPortInstruction, waitToSwap?: boolean): Promise<void>;
 }
 
 export interface IRouterViewViewPortInstruction extends ViewPortInstruction {

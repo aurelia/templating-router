@@ -20,9 +20,7 @@ import {
   IStaticViewConfig
 } from 'aurelia-templating';
 import {
-  Router,
-  ViewPortInstruction,
-  ViewPort
+  Router
 } from 'aurelia-router';
 import { Origin } from 'aurelia-metadata';
 import { DOM } from 'aurelia-pal';
@@ -35,7 +33,7 @@ class EmptyLayoutViewModel {
 /**
  * Implementation of Aurelia Router ViewPort. Responsible for loading route, composing and swapping routes views
  */
-export class RouterView implements ViewPort {
+export class RouterView {
 
   /**@internal */
   static inject() {
@@ -75,8 +73,9 @@ export class RouterView implements ViewPort {
 
   /**
    * Layout view model used as binding context for this router-view layout
+   * Actual type would be {string | Constructable | object}
    */
-  layoutViewModel?: string | Constructable | object;
+  layoutViewModel?: any;
 
   /**
    * Layout model used to activate layout view model, if specified with `layoutViewModel`

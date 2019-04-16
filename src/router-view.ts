@@ -54,7 +54,7 @@ export class RouterView implements ViewPort {
    */
   static $resource: IStaticResourceConfig = {
     name: 'router-view',
-    bindables: ['swapOrder', 'layoutView', 'layoutViewModel', 'layoutModel'] as any
+    bindables: ['swapOrder', 'layoutView', 'layoutViewModel', 'layoutModel', 'inherit-binding-context'] as any
   };
 
   /**
@@ -82,6 +82,13 @@ export class RouterView implements ViewPort {
    * Layout model used to activate layout view model, if specified with `layoutViewModel`
    */
   layoutModel?: any;
+
+  /**
+   * Indicates whether view composed via instruction given to this <router-view/>
+   * should use owning view in scope hierarchy
+   * Default value is `true` for compat reason
+   */
+  inheritBindingContext?: any;
 
   /**
    * Element associated with this <router-view/> custom element
@@ -168,6 +175,7 @@ export class RouterView implements ViewPort {
     this.viewLocator = viewLocator;
     this.compositionTransaction = compositionTransaction;
     this.compositionEngine = compositionEngine;
+    this.inheritBindingContext = true;
     // add this <router-view/> to router view ports lookup based on name attribute
     // when this router is the root router-view
     // also trigger AppRouter registerViewPort extra flow
@@ -184,11 +192,11 @@ export class RouterView implements ViewPort {
     }
   }
 
-  created(owningView: View) {
+  created(owningView: View): void {
     this.owningView = owningView;
   }
 
-  bind(bindingContext: any, overrideContext: OverrideContext) {
+  bind(bindingContext: any, overrideContext: OverrideContext): void {
     // router needs to get access to view model of current route parent
     // doing it in generic way via viewModel property on container
     this.container.viewModel = bindingContext;
@@ -198,7 +206,9 @@ export class RouterView implements ViewPort {
   /**
    * Implementation of `aurelia-router` ViewPort interface, responsible for templating related part in routing Pipeline
    */
-  process(viewPortInstruction: IRouterViewViewPortInstruction, waitToSwap?: boolean): Promise<void> {
+  process($viewPortInstruction: any, waitToSwap?: boolean): Promise<void> {
+    // have strong typings without exposing it in public typings, this is to ensure maximum backward compat
+    const viewPortInstruction = $viewPortInstruction as IRouterViewViewPortInstruction;
     const component = viewPortInstruction.component;
     const childContainer = component.childContainer;
     const viewModel = component.viewModel;
@@ -246,13 +256,15 @@ export class RouterView implements ViewPort {
           viewPortInstruction.layoutInstruction = layoutInstruction;
         }
 
-        viewPortInstruction.controller = metadata.create(childContainer,
-          BehaviorInstruction.dynamic(
-            this.element,
-            viewModel,
-            viewFactory as ViewFactory
-          )
+        const viewPortComponentBehaviorInstruction = BehaviorInstruction.dynamic(
+          this.element,
+          viewModel,
+          viewFactory as ViewFactory
         );
+        const shouldInheritBindingContext = this.inheritBindingContext;
+        viewPortComponentBehaviorInstruction.inheritBindingContext = !!(shouldInheritBindingContext && shouldInheritBindingContext !== 'false');
+
+        viewPortInstruction.controller = metadata.create(childContainer, viewPortComponentBehaviorInstruction);
 
         if (waitToSwap) {
           return null;
@@ -357,7 +369,6 @@ export class RouterView implements ViewPort {
     }
   }
 }
-
 
 /**
 * Locator which finds the nearest RouterView, relative to the current dependency injection container.

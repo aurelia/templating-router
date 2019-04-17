@@ -36,7 +36,7 @@ function generateDts() {
   console.log('\n==============\nGenerating dts bundle...\n==============');
   return new Promise(resolve => {
     const ChildProcess = require('child_process');
-    ChildProcess.exec('npm run bundle-dts', (err, stdout, stderr) => {
+    ChildProcess.exec('npm run build:dts', (err, stdout, stderr) => {
       if (err || stderr) {
         console.log('Generating dts error:');
         console.log(stderr);
@@ -53,9 +53,9 @@ function build() {
   console.log('\n==============\nBuidling...\n==============');
   return Promise.all([
     {
-      input: 'src/index.ts',
+      input: `src/${LIB_NAME}.ts`,
       output: [
-        { file: `dist/es2015/${LIB_NAME}.js`, format: 'es' }
+        { file: `dist/es2015/${LIB_NAME}.js`, format: 'es', sourcemap: true }
       ],
       external: externalLibs,
       plugins: [
@@ -70,11 +70,11 @@ function build() {
       ]
     },
     {
-      input: 'src/index.ts',
+      input: `src/${LIB_NAME}.ts`,
       output: [
-        { file: `dist/commonjs/${LIB_NAME}.js`, format: 'cjs' },
-        { file: `dist/amd/${LIB_NAME}.js`, format: 'amd', amd: { id: LIB_NAME } },
-        { file: `dist/native-${LIB_NAME}/index.js`, format: 'es' }
+        { file: `dist/commonjs/${LIB_NAME}.js`, format: 'cjs', sourcemap: true },
+        { file: `dist/amd/${LIB_NAME}.js`, format: 'amd', amd: { id: LIB_NAME }, sourcemap: true },
+        { file: `dist/native-modules/${LIB_NAME}.js`, format: 'es', sourcemap: true }
       ],
       external: externalLibs,
       plugins: [

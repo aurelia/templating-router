@@ -27,15 +27,14 @@ describe('router-view', () => {
       .then(() => {
         expect(component.viewModel.router).toBeDefined();
         done();
-      })
+      });
   });
 
   it('loads a basic view / view-model', done => {
-    component = withDefaultViewport({ moduleId: PLATFORM.moduleName('test/routes/route-2') });
+    component = withDefaultViewport({ moduleId: 'test/routes/route-2' });
 
     component.create(bootstrap)
       .then(() => {
-        debugger;
         expect(component.element.querySelectorAll('.route-1').length).toBe(1);
         expect(component.element.querySelectorAll('.route-2').length).toBe(0);
         return component.viewModel.router.navigate('route');
@@ -47,8 +46,8 @@ describe('router-view', () => {
       });
   });
 
-  it('loads a view-only module', done =>{
-    component = withDefaultViewport({ moduleId: PLATFORM.moduleName('test/routes/route-2.html') });
+  it('loads a view-only module', done => {
+    component = withDefaultViewport({ moduleId: 'test/routes/route-2.html' });
 
     component.create(bootstrap)
       .then(() => {
@@ -67,8 +66,8 @@ describe('router-view', () => {
 
     it('loads a module based layout', done => {
       component = withDefaultViewport({
-        moduleId: PLATFORM.moduleName('test/routes/route-2'),
-        layoutViewModel: PLATFORM.moduleName('test/routes/layout-1')
+        moduleId: 'test/routes/route-2',
+        layoutViewModel: 'test/routes/layout-1'
       });
 
       component.create(bootstrap)
@@ -84,13 +83,14 @@ describe('router-view', () => {
           expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
           expect(component.element.querySelectorAll('.layout-1:not(.view-only)').length).toBe(1);
           done();
-        });
+        })
+        .catch(done.fail);
     });
 
     it('loads a view-only layout', done => {
       component = withDefaultViewport({
-        moduleId: PLATFORM.moduleName('test/routes/route-2'),
-        layoutView: PLATFORM.moduleName('test/routes/layout-1.html')
+        moduleId: 'test/routes/route-2',
+        layoutView: 'test/routes/layout-1.html'
       });
 
       component.create(bootstrap)
@@ -111,9 +111,9 @@ describe('router-view', () => {
 
     it('loads a module based layout with a specific view', done => {
       component = withDefaultViewport({
-        moduleId: PLATFORM.moduleName('test/routes/route-2'),
-        layoutView: PLATFORM.moduleName('test/routes/layout-1.html'),
-        layoutViewModel: PLATFORM.moduleName('test/routes/layout-2')
+        moduleId: 'test/routes/route-2',
+        layoutView: 'test/routes/layout-1.html',
+        layoutViewModel: 'test/routes/layout-2'
       });
 
       component.create(bootstrap)
@@ -136,8 +136,8 @@ describe('router-view', () => {
 
     it('loads a layout with multiple slots', done => {
       component = withDefaultViewport({
-        moduleId: PLATFORM.moduleName('test/routes/multiple-slots-route-1'),
-        layoutView: PLATFORM.moduleName('test/routes/multiple-slots-layout-1.html')
+        moduleId: 'test/routes/multiple-slots-route-1',
+        layoutView: 'test/routes/multiple-slots-layout-1.html'
       });
 
       component.create(bootstrap)
@@ -162,8 +162,8 @@ describe('router-view', () => {
       component = withNamedViewport({
         viewPorts: {
           viewport1: {
-            moduleId: PLATFORM.moduleName('test/routes/route-2'),
-            layoutViewModel: PLATFORM.moduleName('test/routes/layout-1')
+            moduleId: 'test/routes/route-2',
+            layoutViewModel: 'test/routes/layout-1'
           }
         }
       });
@@ -181,14 +181,15 @@ describe('router-view', () => {
           expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
           expect(component.element.querySelectorAll('.layout-1:not(.view-only)').length).toBe(1);
           done();
-        });
+        })
+        .catch(done.fail);
     });
 
     it('activates the layout viewmodel with a model value', done => {
       const params = 1;
       component = withDefaultViewport({
-        moduleId: PLATFORM.moduleName('test/routes/route-2'),
-        layoutViewModel: PLATFORM.moduleName('test/routes/layout-1'),
+        moduleId: 'test/routes/route-2',
+        layoutViewModel: 'test/routes/layout-1',
         layoutModel: params
       });
 
@@ -211,30 +212,36 @@ describe('router-view', () => {
     // INFO [Matt] This failing test is a bug that needs to get resolved, but
     // it is existing and apprarently not critical. References to existing issues
     // appreciated.
-    // it('resolves the navigate promise when navigation is complete', done => {
-    //   component = withDefaultViewport({ moduleId: PLATFORM.moduleName('test/routes/route-2', layoutViewModel: PLATFORM.moduleName('test/routes/layout-1') });
+    // it appears there needs to be a small waiting period for navigation to complete
+    it('resolves the navigate promise when navigation is complete', done => {
+      component = withDefaultViewport({
+        moduleId: 'test/routes/route-2',
+        layoutViewModel: 'test/routes/layout-1'
+      });
 
-    //   component.create(bootstrap)
-    //     .then(() => {
-    //       expect(component.element.querySelectorAll('.route-1').length).toBe(1);
-    //       expect(component.element.querySelectorAll('.route-2').length).toBe(0);
-    //       expect(component.element.querySelectorAll('.layout-1').length).toBe(0);
-    //       return component.viewModel.router.navigate('route');
-    //     })
-    //     .then(() => {
-    //       expect(component.element.querySelectorAll('.route-1').length).toBe(0);
-    //       expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
-    //       expect(component.element.querySelectorAll('.layout-1:not(.view-only)').length).toBe(1);
-    //       done();
-    //     });
-    // });
+      component.create(bootstrap)
+        .then(() => {
+          expect(component.element.querySelectorAll('.route-1').length).toBe(1);
+          expect(component.element.querySelectorAll('.route-2').length).toBe(0);
+          expect(component.element.querySelectorAll('.layout-1').length).toBe(0);
+          return component.viewModel.router.navigate('route');
+        })
+        .then(wait)
+        .then(() => {
+          expect(component.element.querySelectorAll('.route-1').length).toBe(0);
+          expect(component.element.querySelectorAll('.route-2:not(.view-only)').length).toBe(1);
+          expect(component.element.querySelectorAll('.layout-1:not(.view-only)').length).toBe(1);
+          done();
+        })
+        .catch(done.fail);
+    });
   });
 
   // INFO [Matt] TODO [Binh] Attached isn't being called properly.
   // it('supports classes as a module id', (done) => {
   //   const { Route2ViewModel } = require('test/routes/route-2');
 
-  //   component = withDefaultViewport({ moduleId: PLATFORM.moduleName(Route2ViewModel )});
+  //   component = withDefaultViewport({ moduleId: Route2ViewModel )});
 
   //   component.create(bootstrap)
   //     .then(() => {
@@ -253,7 +260,7 @@ describe('router-view', () => {
   // it('supports objects as a module id', (done) => {
   //   const { Route2ViewModel } = require('test/routes/route-2');
 
-  //   component = withDefaultViewport({ moduleId: PLATFORM.moduleName(new Route2ViewModel() )});
+  //   component = withDefaultViewport({ moduleId: new Route2ViewModel() )});
 
   //   component.create(bootstrap)
   //     .then(() => {
@@ -274,28 +281,32 @@ function wait() {
 }
 
 function withDefaultViewport(routeConfig?: Partial<RouteConfig>) {
-  let component = StageComponent
-      .withResources(PLATFORM.moduleName('src/router-view'))
+  const component = StageComponent
+      .withResources()
       .inView('<router-view></router-view>');
 
-  configure(component, {
-    route: ['', 'default'],
-    moduleId: PLATFORM.moduleName('test/routes/route-1'),
-    activationStrategy: 'replace'
-  }, routeConfig);
+  configure(
+    component,
+    /*default route*/{
+      route: ['', 'default'],
+      moduleId: 'test/routes/route-1',
+      activationStrategy: 'replace'
+    },
+    /*extra route config */routeConfig
+  );
 
   return component;
 }
 
 function withNamedViewport(routeConfig?: Partial<RouteConfig>) {
-  let component = StageComponent
-      .withResources(PLATFORM.moduleName('src/router-view'))
+  const component = StageComponent
+      .withResources()
       .inView('<router-view name="viewport1"></router-view>');
 
   configure(component, {
     route: ['', 'default'],
     viewPorts: {
-      viewport1: { moduleId: PLATFORM.moduleName(PLATFORM.moduleName('test/routes/route-1')) }
+      viewport1: { moduleId: 'test/routes/route-1' }
     },
     activationStrategy: 'replace'
   }, routeConfig);
@@ -303,29 +314,18 @@ function withNamedViewport(routeConfig?: Partial<RouteConfig>) {
   return component;
 }
 
-function configure(component: ComponentTester, defaultRoute: RouteConfig, routeConfig: Partial<RouteConfig>) {
+function configure(component: ComponentTester, defaultRoute: RouteConfig, extraRouteConfig: Partial<RouteConfig>) {
   component.bootstrap((aurelia: Aurelia) => {
-    aurelia.use
-      .defaultBindingLanguage()
-      .defaultResources()
-      .history();
-
-    aurelia.use
-      .singleton(RouteLoader, TemplatingRouteLoader)
-      .singleton(Router, AppRouter)
-      .globalResources([
-        PLATFORM.moduleName('src/router-view'),
-        PLATFORM.moduleName('src/route-href')
-      ]);
+    aurelia.use.standardConfiguration();
 
     const routeConfigs: RouteConfig[] = [defaultRoute];
-    if (routeConfig) {
-      routeConfig.activationStrategy = 'replace';
-      routeConfig.route = 'route';
-      routeConfigs.push(routeConfig as RouteConfig);
+    if (extraRouteConfig) {
+      extraRouteConfig.activationStrategy = 'replace';
+      extraRouteConfig.route = 'route';
+      routeConfigs.push(extraRouteConfig as RouteConfig);
     }
 
-    aurelia.use.container.viewModel = {
+    aurelia.container.viewModel = {
       configureRouter: (config: RouterConfiguration, router: Router) => {
         config.map(routeConfigs);
       }

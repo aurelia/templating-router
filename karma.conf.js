@@ -2,15 +2,16 @@ const { AureliaPlugin } = require('aurelia-webpack-plugin');
 const { resolve } = require('path');
 
 module.exports = function configure(config) {
+  const browsers = config.browsers;
   config.set({
     frameworks: ['jasmine'],
-    files: ['test/**/*.ts'],
+    files: ['test/**/*.spec.ts'],
     preprocessors: {
-      ['test/**/*.ts']: ['webpack']
+      ['test/**/*.spec.ts']: ['webpack', 'sourcemap']
     },
     webpack: {
       mode: 'development',
-      entry: { setup: './test/setup.ts' },
+      entry: './test/setup.ts',
       resolve: {
         extensions: ['.ts', '.js'],
         modules: [
@@ -18,10 +19,11 @@ module.exports = function configure(config) {
         ],
         alias: {
           src: resolve(__dirname, 'src'),
-          test: resolve(__dirname, 'test')
+          test: resolve(__dirname, 'test'),
+          'aurelia-templating-router': resolve(__dirname, 'src/aurelia-templating-router')
         }
       },
-      devtool: 'cheap-module-eval-source-map',
+      devtool: browsers.includes('ChromeDebugging') ? 'eval-source-map' : 'inline-source-map',
       module: {
         rules: [
           {
@@ -35,20 +37,43 @@ module.exports = function configure(config) {
           }
         ]
       },
-      plugins: [new AureliaPlugin()]
+      plugins: [new AureliaPlugin({ aureliaApp: undefined })]
     },
     mime: {
       'text/x-typescript': ['ts']
     },
-    reporters: ['mocha', 'progress'],
-    webpackServer: { noInfo: config.noInfo },
-    browsers: ['Chrome'],
+    reporters: ['mocha'],
+    webpackMiddleware: {
+      stats: {
+        colors: true,
+        hash: false,
+        version: false,
+        timings: false,
+        assets: false,
+        chunks: false,
+        modules: false,
+        reasons: false,
+        children: false,
+        source: false,
+        errors: true,
+        errorDetails: true,
+        warnings: false,
+        publicPath: false
+      }
+    },
+    webpackServer: { noInfo: true },
+    browsers: Array.isArray(browsers) && browsers.length > 0 ? browsers : ['ChromeHeadless'],
     customLaunchers: {
       ChromeDebugging: {
         base: 'Chrome',
-        flags: ['--remote-debugging-port=9333'],
+        flags: [
+          '--remote-debugging-port=9333'
+        ],
         debug: true
       }
+    },
+    mochaReporter: {
+      ignoreSkipped: true
     },
     singleRun: false
   });

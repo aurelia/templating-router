@@ -1,4 +1,4 @@
-import { customAttribute, bindable, IStaticResourceConfig } from 'aurelia-templating';
+import { IStaticResourceConfig } from 'aurelia-templating';
 import { Router } from 'aurelia-router';
 import { DOM } from 'aurelia-pal';
 import * as LogManager from 'aurelia-logging';
@@ -15,7 +15,9 @@ export class RouteHref {
     return [Router, DOM.Element];
   }
 
-  /*@internal */
+  /**
+   * @internal Actively avoid using decorator to reduce the amount of code generated
+   */
   static $resource: IStaticResourceConfig = {
     type: 'attribute',
     name: 'route-href',
@@ -84,13 +86,14 @@ export class RouteHref {
   processChange() {
     return this.router
       .ensureConfigured()
-      .then(() => {
+      .then((): null => {
         if (!this.isActive) {
+          // returning null to avoid Bluebird warning
           return null;
         }
         const element = this.element as Element & { au: any };
 
-        let href = this.router.generate(this.route, this.params);
+        const href = this.router.generate(this.route, this.params);
 
         if (element.au.controller) {
           element.au.controller.viewModel[this.attribute] = href;
@@ -98,9 +101,10 @@ export class RouteHref {
           element.setAttribute(this.attribute, href);
         }
 
+        // returning null to avoid Bluebird warning
         return null;
       })
-      .catch(reason => {
+      .catch((reason: any) => {
         logger.error(reason);
       });
   }

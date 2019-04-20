@@ -35,7 +35,8 @@
     "url": "http://github.com/aurelia/templating-router"
   },
   "files": [
-    "dist"
+    "dist",
+    "typings.json"
   ],
   "jspm": {
     "registry": "npm",

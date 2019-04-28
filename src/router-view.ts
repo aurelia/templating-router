@@ -83,13 +83,6 @@ export class RouterView {
   layoutModel?: any;
 
   /**
-   * Indicates whether view composed via instruction given to this <router-view/>
-   * should use owning view in scope hierarchy
-   * Default value is `true` for compat reason
-   */
-  inheritBindingContext?: any;
-
-  /**
    * Element associated with this <router-view/> custom element
    */
   readonly element: Element;
@@ -174,7 +167,6 @@ export class RouterView {
     this.viewLocator = viewLocator;
     this.compositionTransaction = compositionTransaction;
     this.compositionEngine = compositionEngine;
-    this.inheritBindingContext = true;
     // add this <router-view/> to router view ports lookup based on name attribute
     // when this router is the root router-view
     // also trigger AppRouter registerViewPort extra flow
@@ -260,9 +252,6 @@ export class RouterView {
           viewModel,
           viewFactory as ViewFactory
         );
-        const shouldInheritBindingContext = this.inheritBindingContext;
-        viewPortComponentBehaviorInstruction.inheritBindingContext = !!(shouldInheritBindingContext && shouldInheritBindingContext !== 'false');
-
         viewPortInstruction.controller = metadata.create(childContainer, viewPortComponentBehaviorInstruction);
 
         if (waitToSwap) {

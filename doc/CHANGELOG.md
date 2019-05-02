@@ -1,3 +1,21 @@
+# Change Log
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+# [1.5.0](https://github.com/aurelia/templating-router/compare/1.3.3...1.5.0) (2019-05-02)
+
+
+### Bug Fixes
+
+* **route-loader:** Normalize html child routes ([668bf2c](https://github.com/aurelia/templating-router/commit/668bf2c))
+
+
+### Features
+
+* **router-view:** ability to turn off inherit-binding-context ([f3f38d6](https://github.com/aurelia/templating-router/commit/f3f38d6))
+
+
+
 <a name="1.3.3"></a>
 ## [1.3.3](https://github.com/aurelia/templating-router/compare/1.3.2...1.3.3) (2018-09-25)
 

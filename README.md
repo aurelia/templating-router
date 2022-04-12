@@ -13,6 +13,10 @@
 
 # aurelia-templating-router
 
+This library is part of the [Aurelia](http://www.aurelia.io/) platform and contains an extensible HTML templating engine supporting databinding, custom elements, attached behaviors and more.
+
+> To keep up to date on [Aurelia](http://www.aurelia.io/), please visit and subscribe to [the official blog](http://blog.aurelia.io/) and [our email list](http://eepurl.com/ces50j). We also invite you to [follow us on twitter](https://twitter.com/aureliaeffect). If you have questions look around our [Discourse forums](https://discourse.aurelia.io/), chat in our [community on Discord](https://discord.gg/RBtyM6u) or use [stack overflow](http://stackoverflow.com/search?q=aurelia). Documentation can be found [in our developer hub](http://aurelia.io/docs).
+
 ## Platform Support
 
 This library can be used in the **browser** only.

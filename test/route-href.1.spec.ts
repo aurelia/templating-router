@@ -4,7 +4,6 @@ import { bootstrap } from 'aurelia-bootstrapper';
 import { Router, RouterConfiguration, RouteConfig, AppRouter, ConfiguresRouter } from 'aurelia-router';
 import { ComponentTester, StageComponent } from 'aurelia-testing';
 import { RouteHref } from '../src/route-href';
-import { wait } from './utilities';
 import { addDebugLogging, removeDebugLogging } from './shared';
 import { Logger } from 'aurelia-logging';
 

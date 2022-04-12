@@ -45,7 +45,7 @@ describe('[route-href] -- UNIT', () => {
 
   describe('attributeChanged()', () => {
     it('does not remove attribute if previous value is falsy', () => {
-      routeHref = new RouteHref(null!, document.createElement('div'));
+      routeHref = new RouteHref(null, document.createElement('div'));
       routeHref.element.setAttribute('href', '1111');
       routeHref.processChange = () => Promise.resolve();
       [null, undefined, '', 0].forEach((v: any) => {

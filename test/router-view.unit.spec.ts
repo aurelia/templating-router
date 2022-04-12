@@ -9,7 +9,8 @@ describe('RouterView -- UNIT', () => {
       const notWaited = {};
       const promises = [];
       const values = [null, undefined, 5, '', {}, [], Symbol(), function() {/**/}];
-      for (const v of values) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      for (const _ of values) {
         const locator = new RouterViewLocator();
         promises.push(Promise.race([
           wait(100).then(() => notWaited),

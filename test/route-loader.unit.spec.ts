@@ -23,7 +23,7 @@ describe('RouteLoader -- UNIT', () => {
 
   describe('resolveViewModel()', function _1_resolveViewModel__Tests() {
     it('rejects when there is no "moduleId" in config', async () => {
-      const ex = await routeLoader.resolveViewModel(null!, {} as RouteConfig).catch(ex1 => ex1);
+      const ex = await routeLoader.resolveViewModel(null, {} as RouteConfig).catch(ex1 => ex1);
       expect(ex instanceof Error).toBe(true);
       expect(ex.toString()).toBe(new Error('Invalid route config. No "moduleId" found.').toString());
     });
@@ -114,7 +114,7 @@ describe('RouteLoader -- UNIT', () => {
       routeLoader = container.get(TemplatingRouteLoader);
       const router = new Router(container, new History() as any);
       const childContainer = routeLoader.createChildContainer(router);
-      const childRouter = childContainer.getChildRouter!();
+      const childRouter = childContainer.getChildRouter();
       childRouter.parent = null;
       const resolver = childContainer.getResolver(Router);
       expect(resolver.strategy).toBe(3);

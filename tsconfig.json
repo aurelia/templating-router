@@ -12,9 +12,6 @@
     "noImplicitThis": true,
     "strictFunctionTypes": true,
     "noImplicitReturns": true,
-    "listFiles": true,
-    "declaration": false,
-    "removeComments": false,
     "sourceMap": true,
     "lib": [
       "es2015",

@@ -8,18 +8,20 @@ export function verifyElementsCount(component: ComponentTester, selector: string
 export function verifyElementsCount(component: ComponentTester, selectorOrSelectorCountPair: string | [string, number][], count?: number): boolean {
   if (typeof selectorOrSelectorCountPair === 'string') {
     const elCount = component.element.querySelectorAll(selectorOrSelectorCountPair).length;
-    return expect(elCount).toBe(
-      count,
-      `Expected ${count} elements with selector "${selectorOrSelectorCountPair}". Actual: ${elCount}.`
-    );
+    expect(elCount)
+      .withContext(`Expected ${count} elements with selector "${selectorOrSelectorCountPair}". Actual: ${elCount}.`)
+      .toBe(count);
+    return true;
+
   } else {
     return selectorOrSelectorCountPair
       .map(([selector, count]) => {
         const elCount = component.element.querySelectorAll(selector).length;
-        return expect(elCount).toBe(
-          count,
-          `Expected ${count} elements with selector "${selector}". Actual: ${elCount}.`
-        );
+        return expect(elCount)
+          .withContext(
+            `Expected ${count} elements with selector "${selector}". Actual: ${elCount}.`
+          )
+          .toBe(count);
       })
       .every(Boolean);
   }

@@ -1,8 +1,10 @@
+// @ts-check
 const rollup = require('rollup');
-const typescript = require('rollup-plugin-typescript2');
+/** @type {(options: import('@rollup/plugin-typescript').RollupTypescriptOptions) => import('rollup').Plugin} */
+// @ts-ignore
+const typescript = require('@rollup/plugin-typescript');
 const rimraf = require('rimraf');
 const { name: LIB_NAME } = require('../../package.json');
-const cacheRoot = '.rollupcache';
 const externalLibs = [
   'aurelia-router',
   'aurelia-pal',
@@ -27,7 +29,7 @@ function clean() {
       if (error) {
         throw error;
       }
-      resolve();
+      resolve(void 0);
     });
   });
 }
@@ -60,12 +62,8 @@ function build() {
       external: externalLibs,
       plugins: [
         typescript({
-          tsconfigOverride: {
-            compilerOptions: {
-              target: 'es2015'
-            }
-          },
-          cacheRoot: cacheRoot
+          target: 'es2015',
+          removeComments: true
         }),
       ]
     },
@@ -79,13 +77,8 @@ function build() {
       external: externalLibs,
       plugins: [
         typescript({
-          useTsconfigDeclarationDir: true,
-          tsconfigOverride: {
-            compilerOptions: {
-              target: 'es5'
-            }
-          },
-          cacheRoot: cacheRoot
+          target: 'es5',
+          removeComments: true
         }),
       ]
     }

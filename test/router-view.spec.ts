@@ -1,9 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import './setup';
-import { TemplatingRouteLoader } from '../src/route-loader';
 import { Aurelia } from 'aurelia-framework';
-import { PLATFORM } from 'aurelia-pal';
 import { bootstrap } from 'aurelia-bootstrapper';
-import { RouteLoader, AppRouter, Router, RouteConfig, RouterConfiguration } from 'aurelia-router';
+import { Router, RouteConfig, RouterConfiguration } from 'aurelia-router';
 import { StageComponent, ComponentTester } from 'aurelia-testing';
 
 describe('router-view', () => {
@@ -277,7 +276,7 @@ describe('router-view', () => {
 });
 
 function wait() {
-  return new Promise(res => setTimeout(() => res(), 250));
+  return new Promise(res => setTimeout(() => res(void 0), 250));
 }
 
 function withDefaultViewport(routeConfig?: Partial<RouteConfig>) {

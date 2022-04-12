@@ -82,7 +82,8 @@ export class TemplatingRouteLoader extends RouteLoader {
   /**
    * Load corresponding component of a route config of a navigation instruction
    */
-  loadRoute(router: Router, config: RouteConfig, _navInstruction: NavigationInstruction): Promise<any> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  loadRoute(router: Router, config: RouteConfig, navInstruction: NavigationInstruction): Promise<any> {
     return this
       .resolveViewModel(router, config)
       .then(viewModel => this.compositionEngine.ensureViewModel({

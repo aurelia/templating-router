@@ -1,11 +1,9 @@
+
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="./html.d.ts" />
 import { Container } from 'aurelia-dependency-injection';
-import { Router } from 'aurelia-router';
-import { CompositionContext, Controller, HtmlBehaviorResource } from 'aurelia-templating';
-import { PLATFORM } from 'aurelia-pal';
 import { LogManager } from 'aurelia-framework';
 import { ConsoleAppender } from 'aurelia-logging-console';
-
 
 export function addDebugLogging() {
   const appenders = LogManager.getAppenders();

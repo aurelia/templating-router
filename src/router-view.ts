@@ -24,7 +24,7 @@ import {
 } from 'aurelia-router';
 import { Origin } from 'aurelia-metadata';
 import { DOM } from 'aurelia-pal';
-import { IRouterViewViewPortInstruction, Constructable } from './interfaces';
+import { IRouterViewViewPortInstruction } from './interfaces';
 
 class EmptyLayoutViewModel {
 
@@ -64,7 +64,7 @@ export class RouterView {
    * These values are defined by swapStrategies export in aurelia-templating/ aurelia-framework
    * Can be extended there and used here
    */
-  swapOrder?: string;
+  swapOrder?: 'before' | 'after' | 'with';
 
   /**
    * Layout view used for this router-view layout, if no layout-viewmodel specified

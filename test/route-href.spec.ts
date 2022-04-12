@@ -42,6 +42,7 @@ function configure(component: ComponentTester) {
       .singleton(Router, AppRouter);
 
     aurelia.use.container.viewModel = {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       configureRouter: (config: RouterConfiguration, router: Router) => {
         config.map([
           { route: 'a', name: 'a' },

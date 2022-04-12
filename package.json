@@ -30,7 +30,8 @@
     "posttypedoc": "node doc/cleanup.js",
     "changelog": "standard-version -i doc/CHANGELOG.md --skip.commit --skip.tag",
     "precut-release": "npm run lint && npm run test && npm run build",
-    "cut-release": "npm run changelog"
+    "cut-release": "npm run changelog",
+    "postcut-release": "npm run typedoc"
   },
   "typings": "dist/aurelia-templating-router.d.ts",
   "repository": {

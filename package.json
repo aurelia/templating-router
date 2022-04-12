@@ -42,7 +42,6 @@
     "dist",
     "src",
     "README.md",
-    "doc/api.json",
     "doc/CHANGELOG.md",
     "typings.json"
   ],

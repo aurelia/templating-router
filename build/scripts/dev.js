@@ -32,7 +32,7 @@ const buildConfigs = {
     output: {
       file: `dist/amd/${name}.js`,
       format: 'amd',
-      amd: { id: 'aurelia-router' }
+      amd: { id: name }
     },
     tsConfig: {
       target: 'es5',

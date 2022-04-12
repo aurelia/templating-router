@@ -1,23 +1,20 @@
+// @ts-check
 const args = require('../tasks/args');
 const rollup = require('rollup');
-const typescript = require('rollup-plugin-typescript2');
+const typescript = require('@rollup/plugin-typescript').default;
 const ChildProcess = require('child_process');
 
 const targetFormats = args.format || ['commonjs']; // by default only run devs for commonjs
 const targetDir = args.target;
 
 const buildConfigs = {
-  es2015: {
+  es: {
     output: {
       file: 'dist/es2015/index.js',
       format: 'es'
     },
     tsConfig: {
-      tsconfigOverride: {
-        compilerOptions: {
-          target: 'es2015'
-        }
-      }
+      target: 'es2015'
     }
   },
   amd: {
@@ -27,11 +24,7 @@ const buildConfigs = {
       amd: { id: 'aurelia-router' }
     },
     tsConfig: {
-      tsconfigOverride: {
-        compilerOptions: {
-          target: 'es5'
-        }
-      }
+      target: 'es5',
     }
   },
   commonjs: {
@@ -40,11 +33,7 @@ const buildConfigs = {
       format: 'cjs'
     },
     tsConfig: {
-      tsconfigOverride: {
-        compilerOptions: {
-          target: 'es5'
-        }
-      }
+      target: 'es5',
     }
   },
   'native-modules': {
@@ -53,11 +42,7 @@ const buildConfigs = {
       format: 'es'
     },
     tsConfig: {
-      tsconfigOverride: {
-        compilerOptions: {
-          target: 'es5'
-        }
-      }
+      target: 'es5'
     }
   }
 };
@@ -71,6 +56,8 @@ async function roll(format) {
   const inputOptions = {
     input: 'src/index.ts',
     external: [
+      'aurelia-binding',
+      'aurelia-templating',
       'aurelia-dependency-injection',
       'aurelia-event-aggregator',
       'aurelia-logging',
@@ -78,10 +65,10 @@ async function roll(format) {
       'aurelia-route-recognizer'
     ],
     plugins: [
-      typescript(Object.assign(
-        { cacheRoot: '.rollupcache' },
-        buildConfigs[format].tsConfig
-      ))
+      typescript({
+        target: buildConfigs[format].tsConfig.target,
+        removeComments: true
+      })
     ]
   };
   console.log('Starting watcher');

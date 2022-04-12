@@ -26,8 +26,9 @@
     "test:watch": "karma start",
     "test:debugger": "karma start --browsers ChromeDebugging",
     "lint": "eslint .",
+    "changelog": "standard-version -i doc/CHANGELOG.md --skip.commit --skip.tag",
     "precut-release": "npm run lint && npm run test && npm run build",
-    "cut-release": "standard-version -i doc/CHANGELOG.md --skip.commit --skip.tag"
+    "cut-release": "npm run changelog"
   },
   "typings": "dist/aurelia-templating-router.d.ts",
   "repository": {

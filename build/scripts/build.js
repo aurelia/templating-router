@@ -70,6 +70,19 @@ function build() {
     {
       input: `src/${LIB_NAME}.ts`,
       output: [
+        { file: `dist/es2017/${LIB_NAME}.js`, format: 'es', sourcemap: true }
+      ],
+      external: externalLibs,
+      plugins: [
+        typescript({
+          target: 'es2017',
+          removeComments: true
+        }),
+      ]
+    },
+    {
+      input: `src/${LIB_NAME}.ts`,
+      output: [
         { file: `dist/commonjs/${LIB_NAME}.js`, format: 'cjs', sourcemap: true },
         { file: `dist/amd/${LIB_NAME}.js`, format: 'amd', amd: { id: LIB_NAME }, sourcemap: true },
         { file: `dist/native-modules/${LIB_NAME}.js`, format: 'es', sourcemap: true }

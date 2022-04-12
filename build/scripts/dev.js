@@ -3,23 +3,34 @@ const args = require('../tasks/args');
 const rollup = require('rollup');
 const typescript = require('@rollup/plugin-typescript').default;
 const ChildProcess = require('child_process');
+const pkg = require('../../package.json');
 
+const { name } = pkg;
 const targetFormats = args.format || ['commonjs']; // by default only run devs for commonjs
 const targetDir = args.target;
 
 const buildConfigs = {
-  es: {
+  es2015: {
     output: {
-      file: 'dist/es2015/index.js',
+      file: `dist/es2015/${name}.js`,
       format: 'es'
     },
     tsConfig: {
       target: 'es2015'
     }
   },
+  es2017: {
+    output: {
+      file: `dist/es2017/${name}.js`,
+      format: 'es'
+    },
+    tsConfig: {
+      target: 'es2017'
+    }
+  },
   amd: {
     output: {
-      file: 'dist/amd/index.js',
+      file: `dist/amd/${name}.js`,
       format: 'amd',
       amd: { id: 'aurelia-router' }
     },
@@ -29,7 +40,7 @@ const buildConfigs = {
   },
   commonjs: {
     output: {
-      file: 'dist/commonjs/index.js',
+      file: `dist/commonjs/${name}.js`,
       format: 'cjs'
     },
     tsConfig: {
@@ -38,7 +49,7 @@ const buildConfigs = {
   },
   'native-modules': {
     output: {
-      file: 'dist/commonjs/index.js',
+      file: `dist/native-modules/${name}.js`,
       format: 'es'
     },
     tsConfig: {

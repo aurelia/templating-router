@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 1.5.0 (2022-04-12)
+
+
+### Features
+
+* **router-view:** export RouterViewLocator ([b4bc84a](https://github.com/aurelia/templating-router/commit/b4bc84ae267c081ca6bca56122c8a3f522d0b477)), closes [#127](https://github.com/aurelia/templating-router/issues/127)
+
+
 # [1.4.0](https://github.com/aurelia/templating-router/compare/1.3.3...1.5.0) (2019-05-02)
 
 

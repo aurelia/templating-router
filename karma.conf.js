@@ -43,32 +43,12 @@ module.exports = function configure(config) {
       'text/x-typescript': ['ts']
     },
     reporters: ['mocha'],
-    webpackMiddleware: {
-      stats: {
-        colors: true,
-        hash: false,
-        version: false,
-        timings: false,
-        assets: false,
-        chunks: false,
-        modules: false,
-        reasons: false,
-        children: false,
-        source: false,
-        errors: true,
-        errorDetails: true,
-        warnings: false,
-        publicPath: false
-      }
-    },
     webpackServer: { noInfo: true },
     browsers: Array.isArray(browsers) && browsers.length > 0 ? browsers : ['ChromeHeadless'],
     customLaunchers: {
       ChromeDebugging: {
         base: 'Chrome',
-        flags: [
-          '--remote-debugging-port=9333'
-        ],
+        flags: ['--remote-debugging-port=9333'],
         debug: true
       }
     },
